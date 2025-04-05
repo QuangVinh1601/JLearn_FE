@@ -176,8 +176,8 @@ const Flashcard: React.FC = () => {
   const learningCards = flashcards.filter((card) => card.status === "learning");
 
   return (
-    <div className="flex flex-col min-h-screen bg-white p-2 px-80">
-      <div className="min-h-screen border p-8 border-gray-800 rounded-lg">
+    <div className="flex flex-col min-h-screen bg-[#F8F1E5] p-6 px-80 ">
+      <div className="p-8 bg-white">
         {/* Header */}
         <div className="w-full flex justify-between items-center ">
           <div>
@@ -241,7 +241,7 @@ const Flashcard: React.FC = () => {
       </div> */}
 
         {/* Flashcard Content */}
-        <div className="w-full flex flex-col bg-white shadow-lg rounded-lg p-6 text-center mt-4 h-96">
+        <div className="w-full flex flex-col border-4 rounded-lg p-6 text-center mt-4 h-96">
           <div className="flex justify-between items-center mb-4">
             {flipped ? (
               <div></div>
