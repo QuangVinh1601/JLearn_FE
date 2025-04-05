@@ -10,13 +10,21 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Giả sử dữ liệu đăng nhập thành công
+    // Giả sử dữ liệu đăng nhập thành công cho người dùng
     if (email === "example@example.com" && password === "123") {
       alert("Đăng nhập thành công!");
       login();
       navigate("/profile");
       // Đảm bảo rằng sau khi đăng nhập thành công, người dùng sẽ được điều hướng đến một trang khác
       window.location.href = "/home";
+    }
+    // Giả sử dữ liệu đăng nhập thành công cho admin
+    else if (email === "admin@example.com" && password === "admin123") {
+      alert("Đăng nhập thành công!");
+      login();
+      navigate("/admin");
+      // Đảm bảo rằng sau khi đăng nhập thành công, admin sẽ được điều hướng đến một trang khác
+      window.location.href = "/admin-dashboard";
     } else {
       alert("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
     }

@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const { isLoggedIn, logout } = useAuth(); // Lấy trạng thái đăng nhập và hàm logout
 
   return (
-    <header className="flex items-center justify-between px-4 bg-[#EDEDEA] border-b border-gray-200">
+    <header className="flex items-center justify-between px-4 bg-[#F5E6CA] border-b border-gray-200">
       <img
         src={logo}
         alt="JLearn Logo"
@@ -51,7 +51,7 @@ const Header: React.FC = () => {
             </li>
             <li className="flex items-center">
               <NavLink
-                to="/library"
+                to="/translate"
                 className={({ isActive }) =>
                   `hover:text-red-500 text-lg ${isActive ? "text-red-500" : ""}`
                 }
