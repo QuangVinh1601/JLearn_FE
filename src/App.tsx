@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footerr";
 import Home from "./pages/Home";
+import CollectionFlashcards from "./pages/CollectionFlashcards";
 import Translater from "./pages/Translate";
 import Flashcards from "./pages/Flashcards";
 import Login from "./pages/Login";
@@ -15,6 +16,9 @@ import AdminLayout from "./admin/components/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminAccount from "./admin/pages/AdminAccount";
 import { AuthProvider } from "./components/AuthContext";
+import CreateFlashcards from "./pages/CreateFlashcards";
+import UpdateProfile from "./pages/UpdateProfile";
+import CourseList from "./pages/CourseList";
 // Component để kiểm tra và render layout
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -46,7 +50,10 @@ const AppLayout: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/translate" element={<Translater />} />
             <Route path="/flashcards" element={<Flashcards />} />
-
+            <Route path="/collection" element={<CollectionFlashcards />} />
+            <Route path="/create-flash-card" element={<CreateFlashcards />} />
+            <Route path="/update-profile" element={<UpdateProfile />} />
+            <Route path="/course" element={<CourseList />} />
             <Route element={<MainLayout />}>
               <Route path="/profileProfile" element={<Profile />} />
               <Route path="/profileCourses" element={<Courses />} />
