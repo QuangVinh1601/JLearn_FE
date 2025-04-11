@@ -1,3 +1,4 @@
+// src/App.tsx
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
@@ -16,30 +17,30 @@ import AdminLayout from "./admin/components/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminAccount from "./admin/pages/AdminAccount";
 import { AuthProvider } from "./components/AuthContext";
+import SpeakingTest from "./pages/SpeakingTest";
+import Skills from "./pages/Skills";
+import SpeakingTopics from "./pages/SpeakingTopics";
 import CreateFlashcards from "./pages/CreateFlashcards";
 import UpdateProfile from "./pages/UpdateProfile";
 import CourseList from "./pages/CourseList";
+
+
+
+
 // Component để kiểm tra và render layout
 const AppLayout: React.FC = () => {
   const location = useLocation();
-
-  // Kiểm tra nếu đang ở trang login hoặc register
   const isAuthPage = ["/login", "/register"].includes(location.pathname);
-
-  // Kiểm tra nếu đang ở trang admin
   const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
     <div className="min-h-screen flex flex-col">
       <AuthProvider>
-        {/* Header chỉ hiển thị khi không phải trang auth và không phải trang admin */}
         {!isAuthPage && !isAdminPage && (
           <div className="fixed top-0 left-0 right-0 z-50">
             <Header />
           </div>
         )}
-
-        {/* Nội dung trang */}
         <main
           className={`flex-grow ${!isAuthPage && !isAdminPage ? "mt-16" : ""}`}
         >
@@ -50,24 +51,33 @@ const AppLayout: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/translate" element={<Translater />} />
             <Route path="/flashcards" element={<Flashcards />} />
+
+            <Route path="/skills" element={<Skills />} />
+            {/* Add route for topic selection */}
+            <Route path="/speaking-topics" element={<SpeakingTopics />} />
+            {/* SpeakingTest route remains simple */}
+            <Route path="/speaking-test" element={<SpeakingTest />} />
+
+            {/* Profile Routes */}
+
             <Route path="/collection" element={<CollectionFlashcards />} />
             <Route path="/create-flash-card" element={<CreateFlashcards />} />
             <Route path="/update-profile" element={<UpdateProfile />} />
             <Route path="/course" element={<CourseList />} />
+
             <Route element={<MainLayout />}>
               <Route path="/profileProfile" element={<Profile />} />
               <Route path="/profileCourses" element={<Courses />} />
               <Route path="/profileVideos" element={<Videos />} />
             </Route>
 
+            {/* Admin Routes */}
             <Route element={<AdminLayout />}>
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/admin-account" element={<AdminAccount />} />
             </Route>
           </Routes>
         </main>
-
-        {/* Footer chỉ hiển thị khi không phải trang auth và không phải trang admin */}
         {!isAuthPage && !isAdminPage && <Footer />}
       </AuthProvider>
     </div>
