@@ -19,16 +19,13 @@ import AdminAccount from "./admin/pages/AdminAccount";
 import { AuthProvider } from "./components/AuthContext";
 import SpeakingTest from "./pages/SpeakingTest";
 import Skills from "./pages/Skills";
-<<<<<<< HEAD
 import SpeakingTopics from "./pages/SpeakingTopics";
-=======
-import SpeakingTopics from "./pages/SpeakingTopics"; // <-- Import the new component
 import CreateFlashcards from "./pages/CreateFlashcards";
 import UpdateProfile from "./pages/UpdateProfile";
 import CourseList from "./pages/CourseList";
 
 
->>>>>>> 6f8c2b2a8ba6b55e5c45091e1cbfc8fa3a6906a8
+
 
 // Component để kiểm tra và render layout
 const AppLayout: React.FC = () => {
