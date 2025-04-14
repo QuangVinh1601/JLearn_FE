@@ -36,7 +36,7 @@ const SpeakingTopics: React.FC = () => {
                     >
                         {/* Topic Header */}
                         <div className="text-center mb-5">
-                            <h2 className="text-xl font-semibold mb-2 text-blue-700">
+                            <h2 className="text-xl font-semibold mb-2 text-[#f04532]">
                                 {topic.name}
                             </h2>
                             <p className="text-gray-600 text-sm">
@@ -53,7 +53,7 @@ const SpeakingTopics: React.FC = () => {
                                 {topic.questions.map((question, index) => (
                                     <li
                                         key={index}
-                                        className="group flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-100 transition-colors duration-200 cursor-pointer border border-gray-200 hover:border-blue-300"
+                                        className="group flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-[#f04532]/10 transition-colors duration-200 cursor-pointer border border-gray-200 hover:border-[#f04532]"
                                         onClick={() => handleSelectQuestion(topic, index)}
                                         title={`Bắt đầu trả lời câu hỏi ${index + 1}`}
                                     >
@@ -62,7 +62,7 @@ const SpeakingTopics: React.FC = () => {
                                         </span>
                                         <FontAwesomeIcon
                                             icon={faMicrophoneAlt}
-                                            className="text-blue-500 group-hover:text-blue-700 transition-colors duration-200"
+                                            className="text-[#f04532] group-hover:text-[#d03e2c] transition-colors duration-200"
                                         />
                                     </li>
                                 ))}

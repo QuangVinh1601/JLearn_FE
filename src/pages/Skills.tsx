@@ -12,16 +12,15 @@ const Skills: React.FC = () => {
                 {/* Card 1: Speaking Test */}
                 <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center transition-transform transform hover:scale-105 duration-300 ease-in-out border border-gray-200">
                     <div className="text-6xl mb-5">🎙️</div>
-                    <h2 className="text-2xl font-semibold mb-4 text-blue-700">
+                    <h2 className="text-2xl font-semibold mb-4 text-[#f04532]">
                         Kiểm tra Nói (Speaking Test)
                     </h2>
                     <p className="text-gray-600 mb-8 flex-grow">
                         Chọn chủ đề và luyện tập trả lời câu hỏi bằng tiếng Nhật.
                     </p>
                     <Link
-                        // --- UPDATE THIS LINK ---
-                        to="/speaking-topics" // Link to the new topic selection page
-                        className="mt-auto bg-blue-500 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200 shadow-md"
+                        to="/speaking-topics"
+                        className="mt-auto bg-[#f04532] text-white font-semibold px-8 py-3 rounded-lg hover:bg-[#d03e2c] transition-colors duration-200 shadow-md"
                     >
                         Chọn chủ đề
                     </Link>

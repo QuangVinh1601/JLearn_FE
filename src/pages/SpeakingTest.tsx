@@ -287,7 +287,7 @@ const SpeakingTest: React.FC = () => {
             {/* Back Button */}
             <button
                 onClick={() => navigate('/speaking-topics')}
-                className="absolute top-5 left-5 text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="absolute top-5 left-5 text-gray-600 hover:text-[#f04532] transition-colors p-2 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f04532]/50"
                 title="トピック選択へ戻る (Quay lại Chủ đề)" // <-- TRANSLATED
                 aria-label="Quay lại trang chọn chủ đề" // <-- TRANSLATED
             >
@@ -309,7 +309,7 @@ const SpeakingTest: React.FC = () => {
                     </p>
                     <button
                         onClick={buttonProps.onClick}
-                        className="px-6 py-3 rounded-lg text-white font-semibold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 shadow-md transition-colors"
+                        className="px-6 py-3 rounded-lg text-white font-semibold bg-[#f04532] hover:bg-[#d03e2c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f04532]/50 shadow-md transition-colors"
                     >
                         {buttonProps.text}
                     </button>
@@ -320,7 +320,7 @@ const SpeakingTest: React.FC = () => {
                 <>
                     <div className="w-full max-w-2xl mb-6 p-4 bg-white rounded-lg shadow-md flex flex-col gap-4 min-h-[250px] border border-gray-200">
                         <div className="flex justify-start">
-                            <p className="bg-blue-100 text-blue-900 p-3 rounded-lg rounded-bl-none max-w-[85%] shadow-sm text-base md:text-lg">
+                            <p className="bg-[#f04532]/10 text-[#f04532] p-3 rounded-lg rounded-bl-none max-w-[85%] shadow-sm text-base md:text-lg">
                                 {questions[questionIndex]}
                             </p>
                         </div>
@@ -383,7 +383,7 @@ const SpeakingTest: React.FC = () => {
                                     ? 'bg-gray-400 cursor-not-allowed'
                                     : (testState === 'RECORDING'
                                         ? 'bg-red-500 hover:bg-red-600 focus:ring-red-400'
-                                        : 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-400')
+                                        : 'bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50')
                                 }`}
                         >
                             {buttonProps.loading && <FontAwesomeIcon icon={faSpinner} spin />}
