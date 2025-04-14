@@ -2,41 +2,51 @@ import React from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
-import Header from "./components/Header";
-import Footer from "./components/Footerr";
+
+// Import Components
+import Header from "./components/Layout/Header";
+import Footer from "./components/Layout/Footer";
 import Home from "./pages/Home";
-import CollectionFlashcards from "./pages/CollectionFlashcards";
-import Translater from "./pages/Translate";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
+import Translater from "./pages/Translater";
 import Flashcards from "./pages/Flashcards";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import MainLayout from "./pages/Profile/MainLayout";
-import Profile from "./pages/Profile/Profile";
-import Courses from "./pages/Profile/Courses";
-import Videos from "./pages/Profile/Videos";
-import AdminLayout from "./admin/components/AdminLayout";
-import AdminDashboard from "./admin/pages/AdminDashboard";
-import AdminAccount from "./admin/pages/pagesOfAdminUser/AdminAccount";
-import EditUser from "./admin/pages/pagesOfAdminUser/EditUser";
-import AdminFlashcard from "./admin/pages/pagesOfFlashcard/AdminFlashcard";
-import AdminVideo from "./admin/pages/pagesOfVideo/AdminVideo";
-import EditVideo from "./admin/pages/pagesOfVideo/EditVideo";
-import EditFlashcard from "./admin/pages/pagesOfFlashcard/EditFlashcard";
-import { AuthProvider } from "./components/AuthContext";
+import CollectionFlashcards from "./pages/CollectionFlashcards";
 import CreateFlashcards from "./pages/CreateFlashcards";
 import UpdateProfile from "./pages/UpdateProfile";
 import CourseList from "./pages/CourseList";
-import Purchase from "./pages/Purchase";
+import Profile from "./pages/Profile/Profile";
+import Courses from "./pages/Profile/Courses";
+import Videos from "./pages/Profile/Videos";
+import MainLayout from "./components/Layout/MainLayout"; // Assuming this layout wraps profile sections
+import AdminLayout from "./components/Layout/AdminLayout"; // Assuming this layout wraps admin sections
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminAccount from "./pages/Admin/Account/AdminAccount";
+import EditUser from "./pages/Admin/Account/EditUser"; // Component for adding/editing users
+import AdminFlashcard from "./pages/Admin/Flashcard/AdminFlashcard";
+import EditFlashcard from "./pages/Admin/Flashcard/EditFlashcard"; // Component for adding/editing flashcards
+import AdminVideo from "./pages/Admin/Video/AdminVideo";
+import EditVideo from "./pages/Admin/Video/EditVideo"; // Component for adding/editing videos
+import Purchase from "./pages/Purchase"; // Added from develop
+import Skills from "./pages/Skills"; // Added from Trung
+import SpeakingTopics from "./pages/SpeakingTopics"; // Added from Trung
+import SpeakingTest from "./pages/SpeakingTest"; // Added from Trung
 
-const InnerAppLayout: React.FC = () => {
+// Assuming AuthProvider exists and handles authentication context
+import { AuthProvider } from "./context/AuthContext"; // Added from Trung
+
+function App() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Added from develop for the button
 
-  const isAuthPage = ["/login", "/register"].includes(location.pathname);
+  // Determine if the current page is an authentication or admin page
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
   const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // Added AuthProvider from Trung
+    <AuthProvider>
       {!isAuthPage && !isAdminPage && (
         <div className="fixed top-0 left-0 right-0 z-50">
           <Header />
@@ -44,9 +54,11 @@ const InnerAppLayout: React.FC = () => {
       )}
 
       <main
+        // Use responsive margin from develop, conditional logic from both
         className={`flex-grow ${!isAuthPage && !isAdminPage ? "mt-14 sm:mt-16" : ""}`}
       >
         <Routes>
+          {/* Common Routes from both */}
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -57,15 +69,26 @@ const InnerAppLayout: React.FC = () => {
           <Route path="/create-flash-card" element={<CreateFlashcards />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
           <Route path="/course" element={<CourseList />} />
+
+          {/* Speaking Routes from Trung */}
+          <Route path="/skills" element={<Skills />} />
+          <Route path="/speaking-topics" element={<SpeakingTopics />} />
+          <Route path="/speaking-test" element={<SpeakingTest />} />
+
+          {/* Profile Routes using MainLayout (consistent in both) */}
           <Route element={<MainLayout />}>
             <Route path="/profileProfile" element={<Profile />} />
             <Route path="/profileCourses" element={<Courses />} />
             <Route path="/profileVideos" element={<Videos />} />
           </Route>
 
+          {/* Purchase Route from develop */}
           <Route path="/purchase" element={<Purchase />} />
 
+          {/* Admin Routes using AdminLayout and structure from develop */}
           <Route path="/admin" element={<AdminLayout />}>
+            {/* Redirect /admin to /admin/dashboard or handle index route */}
+            {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="account" element={<AdminAccount />} />
             <Route path="account/add" element={<EditUser />} />
@@ -80,26 +103,21 @@ const InnerAppLayout: React.FC = () => {
         </Routes>
       </main>
 
+      {/* Floating Purchase Button from develop */}
       {!isAuthPage && !isAdminPage && (
         <button
           onClick={() => navigate("/purchase")}
           className="fixed bottom-16 sm:bottom-24 right-2 sm:right-4 z-50 bg-[#e82813] text-white rounded-full p-3 sm:p-4 shadow-lg hover:bg-red-700"
+          aria-label="Go to purchase page" // Added aria-label for accessibility
         >
           <FontAwesomeIcon icon={faShoppingCart} />
         </button>
       )}
 
+      {/* Conditional Footer from both */}
       {!isAuthPage && !isAdminPage && <Footer />}
-    </div>
+    </AuthProvider> // Close AuthProvider
   );
-};
-
-const App: React.FC = () => {
-  return (
-    <AuthProvider>
-      <InnerAppLayout />
-    </AuthProvider>
-  );
-};
+}
 
 export default App;
