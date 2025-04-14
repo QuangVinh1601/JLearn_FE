@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 // Import Components
-import Header from "./components/Layout/Header";
-import Footer from "./components/Layout/Footer";
+import Header from "./components/Header";
+import Footer from "./components/Footerr";
 import Home from "./pages/Home";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import Translater from "./pages/Translater";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Translater from "./pages/Translate";
 import Flashcards from "./pages/Flashcards";
 import CollectionFlashcards from "./pages/CollectionFlashcards";
 import CreateFlashcards from "./pages/CreateFlashcards";
@@ -18,22 +18,22 @@ import CourseList from "./pages/CourseList";
 import Profile from "./pages/Profile/Profile";
 import Courses from "./pages/Profile/Courses";
 import Videos from "./pages/Profile/Videos";
-import MainLayout from "./components/Layout/MainLayout"; // Assuming this layout wraps profile sections
-import AdminLayout from "./components/Layout/AdminLayout"; // Assuming this layout wraps admin sections
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import AdminAccount from "./pages/Admin/Account/AdminAccount";
-import EditUser from "./pages/Admin/Account/EditUser"; // Component for adding/editing users
-import AdminFlashcard from "./pages/Admin/Flashcard/AdminFlashcard";
-import EditFlashcard from "./pages/Admin/Flashcard/EditFlashcard"; // Component for adding/editing flashcards
-import AdminVideo from "./pages/Admin/Video/AdminVideo";
-import EditVideo from "./pages/Admin/Video/EditVideo"; // Component for adding/editing videos
+import MainLayout from "./pages/Profile/MainLayout"; // Assuming this layout wraps profile sections
+import AdminLayout from "./admin/components/AdminLayout";
+import AdminDashboard from "./admin/pages/AdminDashboard";
+import AdminAccount from "./admin/pages/pagesOfAdminUser/AdminAccount";
+import EditUser from "./admin/pages/pagesOfAdminUser/EditUser";
+import AdminFlashcard from "./admin/pages/pagesOfFlashcard/AdminFlashcard";
+import AdminVideo from "./admin/pages/pagesOfVideo/AdminVideo";
+import EditVideo from "./admin/pages/pagesOfVideo/EditVideo";
+import EditFlashcard from "./admin/pages/pagesOfFlashcard/EditFlashcard";
 import Purchase from "./pages/Purchase"; // Added from develop
 import Skills from "./pages/Skills"; // Added from Trung
 import SpeakingTopics from "./pages/SpeakingTopics"; // Added from Trung
 import SpeakingTest from "./pages/SpeakingTest"; // Added from Trung
 
 // Assuming AuthProvider exists and handles authentication context
-import { AuthProvider } from "./context/AuthContext"; // Added from Trung
+import { AuthProvider } from "./components/AuthContext";
 
 function App() {
   const location = useLocation();
