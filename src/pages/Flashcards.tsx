@@ -49,7 +49,6 @@ const Flashcard: React.FC = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  // random
   const [isRandomMode, setIsRandomMode] = useState(false);
   const [randomOrder, setRandomOrder] = useState<number[]>([]);
   const [progress, setProgress] = useState({
@@ -60,14 +59,12 @@ const Flashcard: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem("flashcards", JSON.stringify(flashcards));
-
     const remembered = flashcards.filter(
       (card) => card.status === "remembered",
     ).length;
     const learning = flashcards.filter(
       (card) => card.status === "learning",
     ).length;
-
     setProgress({
       remembered,
       learning,
@@ -88,7 +85,6 @@ const Flashcard: React.FC = () => {
     generateRandomOrder();
   }, [generateRandomOrder]);
 
-  // Toggle random mode
   const toggleRandomMode = () => {
     if (!isRandomMode) {
       generateRandomOrder();
@@ -104,9 +100,8 @@ const Flashcard: React.FC = () => {
     setFlipped(false);
   };
 
-  const getCurrentFlashcardIndex = () => {
-    return isRandomMode ? randomOrder[currentIndex] : currentIndex;
-  };
+  const getCurrentFlashcardIndex = () =>
+    isRandomMode ? randomOrder[currentIndex] : currentIndex;
 
   const handleNext = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
@@ -117,7 +112,6 @@ const Flashcard: React.FC = () => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     let timeout: NodeJS.Timeout;
-
     if (isPlaying) {
       interval = setInterval(() => {
         setFlipped(true);
@@ -126,7 +120,6 @@ const Flashcard: React.FC = () => {
         }, 2000);
       }, 4000);
     }
-
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
@@ -154,19 +147,16 @@ const Flashcard: React.FC = () => {
 
   const speakWord = (word: string) => {
     const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "ja-JP"; // Set language to Japanese
+    utterance.lang = "ja-JP";
     speechSynthesis.speak(utterance);
   };
 
-  const getPartialHint = (hint: string) => {
-    const words = hint.split(" ");
-    return words.map((word) => word[0] + "...").join(" ");
-  };
-
-  const toggleAutoPlay = () => {
-    setIsPlaying(!isPlaying);
-    // When pausing, we keep the current state (flipped or not flipped)
-  };
+  const getPartialHint = (hint: string) =>
+    hint
+      .split(" ")
+      .map((w) => w[0] + "...")
+      .join(" ");
+  const toggleAutoPlay = () => setIsPlaying(!isPlaying);
 
   const actualIndex = getCurrentFlashcardIndex();
   const currentFlashcard = flashcards[actualIndex];
@@ -176,12 +166,12 @@ const Flashcard: React.FC = () => {
   const learningCards = flashcards.filter((card) => card.status === "learning");
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8F1E5] p-6 px-80 ">
-      <div className="p-8 bg-white">
+    <div className="flex flex-col min-h-screen bg-[#F8F1E5] p-4 md:p-6 lg:px-40 xl:px-80">
+      <div className="p-4 md:p-8 bg-white rounded shadow-md">
         {/* Header */}
-        <div className="w-full flex justify-between items-center ">
+        <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-bold">Tự học tiếng nhật</h2>
+            <h2 className="text-xl md:text-2xl font-bold">Tự học tiếng nhật</h2>
             {isTracking && (
               <div className="mt-2 flex gap-4 text-sm">
                 <span className="text-green-600">
@@ -196,8 +186,8 @@ const Flashcard: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="flex space-x-4">
-            <button className="text-gray-600 border border-gray-300 p-2 rounded hover:bg-gray-200">
+          <div className="flex space-x-2 md:space-x-4 flex-wrap">
+            <button className="text-gray-600 border border-gray-300 px-3 py-2 rounded hover:bg-gray-200">
               <FontAwesomeIcon icon={faSave} /> Save
             </button>
             <div className="relative inline-block group">
@@ -213,7 +203,7 @@ const Flashcard: React.FC = () => {
                 <FontAwesomeIcon icon={faShareAlt} />
               </button>
               <div className="absolute left-1/2 transform -translate-x-1/2 w-max mt-2 p-1 text-white bg-black text-sm hidden group-hover:block">
-                Save
+                Share
               </div>
             </div>
             <div className="relative inline-block group">
@@ -228,76 +218,96 @@ const Flashcard: React.FC = () => {
         </div>
 
         {/* Navigation Tabs
-      <div className="w-full flex justify-around p-2 bg-gray-100">
-        <button className="bg-blue-200 p-2 rounded">Flashcards</button>
-        <button className="bg-gray-200 p-2 rounded">Learn</button>
-        <button className="bg-gray-200 p-2 rounded">Test</button>
-        <button className="bg-gray-200 p-2 rounded relative">
-          Blocks
-          <span className="absolute top-0 right-0 bg-blue-500 text-white text-xs rounded-full px-1">New</span>
-        </button>
-        <button className="bg-gray-200 p-2 rounded">Blast</button>
-        <button className="bg-gray-200 p-2 rounded">Match</button>
-      </div> */}
+        <div className="w-full flex justify-around p-2 bg-gray-100">
+          <button className="bg-blue-200 p-2 rounded">Flashcards</button>
+          <button className="bg-gray-200 p-2 rounded">Learn</button>
+          <button className="bg-gray-200 p-2 rounded">Test</button>
+          <button className="bg-gray-200 p-2 rounded relative">
+            Blocks
+            <span className="absolute top-0 right-0 bg-blue-500 text-white text-xs rounded-full px-1">New</span>
+          </button>
+          <button className="bg-gray-200 p-2 rounded">Blast</button>
+          <button className="bg-gray-200 p-2 rounded">Match</button>
+        </div> */}
 
         {/* Flashcard Content */}
-        <div className="w-full flex flex-col border-4 rounded-lg p-6 text-center mt-4 h-96">
-          <div className="flex justify-between items-center mb-4">
-            {flipped ? (
-              <div></div>
-            ) : (
+        <div className="w-full flex flex-col rounded-lg p-4 text-center mt-4 h-96">
+          <div className="flex-1 perspective-1000">
+            <div
+              className={`relative w-full h-full transition-transform duration-500 transform-style-preserve-3d ${flipped ? "rotate-x-180" : ""}`}
+              onClick={() => setFlipped(!flipped)}
+            >
+              {/* Mặt trước (Từ, gợi ý, biểu tượng) */}
               <div
-                className="flex items-center cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowHint(!showHint);
+                className="absolute w-full h-full bg-white rounded-lg flex flex-col items-center justify-between p-6 backface-hidden shadow-md"
+                style={{
+                  boxShadow:
+                    "0 8px 25px 10px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
                 }}
               >
-                {showHint ? (
-                  <>
+                <div className="w-full flex justify-between items-center">
+                  <div
+                    className="flex items-center cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowHint(!showHint);
+                    }}
+                  >
                     <FontAwesomeIcon icon={faQuestionCircle} />
                     <span className="ml-2 text-gray-600">
-                      {getPartialHint(currentFlashcard.hint)}
+                      {showHint
+                        ? getPartialHint(currentFlashcard.hint)
+                        : "Xem gợi ý"}
                     </span>
-                  </>
-                ) : (
-                  <>
-                    <FontAwesomeIcon icon={faQuestionCircle} />
-                    <span className="ml-2 text-gray-600">Get a hint</span>
-                  </>
-                )}
+                  </div>
+                  <div className="flex space-x-4">
+                    <FontAwesomeIcon
+                      icon={faVolumeUp}
+                      className="hover:text-gray-600 hover:bg-gray-200 p-2 rounded-full transition-colors cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        speakWord(currentFlashcard.word);
+                      }}
+                    />
+                    <FontAwesomeIcon
+                      icon={faStar}
+                      className="hover:text-gray-600 hover:bg-gray-200 p-2 rounded-full transition-colors cursor-pointer"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                  <h1 className="text-3xl font-bold">
+                    {currentFlashcard.word}
+                  </h1>
+                </div>
               </div>
-            )}
-            <div className="flex space-x-4">
-              {!flipped && (
-                <FontAwesomeIcon
-                  icon={faVolumeUp}
-                  className="hover:text-gray-600 hover:bg-gray-200 p-2 rounded-full transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    speakWord(currentFlashcard.word);
-                  }}
-                />
-              )}
-              <FontAwesomeIcon
-                icon={faStar}
-                className="hover:text-gray-600 hover:bg-gray-200 p-2 rounded-full transition-colors cursor-pointer"
-                onClick={(e) => e.stopPropagation()}
-              />
+              {/* Mặt sau (Gợi ý) */}
+              <div
+                className="absolute w-full h-full bg-white rounded-lg flex flex-col items-center justify-between p-6 backface-hidden rotate-x-180 shadow-md"
+                style={{
+                  boxShadow:
+                    "0 8px 25px 10px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+                }}
+              >
+                <div className="w-full flex justify-end items-center">
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className="hover:text-gray-600 hover:bg-gray-200 p-2 rounded-full transition-colors cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                  <h1 className="text-3xl font-bold">
+                    {currentFlashcard.hint}
+                  </h1>
+                </div>
+              </div>
             </div>
           </div>
-          <div
-            className={`flex flex-1 items-center justify-center text-3xl mb-8 font-bold transition-transform duration-500 ${flipped ? "rotate-y-180" : ""} cursor-pointer`}
-            onClick={() => setFlipped(!flipped)}
-          >
-            {flipped ? (
-              <h1>{currentFlashcard.hint}</h1>
-            ) : (
-              <h1>{currentFlashcard.word}</h1>
-            )}
-          </div>
+
           {isTracking && flipped && (
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center flex-wrap gap-2 md:gap-4 mt-4">
               <button
                 onClick={() => handleCardStatus("remembered")}
                 className="bg-green-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-green-600"
@@ -315,7 +325,7 @@ const Flashcard: React.FC = () => {
         </div>
 
         {/* Navigation and Progress */}
-        <div className="flex items-center justify-between mt-8 border-t pt-4">
+        <div className="flex flex-col md:flex-row items-center justify-between mt-8 border-t pt-4 gap-4">
           <div className="flex items-center gap-2">
             <div
               className="w-12 h-6 bg-gray-300 rounded-full p-1 cursor-pointer"
@@ -327,7 +337,6 @@ const Flashcard: React.FC = () => {
             </div>
             <span className="text-sm text-gray-600">Track progress</span>
           </div>
-
           <div className="flex items-center gap-3">
             <button
               onClick={handlePrev}
@@ -348,7 +357,6 @@ const Flashcard: React.FC = () => {
               />
             </button>
           </div>
-
           <div className="flex items-center gap-2">
             <FontAwesomeIcon
               icon={isPlaying ? faPause : faPlay}
@@ -376,7 +384,7 @@ const Flashcard: React.FC = () => {
 
         {/* Word Lists */}
         {isTracking && (
-          <div className="mt-8 grid grid-cols-2 gap-8">
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="border rounded-lg p-4">
               <h3 className="text-lg font-semibold text-green-600 mb-4">
                 Từ đã nhớ ({rememberedCards.length})

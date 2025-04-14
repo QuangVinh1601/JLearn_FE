@@ -1,5 +1,7 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import Header from "./components/Header";
 import Footer from "./components/Footerr";
 import Home from "./pages/Home";
@@ -14,68 +16,90 @@ import Courses from "./pages/Profile/Courses";
 import Videos from "./pages/Profile/Videos";
 import AdminLayout from "./admin/components/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
-import AdminAccount from "./admin/pages/AdminAccount";
+import AdminAccount from "./admin/pages/pagesOfAdminUser/AdminAccount";
+import EditUser from "./admin/pages/pagesOfAdminUser/EditUser";
+import AdminFlashcard from "./admin/pages/pagesOfFlashcard/AdminFlashcard";
+import AdminVideo from "./admin/pages/pagesOfVideo/AdminVideo";
+import EditVideo from "./admin/pages/pagesOfVideo/EditVideo";
+import EditFlashcard from "./admin/pages/pagesOfFlashcard/EditFlashcard";
 import { AuthProvider } from "./components/AuthContext";
 import CreateFlashcards from "./pages/CreateFlashcards";
 import UpdateProfile from "./pages/UpdateProfile";
 import CourseList from "./pages/CourseList";
-// Component để kiểm tra và render layout
-const AppLayout: React.FC = () => {
+import Purchase from "./pages/Purchase";
+
+const InnerAppLayout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Kiểm tra nếu đang ở trang login hoặc register
   const isAuthPage = ["/login", "/register"].includes(location.pathname);
-
-  // Kiểm tra nếu đang ở trang admin
   const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
     <div className="min-h-screen flex flex-col">
-      <AuthProvider>
-        {/* Header chỉ hiển thị khi không phải trang auth và không phải trang admin */}
-        {!isAuthPage && !isAdminPage && (
-          <div className="fixed top-0 left-0 right-0 z-50">
-            <Header />
-          </div>
-        )}
+      {!isAuthPage && !isAdminPage && (
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Header />
+        </div>
+      )}
 
-        {/* Nội dung trang */}
-        <main
-          className={`flex-grow ${!isAuthPage && !isAdminPage ? "mt-16" : ""}`}
+      <main
+        className={`flex-grow ${!isAuthPage && !isAdminPage ? "mt-14 sm:mt-16" : ""}`}
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/translate" element={<Translater />} />
+          <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/collection" element={<CollectionFlashcards />} />
+          <Route path="/create-flash-card" element={<CreateFlashcards />} />
+          <Route path="/update-profile" element={<UpdateProfile />} />
+          <Route path="/course" element={<CourseList />} />
+          <Route element={<MainLayout />}>
+            <Route path="/profileProfile" element={<Profile />} />
+            <Route path="/profileCourses" element={<Courses />} />
+            <Route path="/profileVideos" element={<Videos />} />
+          </Route>
+
+          <Route path="/purchase" element={<Purchase />} />
+
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="account" element={<AdminAccount />} />
+            <Route path="account/add" element={<EditUser />} />
+            <Route path="account/edit/:id" element={<EditUser />} />
+            <Route path="flashcard" element={<AdminFlashcard />} />
+            <Route path="flashcard/add" element={<EditFlashcard />} />
+            <Route path="flashcard/edit/:id" element={<EditFlashcard />} />
+            <Route path="video" element={<AdminVideo />} />
+            <Route path="video/add" element={<EditVideo />} />
+            <Route path="video/edit/:id" element={<EditVideo />} />
+          </Route>
+        </Routes>
+      </main>
+
+      {!isAuthPage && !isAdminPage && (
+        <button
+          onClick={() => navigate("/purchase")}
+          className="fixed bottom-16 sm:bottom-24 right-2 sm:right-4 z-50 bg-[#e82813] text-white rounded-full p-3 sm:p-4 shadow-lg hover:bg-red-700"
         >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/translate" element={<Translater />} />
-            <Route path="/flashcards" element={<Flashcards />} />
-            <Route path="/collection" element={<CollectionFlashcards />} />
-            <Route path="/create-flash-card" element={<CreateFlashcards />} />
-            <Route path="/update-profile" element={<UpdateProfile />} />
-            <Route path="/course" element={<CourseList />} />
-            <Route element={<MainLayout />}>
-              <Route path="/profileProfile" element={<Profile />} />
-              <Route path="/profileCourses" element={<Courses />} />
-              <Route path="/profileVideos" element={<Videos />} />
-            </Route>
+          <FontAwesomeIcon icon={faShoppingCart} />
+        </button>
+      )}
 
-            <Route element={<AdminLayout />}>
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/admin-account" element={<AdminAccount />} />
-            </Route>
-          </Routes>
-        </main>
-
-        {/* Footer chỉ hiển thị khi không phải trang auth và không phải trang admin */}
-        {!isAuthPage && !isAdminPage && <Footer />}
-      </AuthProvider>
+      {!isAuthPage && !isAdminPage && <Footer />}
     </div>
   );
 };
 
 const App: React.FC = () => {
-  return <AppLayout />;
+  return (
+    <AuthProvider>
+      <InnerAppLayout />
+    </AuthProvider>
+  );
 };
 
 export default App;
