@@ -31,6 +31,8 @@ import Purchase from "./pages/Purchase"; // Added from develop
 import Skills from "./pages/Skills"; // Added from Trung
 import SpeakingTopics from "./pages/SpeakingTopics"; // Added from Trung
 import SpeakingTest from "./pages/SpeakingTest"; // Added from Trung
+import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
+import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
 // Assuming AuthProvider exists and handles authentication context
 import { AuthProvider } from "./components/AuthContext";
@@ -69,6 +71,8 @@ function App() {
           <Route path="/create-flash-card" element={<CreateFlashcards />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
           <Route path="/course" element={<CourseList />} />
+          <Route path="/course/:courseId/lessons" element={<LessonsPage />} />
+          <Route path="/exercise/:exerciseId" element={<ExercisePage />} />
 
           {/* Speaking Routes from Trung */}
           <Route path="/skills" element={<Skills />} />
