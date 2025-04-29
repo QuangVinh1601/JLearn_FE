@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
@@ -33,13 +33,16 @@ import SpeakingTopics from "./pages/SpeakingTopics"; // Added from Trung
 import SpeakingTest from "./pages/SpeakingTest"; // Added from Trung
 import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
 import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
+import DepositModal from "./components/DepositModal";
 
 // Assuming AuthProvider exists and handles authentication context
 import { AuthProvider } from "./components/AuthContext";
+import { UserContext } from "./contexts/UserContext";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate(); // Added from develop for the button
+  const { depositModalVisible, closeDepositModal } = useContext(UserContext);
 
   // Determine if the current page is an authentication or admin page
   const isAuthPage =
@@ -86,7 +89,7 @@ function App() {
             <Route path="/profileVideos" element={<Videos />} />
           </Route>
 
-          {/* Purchase Route from develop */}
+          {/* Purchase Route from develop */}fixed bottom-16 sm:bottom-24 right-2 sm:right-4 z-50 bg-[#e82813] text-white rounded-full p-3 sm:p-4 shadow-lg hover:bg-red-700
           <Route path="/purchase" element={<Purchase />} />
 
           {/* Admin Routes using AdminLayout and structure from develop */}
@@ -110,7 +113,7 @@ function App() {
       {/* Floating Purchase Button from develop */}
       {!isAuthPage && !isAdminPage && (
         <button
-          onClick={() => navigate("/purchase")}
+          onClick={() => navigate("/course")}
           className="fixed bottom-16 sm:bottom-24 right-2 sm:right-4 z-50 bg-[#e82813] text-white rounded-full p-3 sm:p-4 shadow-lg hover:bg-red-700"
           aria-label="Go to purchase page" // Added aria-label for accessibility
         >
@@ -120,6 +123,8 @@ function App() {
 
       {/* Conditional Footer from both */}
       {!isAuthPage && !isAdminPage && <Footer />}
+
+      <DepositModal visible={depositModalVisible} onClose={closeDepositModal} />
     </AuthProvider> // Close AuthProvider
   );
 }
