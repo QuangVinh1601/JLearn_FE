@@ -133,7 +133,9 @@ const EditUser: React.FC = () => {
                 value={details.userName}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.userName ? "border-red-500" : "border-gray-300"
+                  validationErrors.userName
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               />
               {validationErrors.userName && (
@@ -173,7 +175,9 @@ const EditUser: React.FC = () => {
                 value={details.fullName}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.fullName ? "border-red-500" : "border-gray-300"
+                  validationErrors.fullName
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               />
               {validationErrors.fullName && (
@@ -192,7 +196,9 @@ const EditUser: React.FC = () => {
                 value={details.roleUser}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.roleUser ? "border-red-500" : "border-gray-300"
+                  validationErrors.roleUser
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               >
                 <option value="User">User</option>

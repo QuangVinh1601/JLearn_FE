@@ -8,7 +8,7 @@ import jobOpportunity2 from "../assets/images/vieclamitjp.jpg";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 
-const videos = ["sKPCZPSrDXs", "johSrXAdtsM", "Y6AHHCq6Mp0", "SdLHV1jxb7g"];
+const videos = ["sKPCZPSrDXs", "johSrXAdtsM", "Y6AHHCq6Mp0", "wWzHTRePd8c"];
 
 const imageSets = [
   [japancastle, itCareer, jobOpportunity],

@@ -48,7 +48,10 @@ const Header: React.FC = () => {
     `hover:text-red-500 text-lg ${isActive ? "text-red-500 font-semibold" : "text-gray-700"}`; // Added font-semibold for active link
 
   return (
+    // Use py-2 for vertical padding, h-16 for fixed height
     <header className="flex items-center justify-between px-4 sm:px-6 py-2 bg-[#F5E6CA] border-b border-gray-200 h-16 shadow-sm relative">
+      {" "}
+      {/* Added relative positioning */}
       {/* Left section: Logo */}
       <div className="flex-shrink-0">
         <img
@@ -61,7 +64,6 @@ const Header: React.FC = () => {
           }}
         />
       </div>
-
       {/* Center: Hamburger Button (Mobile) */}
       <div className="sm:hidden flex-shrink-0">
         <button
@@ -73,7 +75,6 @@ const Header: React.FC = () => {
           ☰
         </button>
       </div>
-
       {/* Center: Navigation Menu (Desktop and Mobile Dropdown) */}
       <nav
         className={`${isMenuOpen ? "block" : "hidden"
@@ -81,27 +82,49 @@ const Header: React.FC = () => {
       >
         <ul className="font-poppins flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 md:space-x-8">
           <li>
-            <NavLink to="/home" className={linkClassName} onClick={handleNavClick}>
+            <NavLink
+              to="/home"
+              className={linkClassName}
+              onClick={handleNavClick}
+            >
               Trang chủ
             </NavLink>
           </li>
           <li>
-            <NavLink to="/course" className={linkClassName} onClick={handleNavClick}>
+            <NavLink
+              to="/course"
+              className={linkClassName}
+              onClick={handleNavClick}
+            >
+              {" "}
+              {/* Changed from /courses */}
               Khóa học
             </NavLink>
           </li>
           <li>
-            <NavLink to="/skills" className={linkClassName} onClick={handleNavClick}>
+            <NavLink
+              to="/skills"
+              className={linkClassName}
+              onClick={handleNavClick}
+            >
               Kỹ năng
             </NavLink>
           </li>
           <li>
-            <NavLink to="/translate" className={linkClassName} onClick={handleNavClick}>
+            <NavLink
+              to="/translate"
+              className={linkClassName}
+              onClick={handleNavClick}
+            >
               Tra cứu
             </NavLink>
           </li>
           <li>
-            <NavLink to="/flashcards" className={linkClassName} onClick={handleNavClick}>
+            <NavLink
+              to="/flashcards"
+              className={linkClassName}
+              onClick={handleNavClick}
+            >
               Thẻ ghi nhớ
             </NavLink>
           </li>
