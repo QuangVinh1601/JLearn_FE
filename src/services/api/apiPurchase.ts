@@ -146,13 +146,26 @@ interface ZaloPayStatusResponse {
 export const createZaloPayOrder = async (
   amount: number,
   description: string,
-): Promise<ZaloPayOrderResponse> => {
-  // Use the full URL
-  const response = await axios.post<ZaloPayOrderResponse>(`${BACKEND_URL}/create_order`, {
-    amount,
-    description,
-  });
-  return response.data;
+  userId: string,
+  collectionId: string,
+): Promise<{
+  order_payload: ZaloPayOrderResponse["order"];
+  zalopay_response: ZaloPayOrderResponse["result"];
+}> => {
+  try {
+    const response = await axios.post(`${BACKEND_URL}/create_order`, {
+      amount,
+      description,
+      user_id: userId,
+      collection_id: collectionId,
+    });
+
+    const { order_payload, zalopay_response } = response.data;
+    return { order_payload, zalopay_response };
+  } catch (error) {
+    console.error("Error creating ZaloPay order:", error);
+    throw new Error("Failed to create ZaloPay order");
+  }
 };
 
 export const getZaloPayOrderStatus = async (

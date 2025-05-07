@@ -20,6 +20,8 @@ export interface CustomerInfo {
   name: string;
   phone: string;
   email: string;
+  userId: string; // Add userId
+  collectionId: string; // Add collectionId
 }
 
 export interface PurchaseResponse {

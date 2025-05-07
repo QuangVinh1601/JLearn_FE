@@ -73,23 +73,23 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
         const response = await createZaloPayOrder(
           product.price,
           `Thanh toán cho ${product.title}`,
+          customerInfo.userId, // Pass the userId
+          customerInfo.collectionId, // Pass the collectionId
         );
 
-        if (response.result.returncode === 1 && response.result.orderurl) {
-          setZaloPayOrderUrl(response.result.orderurl);
-          setZaloPayAppTransId(response.order.apptransid);
-          setZaloPayQRCode((response.result as any).qrcode); // Set qrcode state
+        if (response.zalopay_response.returncode === 1 && response.zalopay_response.orderurl) {
+          setZaloPayOrderUrl(response.zalopay_response.orderurl);
+          setZaloPayAppTransId(response.order_payload.apptransid);
+          setZaloPayQRCode((response.zalopay_response as any).qrcode); // Set qrcode state
           setCountdown(300); // Start countdown
         } else {
           setZaloPayError(
-            `Lỗi tạo đơn hàng ZaloPay: ${response.result.returnmessage} (Code: ${response.result.returncode})`,
+            `Lỗi tạo đơn hàng ZaloPay: ${response.zalopay_response.returnmessage} (Code: ${response.zalopay_response.returncode})`,
           );
         }
       } catch (err: any) {
-        setZaloPayError(
-          "Lỗi kết nối hoặc tạo đơn hàng ZaloPay: " +
-          (err.response?.data?.error || err.message),
-        );
+        console.error("Error creating ZaloPay order:", err);
+        setZaloPayError("Đã xảy ra lỗi khi tạo đơn hàng ZaloPay.");
       } finally {
         setZaloPayLoading(false);
       }

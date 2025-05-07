@@ -17,6 +17,8 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
     name: "",
     phone: "",
     email: "",
+    userId: "", // Ensure userId is initialized
+    collectionId: "", // Ensure collectionId is initialized
   });
   const [isPaymentMethodOpen, setIsPaymentMethodOpen] =
     useState<boolean>(false);
@@ -27,7 +29,13 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
   };
 
   const handleSubmit = () => {
-    if (!customerInfo.name || !customerInfo.phone || !customerInfo.email) {
+    if (
+      !customerInfo.name ||
+      !customerInfo.phone ||
+      !customerInfo.email ||
+      !customerInfo.userId || // Validate userId
+      !customerInfo.collectionId // Validate collectionId
+    ) {
       alert("Vui lòng điền đầy đủ thông tin.");
       return;
     }
@@ -85,6 +93,32 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
                   onChange={handleInputChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                   placeholder="Ví dụ: emailvidu@gmail.com"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  User ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={customerInfo.userId}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  placeholder="Nhập User ID"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Collection ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="collectionId"
+                  value={customerInfo.collectionId}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  placeholder="Nhập Collection ID"
                 />
               </div>
             </div>
