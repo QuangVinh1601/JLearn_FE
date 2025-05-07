@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  getFlashcard,
+  addFlashcard,
+  updateFlashcard,
+  createPersonalFlashcardList,
+} from "../../../api/apiClient";
 
 interface Flashcard {
   id: string;
-  japanese: string;
-  hiragana: string;
+  japaneseWord: string;
   romaji: string;
-  meaning: string;
-  category: string;
+  vietnameseMeaning: string;
+  exampleSentence: string;
+  publicImageId?: string;
+  listId?: string;
+  imageFile?: string;
 }
 
 const EditFlashcard: React.FC = () => {
@@ -19,34 +27,54 @@ const EditFlashcard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState({
-    japanese: "",
-    hiragana: "",
+    japaneseWord: "",
     romaji: "",
-    meaning: "",
-    category: "",
+    vietnameseMeaning: "",
+    exampleSentence: "",
   });
 
   useEffect(() => {
-    const flashcardData = (location.state as { flashcard: Flashcard })
-      ?.flashcard;
-    if (flashcardData && (!id || flashcardData.id === id)) {
-      setDetails(flashcardData);
-      setLoading(false);
-    } else if (!id) {
-      setDetails({
-        id: `${Date.now()}`,
-        japanese: "",
-        hiragana: "",
-        romaji: "",
-        meaning: "",
-        category: "",
-      });
-      setLoading(false);
-    } else {
-      setError("Không tìm thấy flashcard");
-      setLoading(false);
-    }
-  }, [id, location.state]);
+    const fetchFlashcard = async () => {
+      const listId = new URLSearchParams(location.search).get("listId");
+      if (!listId) {
+        setError("Vui lòng tạo PersonalFlashcardList trước!");
+        setLoading(false);
+        return;
+      }
+
+      if (id) {
+        try {
+          const data = await getFlashcard(id);
+          setDetails({
+            id: data.flashcardId,
+            japaneseWord: data.japaneseWord,
+            romaji: data.romaji,
+            vietnameseMeaning: data.vietnameseMeaning,
+            exampleSentence: data.exampleSentence,
+            publicImageId: data.publicImageId,
+            listId: listId,
+          });
+        } catch (error) {
+          setError("Không tìm thấy flashcard");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setDetails({
+          id: `${Date.now()}`,
+          japaneseWord: "",
+          romaji: "",
+          vietnameseMeaning: "",
+          exampleSentence: "",
+          publicImageId: "",
+          listId: listId,
+          imageFile: "",
+        });
+        setLoading(false);
+      }
+    };
+    fetchFlashcard();
+  }, [id, location.search]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (details) {
@@ -60,44 +88,91 @@ const EditFlashcard: React.FC = () => {
 
   const validateForm = (): boolean => {
     const errors = {
-      japanese: "",
-      hiragana: "",
+      japaneseWord: "",
       romaji: "",
-      meaning: "",
-      category: "",
+      vietnameseMeaning: "",
+      exampleSentence: "",
     };
 
-    if (!details?.japanese.trim()) errors.japanese = "Yêu cầu nhập tiếng Nhật";
-    if (!details?.hiragana.trim()) errors.hiragana = "Yêu cầu nhập hiragana";
+    if (!details?.japaneseWord.trim())
+      errors.japaneseWord = "Yêu cầu nhập tiếng Nhật";
     if (!details?.romaji.trim()) errors.romaji = "Yêu cầu nhập romaji";
-    if (!details?.meaning.trim()) errors.meaning = "Yêu cầu nhập nghĩa";
-    if (!details?.category.trim()) errors.category = "Yêu cầu nhập danh mục";
+    if (!details?.vietnameseMeaning.trim())
+      errors.vietnameseMeaning = "Yêu cầu nhập nghĩa";
+    if (!details?.exampleSentence.trim())
+      errors.exampleSentence = "Yêu cầu nhập câu ví dụ";
 
     setValidationErrors(errors);
     return !Object.values(errors).some((error) => error !== "");
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!details) return;
+    if (!details || !details.listId) return;
 
     if (!validateForm()) return;
 
     setSaving(true);
-    setTimeout(() => {
-      alert(
-        id ? "Cập nhật flashcard thành công!" : "Thêm flashcard thành công!",
-      );
+    try {
+      if (id) {
+        await updateFlashcard(id, {
+          japaneseWord: details.japaneseWord,
+          romaji: details.romaji,
+          vietnameseMeaning: details.vietnameseMeaning,
+          exampleSentence: details.exampleSentence,
+          publicImageId: details.publicImageId || "",
+        });
+        alert("Cập nhật flashcard thành công!");
+      } else {
+        await addFlashcard({
+          japaneseWord: details.japaneseWord,
+          romaji: details.romaji,
+          vietnameseMeaning: details.vietnameseMeaning,
+          exampleSentence: details.exampleSentence,
+          publicImageId: details.publicImageId || "",
+          listId: details.listId,
+          imageFile: details.imageFile || "",
+        });
+        alert("Thêm flashcard thành công!");
+      }
+      navigate(`/admin/flashcard?listId=${details.listId}`, {
+        state: { updatedFlashcard: details },
+      });
+    } catch (error) {
+      console.error("Error saving flashcard:", error);
+      alert("Lưu flashcard thất bại!");
+    } finally {
       setSaving(false);
-      navigate("/admin/flashcard", { state: { updatedFlashcard: details } });
-    }, 1000);
+    }
+  };
+
+  const handleCreateList = async () => {
+    try {
+      const listName = prompt("Nhập tên danh sách mới:");
+      if (listName) {
+        const newList = await createPersonalFlashcardList(listName);
+        navigate(`/admin/flashcard/add?listId=${newList.listId}`);
+      }
+    } catch (error) {
+      setError("Không thể tạo danh sách mới. Vui lòng thử lại!");
+    }
   };
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <div className="max-w-2xl mx-auto border-2 border-gray-400 rounded-lg shadow-md bg-white p-4 sm:p-6">
         {loading && <p className="text-center">Đang tải dữ liệu...</p>}
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && (
+          <div className="text-center">
+            <p className="text-red-500">{error}</p>
+            <button
+              onClick={handleCreateList}
+              className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+            >
+              Tạo PersonalFlashcardList
+            </button>
+          </div>
+        )}
 
         {!loading && !error && details && (
           <form onSubmit={handleSave}>
@@ -111,36 +186,18 @@ const EditFlashcard: React.FC = () => {
               </label>
               <input
                 type="text"
-                name="japanese"
-                value={details.japanese}
+                name="japaneseWord"
+                value={details.japaneseWord}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.japanese ? "border-red-500" : "border-gray-300"
+                  validationErrors.japaneseWord
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               />
-              {validationErrors.japanese && (
+              {validationErrors.japaneseWord && (
                 <p className="text-red-500 text-xs sm:text-sm mt-1">
-                  {validationErrors.japanese}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="block mb-2 text-sm sm:text-base font-semibold">
-                Hiragana
-              </label>
-              <input
-                type="text"
-                name="hiragana"
-                value={details.hiragana}
-                onChange={handleInputChange}
-                className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.hiragana ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {validationErrors.hiragana && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">
-                  {validationErrors.hiragana}
+                  {validationErrors.japaneseWord}
                 </p>
               )}
             </div>
@@ -171,38 +228,55 @@ const EditFlashcard: React.FC = () => {
               </label>
               <input
                 type="text"
-                name="meaning"
-                value={details.meaning}
+                name="vietnameseMeaning"
+                value={details.vietnameseMeaning}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.meaning ? "border-red-500" : "border-gray-300"
+                  validationErrors.vietnameseMeaning
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               />
-              {validationErrors.meaning && (
+              {validationErrors.vietnameseMeaning && (
                 <p className="text-red-500 text-xs sm:text-sm mt-1">
-                  {validationErrors.meaning}
+                  {validationErrors.vietnameseMeaning}
                 </p>
               )}
             </div>
 
             <div className="mb-4">
               <label className="block mb-2 text-sm sm:text-base font-semibold">
-                Danh mục
+                Câu ví dụ
               </label>
               <input
                 type="text"
-                name="category"
-                value={details.category}
+                name="exampleSentence"
+                value={details.exampleSentence}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.category ? "border-red-500" : "border-gray-300"
+                  validationErrors.exampleSentence
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               />
-              {validationErrors.category && (
+              {validationErrors.exampleSentence && (
                 <p className="text-red-500 text-xs sm:text-sm mt-1">
-                  {validationErrors.category}
+                  {validationErrors.exampleSentence}
                 </p>
               )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block mb-2 text-sm sm:text-base font-semibold">
+                PublicImageId (Optional)
+              </label>
+              <input
+                type="text"
+                name="publicImageId"
+                value={details.publicImageId || ""}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded text-sm sm:text-base border-gray-300"
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
@@ -219,7 +293,9 @@ const EditFlashcard: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate("/admin/flashcard")}
+                onClick={() =>
+                  navigate(`/admin/flashcard?listId=${details.listId}`)
+                }
                 className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm sm:text-base"
               >
                 Quay lại

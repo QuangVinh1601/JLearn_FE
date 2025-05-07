@@ -1,29 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import {
+  getFlashcards,
+  deleteFlashcard,
+  createPersonalFlashcardList,
+} from "../../../api/apiClient";
 
 interface Flashcard {
   id: string;
-  japanese: string;
-  meaning: string;
+  japaneseWord: string;
+  romaji: string;
+  vietnameseMeaning: string;
+  exampleSentence: string;
+  publicImageId?: string;
+  listId?: string;
 }
-
-const mockFlashcards: Flashcard[] = [
-  {
-    id: "1",
-    japanese: "こんにちは",
-    meaning: "Xin chào",
-  },
-  {
-    id: "2",
-    japanese: "ありがとう",
-    meaning: "Cảm ơn",
-  },
-  {
-    id: "3",
-    japanese: "りんご",
-    meaning: "Quả táo",
-  },
-];
 
 const AdminFlashcard: React.FC = () => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
@@ -34,13 +25,34 @@ const AdminFlashcard: React.FC = () => {
   const [itemsPerPage] = useState(5);
 
   useEffect(() => {
-    setTimeout(() => {
-      setFlashcards(mockFlashcards);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    const fetchFlashcards = async () => {
+      const listId = new URLSearchParams(location.search).get("listId");
+      if (!listId) {
+        setLoading(false);
+        return;
+      }
 
-  useEffect(() => {
+      try {
+        const data = await getFlashcards(listId);
+        setFlashcards(
+          data.map((item: any) => ({
+            id: item.flashcardId,
+            japaneseWord: item.japaneseWord,
+            romaji: item.romaji,
+            vietnameseMeaning: item.vietnameseMeaning,
+            exampleSentence: item.exampleSentence,
+            publicImageId: item.publicImageId,
+            listId: listId,
+          })),
+        );
+      } catch (error) {
+        console.error("Error fetching flashcards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFlashcards();
+
     const updatedFlashcard = (location.state as { updatedFlashcard: Flashcard })
       ?.updatedFlashcard;
     if (updatedFlashcard) {
@@ -57,22 +69,45 @@ const AdminFlashcard: React.FC = () => {
         }
       });
     }
-  }, [location.state]);
+  }, [location.search, location.state]);
 
   const handleAdd = () => {
-    navigate("/admin/flashcard/add");
+    const listId = new URLSearchParams(location.search).get("listId");
+    if (!listId) {
+      alert("Vui lòng tạo PersonalFlashcardList trước!");
+      return;
+    }
+    navigate(`/admin/flashcard/add?listId=${listId}`);
   };
 
   const handleEdit = (flashcard: Flashcard) => {
     navigate(`/admin/flashcard/edit/${flashcard.id}`, { state: { flashcard } });
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa flashcard này?")) {
-      setFlashcards((prevFlashcards) =>
-        prevFlashcards.filter((fc) => fc.id !== id),
-      );
-      alert("Xóa flashcard thành công!");
+      try {
+        await deleteFlashcard(id);
+        setFlashcards((prevFlashcards) =>
+          prevFlashcards.filter((fc) => fc.id !== id),
+        );
+        alert("Xóa flashcard thành công!");
+      } catch (error) {
+        console.error("Error deleting flashcard:", error);
+        alert("Xóa flashcard thất bại!");
+      }
+    }
+  };
+
+  const handleCreateList = async () => {
+    try {
+      const listName = prompt("Nhập tên danh sách mới:");
+      if (listName) {
+        const newList = await createPersonalFlashcardList(listName);
+        navigate(`/admin/flashcard?listId=${newList.listId}`);
+      }
+    } catch (error) {
+      alert("Không thể tạo danh sách mới. Vui lòng thử lại!");
     }
   };
 
@@ -86,16 +121,22 @@ const AdminFlashcard: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-xl sm:text-2xl font-bold">Quản lý Flashcard</h1>
         <button
-          onClick={handleAdd}
+          onClick={handleCreateList}
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm sm:text-base"
         >
-          Thêm Flashcard
+          Tạo PersonalFlashcardList
         </button>
       </div>
 
+      {!loading && !new URLSearchParams(location.search).get("listId") && (
+        <div className="text-center text-red-500 mb-4">
+          Vui lòng tạo PersonalFlashcardList trước để quản lý flashcard!
+        </div>
+      )}
+
       {loading && <div className="text-center">Loading...</div>}
 
-      {!loading && (
+      {!loading && new URLSearchParams(location.search).get("listId") && (
         <>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white rounded-lg shadow-md">
@@ -108,6 +149,9 @@ const AdminFlashcard: React.FC = () => {
                     Tiếng Nhật
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Romaji
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Nghĩa
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -118,9 +162,18 @@ const AdminFlashcard: React.FC = () => {
               <tbody className="divide-y divide-gray-200">
                 {currentFlashcards.map((flashcard) => (
                   <tr key={flashcard.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{flashcard.id}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{flashcard.japanese}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{flashcard.meaning}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {flashcard.id}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {flashcard.japaneseWord}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {flashcard.romaji}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {flashcard.vietnameseMeaning}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
@@ -174,6 +227,13 @@ const AdminFlashcard: React.FC = () => {
               Sau
             </button>
           </div>
+
+          <button
+            onClick={handleAdd}
+            className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm sm:text-base"
+          >
+            Thêm Flashcard
+          </button>
         </>
       )}
     </div>

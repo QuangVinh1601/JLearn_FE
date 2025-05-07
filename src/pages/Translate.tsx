@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExchangeAlt, faVolumeUp } from "@fortawesome/free-solid-svg-icons";
@@ -51,7 +51,7 @@ export default function Translator() {
     if (fromLang === toLang) {
       // Ưu tiên đổi sang tiếng Anh nếu có
       const newToLang = languages.find(
-        (lang) => lang.code !== fromLang && lang.code !== "auto"
+        (lang) => lang.code !== fromLang && lang.code !== "auto",
       );
       if (newToLang) {
         setToLang(newToLang.code);
@@ -96,7 +96,11 @@ export default function Translator() {
                   speakText(inputText, fromLang === "auto" ? "en" : fromLang)
                 }
               >
-                <FontAwesomeIcon icon={faVolumeUp} size="lg" className="text-[#6b7280] hover:text-gray-600"/>
+                <FontAwesomeIcon
+                  icon={faVolumeUp}
+                  size="lg"
+                  className="text-[#6b7280] hover:text-gray-600"
+                />
               </button>
             )}
           </div>
@@ -129,7 +133,11 @@ export default function Translator() {
                 className="absolute bottom-0 right-0 m-4 text-blue-600 hover:text-blue-800 w-fit"
                 onClick={() => speakText(translatedText, toLang)}
               >
-                <FontAwesomeIcon icon={faVolumeUp} size="lg" className="text-[#6b7280] hover:text-gray-600"/>
+                <FontAwesomeIcon
+                  icon={faVolumeUp}
+                  size="lg"
+                  className="text-[#6b7280] hover:text-gray-600"
+                />
               </button>
             )}
           </div>

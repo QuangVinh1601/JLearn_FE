@@ -129,11 +129,21 @@ const AdminAccount: React.FC = () => {
               <tbody className="divide-y divide-gray-200">
                 {currentUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{user.id}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{user.userName}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{user.email}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{user.fullName}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{user.roleUser}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {user.id}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {user.userName}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {user.email}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {user.fullName}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {user.roleUser}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
