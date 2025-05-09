@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "http://34.58.73.85:8080",
+  dotnet: "http://localhost",
 };
 
 // Hàm refresh token
