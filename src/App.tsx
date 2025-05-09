@@ -40,6 +40,8 @@ import Skills from "./pages/Skills";
 import SpeakingTopics from "./pages/SpeakingTopics";
 import SpeakingTest from "./pages/SpeakingTest";
 import NotFound from "./pages/NotFound";
+import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
+import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
 function App() {
   const location = useLocation();
@@ -74,6 +76,8 @@ function App() {
             <Route path="/create-flash-card" element={<CreateFlashcards />} />
             <Route path="/update-profile" element={<UpdateProfile />} />
             <Route path="/course" element={<CourseList />} />
+            <Route path="/course/:courseId/lessons" element={<LessonsPage />} />
+            <Route path="/exercise/:exerciseId" element={<ExercisePage />} />
             <Route path="/skills" element={<Skills />} />
             <Route path="/speaking-topics" element={<SpeakingTopics />} />
             <Route path="/speaking-test" element={<SpeakingTest />} />

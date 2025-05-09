@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Product, CustomerInfo } from "../../types/purchase";
 import PaymentMethodModal from "./PaymentMethodModal";
 
@@ -22,6 +22,16 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
   });
   const [isPaymentMethodOpen, setIsPaymentMethodOpen] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    // Lấy userId từ local storage và collectionId từ product.id
+    const storedUserId = localStorage.getItem("userID") || "";
+    setCustomerInfo((prev) => ({
+      ...prev,
+      userId: storedUserId,
+      collectionId: product.id,
+    }));
+  }, [product.id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -106,6 +116,7 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
                   onChange={handleInputChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                   placeholder="Nhập User ID"
+                  disabled // Không cho phép chỉnh sửa User ID
                 />
               </div>
               <div className="mb-4">
@@ -119,6 +130,7 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
                   onChange={handleInputChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                   placeholder="Nhập Collection ID"
+                  disabled // Không cho phép chỉnh sửa Collection ID
                 />
               </div>
             </div>

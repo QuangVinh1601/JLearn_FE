@@ -19,8 +19,12 @@ const Login: React.FC = () => {
     setError(null);
     try {
       const response = await loginUser(email, password);
-      const { token, role } = response;
+      const { token, role, userID } = response.data; // Access userID from response.data
       login(token, role);
+      
+      // Lưu userID vào local storage
+      localStorage.setItem("userID", userID);
+      console.log("User ID:", userID);
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!", {
         position: "top-right",

@@ -12,7 +12,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
   return [
     // Courses
     {
-      id: "course-1",
+      id: "d5f6e7a8-1234-5678-9abc-def012345678",
       type: ProductType.Course,
       title: "Khóa Sơ cấp N5",
       description: "Thời hạn 8 tháng",
@@ -23,7 +23,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       level: "N5", // Add level
     },
     {
-      id: "course-2",
+      id: "e7a8b9c0-2345-6789-abcd-ef1234567890",
       type: ProductType.Course,
       title: "Khóa Sơ cấp N4",
       description: "Thời hạn 8 tháng",
@@ -34,7 +34,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       level: "N4", // Add level
     },
     {
-      id: "course-3",
+      id: "f9c0d1e2-3456-7890-bcde-f23456789012",
       type: ProductType.Course,
       title: "Khóa N3",
       description: "Thời hạn 8 tháng",
@@ -45,7 +45,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       level: "N3", // Add level
     },
     {
-      id: "course-4",
+      id: "a1b2c3d4-4567-8901-cdef-345678901234",
       type: ProductType.Course,
       title: "Khóa N2",
       description: "Thời hạn 8 tháng",
@@ -57,7 +57,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
     },
     // Flashcard Collections
     {
-      id: "flashcard-1",
+      id: "eed28469-eaa1-4ae8-933c-b8786a8e5c1d",
       type: ProductType.FlashcardCollection,
       title: "Bộ Flashcard N5",
       description: "500 từ vựng cơ bản",
@@ -66,7 +66,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       imageUrl: ImgFlahcard,
     },
     {
-      id: "flashcard-2",
+      id: "b2a1c3d4-e5f6-7890-ab12-cd34ef567890",
       type: ProductType.FlashcardCollection,
       title: "Bộ Flashcard N4",
       description: "700 từ vựng cơ bản",
@@ -75,7 +75,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       imageUrl: ImgFlahcard,
     },
     {
-      id: "flashcard-3", // Changed from flashcard-4
+      id: "c3d4e5f6-7890-ab12-cd34-ef5678901234", // Changed from flashcard-4
       type: ProductType.FlashcardCollection,
       title: "Bộ Flashcard N3", // Changed from N4
       description: "1000 từ vựng trung cấp",
