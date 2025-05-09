@@ -13,7 +13,9 @@ const UpdateProfile: React.FC = () => {
     email: "TrangNTQ.com",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -41,9 +43,13 @@ const UpdateProfile: React.FC = () => {
             </div>
           </div>
           <button
-            onClick={() => (isEditing ? setIsEditing(false) : setIsEditing(true))}
+            onClick={() =>
+              isEditing ? setIsEditing(false) : setIsEditing(true)
+            }
             className={`px-5 py-2 text-white rounded-md font-medium ${
-              isEditing ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
+              isEditing
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-red-500 hover:bg-red-600"
             }`}
           >
             {isEditing ? "Lưu" : "Chỉnh sửa"}
@@ -51,9 +57,14 @@ const UpdateProfile: React.FC = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700">Họ và tên</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Họ và tên
+            </label>
             <input
               type="text"
               name="fullName"
@@ -66,7 +77,9 @@ const UpdateProfile: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Biệt danh</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Biệt danh
+            </label>
             <input
               type="text"
               name="nickName"
@@ -79,7 +92,9 @@ const UpdateProfile: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Giới tính</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Giới tính
+            </label>
             <select
               name="gender"
               value={formData.gender}
@@ -95,7 +110,9 @@ const UpdateProfile: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Quốc gia</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Quốc gia
+            </label>
             <input
               type="text"
               name="country"
@@ -108,7 +125,9 @@ const UpdateProfile: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Ngôn ngữ</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Ngôn ngữ
+            </label>
             <select
               name="language"
               value={formData.language}
@@ -124,7 +143,9 @@ const UpdateProfile: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Múi giờ</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Múi giờ
+            </label>
             <select
               name="timezone"
               value={formData.timezone}
@@ -142,7 +163,9 @@ const UpdateProfile: React.FC = () => {
 
         {/* Email list */}
         <div className="pt-6 border-t">
-          <h3 className="text-md font-semibold text-gray-700 mb-2">Email của tôi</h3>
+          <h3 className="text-md font-semibold text-gray-700 mb-2">
+            Email của tôi
+          </h3>
           <div className="flex items-center gap-4">
             <div className="bg-blue-100 text-blue-600 rounded-full p-2">📧</div>
             <div>

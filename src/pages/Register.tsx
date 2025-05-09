@@ -8,11 +8,17 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center py-8 justify-center bg-cover bg-center">
+    <div
+      className="min-h-screen flex items-center py-8 justify-center bg-cover bg-center "
+      style={{
+        backgroundImage:
+          'url("https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/183983/Originals/cac-mau-background-4k-cuc-sac-net-1.png")',
+      }}
+    >
       <div className="max-w-md w-full space-y-8 bg-white border border-gray-300 rounded-md p-4 shadow-lg">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-teal-900">
+          <h1 className="text-3xl font-bold text-red-900">
             TẠO TÀI KHOẢN JLEARN
           </h1>
           <p className="mt-2 text-gray-700">
@@ -35,7 +41,7 @@ const Register: React.FC = () => {
               name="fullName"
               type="text"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Họ và tên"
             />
           </div>
@@ -52,7 +58,7 @@ const Register: React.FC = () => {
               name="userName"
               type="text"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Tên người dùng"
             />
           </div>
@@ -69,7 +75,7 @@ const Register: React.FC = () => {
               name="email"
               type="email"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Email"
             />
           </div>
@@ -86,7 +92,7 @@ const Register: React.FC = () => {
               name="password"
               type="password"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Mật khẩu"
             />
           </div>
@@ -103,13 +109,13 @@ const Register: React.FC = () => {
               name="confirmPassword"
               type="password"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Nhập lại mật khẩu"
             />
           </div>
           <button
             type="submit"
-            className="w-full flex justify-center py-3 px-4 rounded-full text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className="w-full flex justify-center py-3 px-4 rounded-full text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Đăng ký
           </button>

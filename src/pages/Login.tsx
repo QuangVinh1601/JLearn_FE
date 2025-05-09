@@ -24,18 +24,24 @@ const Login: React.FC = () => {
       login();
       navigate("/admin");
       // Đảm bảo rằng sau khi đăng nhập thành công, admin sẽ được điều hướng đến một trang khác
-      window.location.href = "/admin-dashboard";
+      window.location.href = "/admin/dashboard";
     } else {
       alert("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-8 bg-cover bg-center">
+    <div
+      className="min-h-screen flex items-center justify-center py-8 bg-cover bg-center"
+      style={{
+        backgroundImage:
+          'url("https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/183983/Originals/cac-mau-background-4k-cuc-sac-net-1.png")',
+      }}
+    >
       <div className="max-w-md w-full space-y-8 bg-white border border-gray-300 rounded-md p-4 shadow-lg">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-teal-900 leading-tight">
+          <h1 className="text-3xl font-bold text-red-900 leading-tight">
             HỌC TIẾNG NHẬT CÙNG
             <br />
             JLEARN NÀO!
@@ -63,7 +69,7 @@ const Login: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Email hoặc tên đăng nhập"
               />
             </div>
@@ -82,7 +88,7 @@ const Login: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Mật khẩu"
               />
             </div>
@@ -90,7 +96,7 @@ const Login: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-3 px-4 rounded-full text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className="w-full flex justify-center py-3 px-4 rounded-full text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             Đăng nhập
           </button>

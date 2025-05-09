@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 interface Flashcard {
   word: string;
   meaning: string;
- 
 }
 
 const CreateFlashcardSet: React.FC = () => {
@@ -14,7 +13,11 @@ const CreateFlashcardSet: React.FC = () => {
     { word: "", meaning: "" },
   ]);
 
-  const handleCardChange = (index: number, field: keyof Flashcard, value: string) => {
+  const handleCardChange = (
+    index: number,
+    field: keyof Flashcard,
+    value: string,
+  ) => {
     const newCards = [...flashcards];
     newCards[index][field] = value;
     setFlashcards(newCards);
@@ -22,11 +25,11 @@ const CreateFlashcardSet: React.FC = () => {
 
   const addFlashcard = () => {
     if (flashcards.length < 20) {
-      setFlashcards([...flashcards, { word: "", meaning: ""}]);
+      setFlashcards([...flashcards, { word: "", meaning: "" }]);
     }
   };
   const createCollection = () => {
-    console.log(flashcards)
+    console.log(flashcards);
     navigate("/collection");
   };
   const removeFlashcard = (index: number) => {
@@ -57,14 +60,18 @@ const CreateFlashcardSet: React.FC = () => {
                 type="text"
                 placeholder="Từ vựng"
                 value={card.word}
-                onChange={(e) => handleCardChange(index, "word", e.target.value)}
+                onChange={(e) =>
+                  handleCardChange(index, "word", e.target.value)
+                }
                 className="flex-1 p-2 border rounded-xl focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Nghĩa"
                 value={card.meaning}
-                onChange={(e) => handleCardChange(index, "meaning", e.target.value)}
+                onChange={(e) =>
+                  handleCardChange(index, "meaning", e.target.value)
+                }
                 className="flex-1 p-2 border rounded-xl focus:outline-none"
               />
               <button
@@ -89,8 +96,8 @@ const CreateFlashcardSet: React.FC = () => {
           <button
             className="px-6 py-2 text-white rounded-xl transition"
             style={{ backgroundColor: "#F04532" }}
-              onClick={createCollection}
-                    >
+            onClick={createCollection}
+          >
             Tạo bộ thẻ
           </button>
         </div>
