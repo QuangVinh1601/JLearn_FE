@@ -67,12 +67,27 @@ export const registerUser = async (userData) => {
 
 // Tạo PersonalFlashcardList
 export const createPersonalFlashcardList = async (listName) => {
+  console.log("startting...")
   return await request("dotnet", "/api/personal-flashcard", {
     method: "POST",
     data: { listName },
     headers: {
       "Content-Type": "application/json",
     },
+  });
+};
+
+// Lấy danh sách PersonalFlashcardList
+export const getPersonalFlashcardLists = async () => {
+  return await request("dotnet", "/api/personal-flashcard", {
+    method: "GET",
+  });
+};
+
+// Xóa PersonalFlashcardList
+export const deletePersonalFlashcardList = async (listId) => {
+  return await request("dotnet", `/api/personal-flashcard/${listId}`, {
+    method: "DELETE",
   });
 };
 
