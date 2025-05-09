@@ -128,8 +128,12 @@ const AdminVideo: React.FC = () => {
               <tbody className="divide-y divide-gray-200">
                 {currentVideos.map((video) => (
                   <tr key={video.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{video.id}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{video.title}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {video.id}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {video.title}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm">
                       <a
                         href={video.url}
@@ -140,8 +144,12 @@ const AdminVideo: React.FC = () => {
                         {video.url}
                       </a>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{video.description}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">{video.category}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {video.description}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {video.category}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button

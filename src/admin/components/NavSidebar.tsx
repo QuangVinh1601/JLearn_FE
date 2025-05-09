@@ -65,7 +65,8 @@ const NavSidebar = () => {
               }
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faUser} className="mr-2" /> Quản lý tài khoản
+              <FontAwesomeIcon icon={faUser} className="mr-2" /> Quản lý tài
+              khoản
             </NavLink>
             <NavLink
               to="/admin/flashcard"
@@ -76,7 +77,8 @@ const NavSidebar = () => {
               }
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faClone} className="mr-2" /> Quản lý flashcard
+              <FontAwesomeIcon icon={faClone} className="mr-2" /> Quản lý
+              flashcard
             </NavLink>
             <NavLink
               to="/admin/video"
