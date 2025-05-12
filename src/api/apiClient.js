@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "http://34.58.73.85:8080",
+  dotnet: "http://34.44.254.240:8080",
+  python: "http://localhost:5000", // Added Python backend URL
 };
 
 // Hàm refresh token
@@ -130,5 +131,41 @@ export const updateFlashcard = async (flashcardId, flashcardData) => {
 export const deleteFlashcard = async (flashcardId) => {
   return await request("dotnet", `/api/flashcards/${flashcardId}`, {
     method: "DELETE",
+  });
+};
+
+// Tạo ZaloPay order
+export const createZaloPayOrder = async (amount, description, userId, collectionId) => {
+  return await request("python", "/create_order", { // Updated to use Python backend
+    method: "POST",
+    data: {
+      amount,
+      description,
+      user_id: userId,
+      collection_id: collectionId,
+    },
+  });
+};
+
+// Lấy trạng thái ZaloPay order
+export const getZaloPayOrderStatus = async (apptransid) => {
+  return await request("python", "/order_status", { // Updated to use Python backend
+    method: "GET",
+    params: { apptransid },
+  });
+};
+
+// Transcribe audio
+export const transcribeAudio = async (audioFile, additionalText) => {
+  const formData = new FormData();
+  formData.append("audio", audioFile);
+  formData.append("additional_text", additionalText);
+
+  return await request("python", "/transcribe", { // Updated to use Python backend
+    method: "POST",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 };

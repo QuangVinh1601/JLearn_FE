@@ -7,6 +7,7 @@ import {
 } from "../../types/purchase";
 import ImgCourse from "../../assets/images/khoahoc.jpeg";
 import ImgFlahcard from "../../assets/images/flashcard.png";
+import { createZaloPayOrder as apiCreateZaloPayOrder, getZaloPayOrderStatus as apiGetZaloPayOrderStatus } from "../../api/apiClient";
 
 export const fetchProducts = async (): Promise<Product[]> => {
   return [
@@ -104,78 +105,17 @@ export const createOrder = async (
 
 // --- ZaloPay Integration ---
 
-// Define your backend base URL. Replace with your actual backend server address.
-// It's often better to use environment variables for this in a real application.
-const BACKEND_URL = "http://localhost:5000"; // <-- CHANGE THIS TO YOUR BACKEND URL
-
-interface ZaloPayOrderRequest {
-  amount: number;
-  description: string;
-}
-
-interface ZaloPayOrderResponse {
-  order: {
-    appid: string;
-    apptransid: string; // Important: Used for status check
-    appuser: string;
-    apptime: number;
-    embeddata: string;
-    item: string;
-    amount: number;
-    description: string;
-    bankcode: string;
-    mac: string;
-  };
-  result: {
-    returncode: number;
-    returnmessage: string;
-    orderurl?: string; // URL for QR code
-    zptranstoken?: string;
-  };
-}
-
-interface ZaloPayStatusResponse {
-  returncode: number; // 1 = success, 2 = processing, 3 = failed
-  returnmessage: string;
-  isprocessing: boolean;
-  amount: number;
-  discountamount: number;
-  zptransid: number;
-}
-
 export const createZaloPayOrder = async (
   amount: number,
   description: string,
   userId: string,
   collectionId: string,
-): Promise<{
-  order_payload: ZaloPayOrderResponse["order"];
-  zalopay_response: ZaloPayOrderResponse["result"];
-}> => {
-  try {
-    const response = await axios.post(`${BACKEND_URL}/create_order`, {
-      amount,
-      description,
-      user_id: userId,
-      collection_id: collectionId,
-    });
-
-    const { order_payload, zalopay_response } = response.data;
-    return { order_payload, zalopay_response };
-  } catch (error) {
-    console.error("Error creating ZaloPay order:", error);
-    throw new Error("Failed to create ZaloPay order");
-  }
+) => {
+  return await apiCreateZaloPayOrder(amount, description, userId, collectionId);
 };
 
-export const getZaloPayOrderStatus = async (
-  apptransid: string,
-): Promise<ZaloPayStatusResponse> => {
-  // Use the full URL
-  const response = await axios.get<ZaloPayStatusResponse>(`${BACKEND_URL}/order_status`, {
-    params: { apptransid },
-  });
-  return response.data;
+export const getZaloPayOrderStatus = async (apptransid: string) => {
+  return await apiGetZaloPayOrderStatus(apptransid);
 };
 
 // --- End ZaloPay Integration ---
