@@ -1,18 +1,25 @@
 import React, { useEffect } from "react";
 import ProductList from "../components/Purchase/ProductList"; // Import ProductList
-import { savePurchasedCourses, getPurchasedCourses } from "./CourseList"; // Corrected import path
+import {
+  savePurchasedProductIds,
+  getPurchasedProductIds,
+} from "./CourseList"; // Corrected import path
 
 const Purchase: React.FC = () => {
-  useEffect(() => {
-    const purchasedCourses = getPurchasedCourses();
-    // Example: Add a purchased course (replace with actual logic)
-    const newPurchasedCourse = "N5"; // Replace with dynamic course level
-    if (!purchasedCourses.includes(newPurchasedCourse)) {
-      const updatedPurchased = [...purchasedCourses, newPurchasedCourse];
-      savePurchasedCourses(updatedPurchased);
-      window.dispatchEvent(new Event("storage")); // Notify other components
-    }
-  }, []);
+  // useEffect(() => {
+  //   // This useEffect seems to be for testing or a different purchase flow.
+  //   // The main purchase flow is handled via the modal in CourseList.tsx.
+  //   // If you need to simulate a purchase here for testing:
+  //   const currentPurchasedIds = getPurchasedProductIds();
+  //   // Example: Add a specific product ID for testing (e.g., N5 course ID)
+  //   const testProductId = "d5f6e7a8-1234-5678-9abc-def012345678"; // N5 Course ID
+  //   if (!currentPurchasedIds.includes(testProductId)) {
+  //     const updatedPurchasedIds = [...currentPurchasedIds, testProductId];
+  //     savePurchasedProductIds(updatedPurchasedIds);
+  //     window.dispatchEvent(new Event("storage")); // Notify other components
+  //     console.log("Test product ID added via Purchase.tsx useEffect");
+  //   }
+  // }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">

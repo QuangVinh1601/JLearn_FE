@@ -6,28 +6,28 @@ import InfoModal from "../components/Purchase/InfoModal";
 import { Product, ProductType, CustomerInfo } from "../types/purchase";
 import { fetchProducts } from "../services/api/apiPurchase";
 
-export const getPurchasedCourses = (): string[] => {
+// Retrieves an array of purchased PRODUCT IDs from localStorage
+export const getPurchasedProductIds = (): string[] => {
   const purchased = localStorage.getItem('purchasedCourses');
   return purchased ? JSON.parse(purchased) : [];
 };
 
-export const savePurchasedCourses = (courses: string[]) => {
-  localStorage.setItem('purchasedCourses', JSON.stringify(courses));
-};
-
-const parsePrice = (price: number): number => {
-  return price;
+// Saves an array of purchased PRODUCT IDs to localStorage
+export const savePurchasedProductIds = (productIds: string[]) => {
+  localStorage.setItem('purchasedCourses', JSON.stringify(productIds));
 };
 
 const CourseList: React.FC = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  const [purchasedCourses, setPurchasedCourses] = useState<string[]>(getPurchasedCourses());
+  // This state will store the IDs of purchased products, synced with localStorage
+  const [purchasedProductIds, setPurchasedProductIds] = useState<string[]>(getPurchasedProductIds());
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [selectedProductForPurchase, setSelectedProductForPurchase] = useState<Product | null>(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState<boolean>(false);
+  console.log("Current purchasedProductIds state:", purchasedProductIds);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -35,6 +35,8 @@ const CourseList: React.FC = () => {
         setLoading(true);
         const data = await fetchProducts();
         setAllProducts(data);
+        // purchasedProductIds is already initialized from localStorage via useState.
+        // The storage event listener will handle updates from other tabs/sources.
       } catch (error) {
         console.error("Lỗi tải sản phẩm:", error);
       } finally {
@@ -42,16 +44,16 @@ const CourseList: React.FC = () => {
       }
     };
     loadProducts();
-  }, []);
+  }, []); // Empty dependency array, runs once on mount
 
   const handlePurchaseOrEnter = (product: Product) => {
     if (product.type === ProductType.Course && product.level) {
-      const courseLevel = product.level;
-      const isPurchased = purchasedCourses.includes(courseLevel);
+      const isPurchased = purchasedProductIds.includes(product.id);
       const isFree = product.price === 0;
 
       if (isFree || isPurchased) {
-        navigate(`/course/${courseLevel.toLowerCase()}/lessons`);
+        // navigate(`/course/${courseLevel.toLowerCase()}/lessons`);
+        navigate(`/course/${product.level.toLowerCase()}/lessons`);
       } else {
         if (!isLoggedIn) {
           alert("Vui lòng đăng nhập để mua khóa học.");
@@ -62,6 +64,13 @@ const CourseList: React.FC = () => {
         setIsInfoModalOpen(true);
       }
     } else if (product.type === ProductType.FlashcardCollection) {
+      // Flashcard purchases are tracked by their IDs
+      if (purchasedProductIds.includes(product.id)) {
+        alert(`Bạn đã sở hữu bộ flashcard: ${product.title}`);
+        // Example: navigate(`/flashcards/view/${product.id}`);
+        return;
+      }
+
       if (!isLoggedIn) {
         alert("Vui lòng đăng nhập để mua flashcard.");
         navigate("/login");
@@ -77,29 +86,36 @@ const CourseList: React.FC = () => {
   const handlePurchaseFlowComplete = (success: boolean, customerInfo?: CustomerInfo) => {
     setIsInfoModalOpen(false);
     if (success && selectedProductForPurchase) {
+      const newProductId = selectedProductForPurchase.id;
+      if (!purchasedProductIds.includes(newProductId)) {
+        const updatedIds = [...purchasedProductIds, newProductId];
+        savePurchasedProductIds(updatedIds); // Save to localStorage
+        setPurchasedProductIds(updatedIds);      // Update local state
+      }
+
       if (selectedProductForPurchase.type === ProductType.Course && selectedProductForPurchase.level) {
-        const courseLevel = selectedProductForPurchase.level;
-        const updatedPurchased = [...purchasedCourses, courseLevel];
-        setPurchasedCourses(updatedPurchased);
-        savePurchasedCourses(updatedPurchased);
-        window.dispatchEvent(new Event('storage'));
-        alert(`Đã mua thành công khóa học ${courseLevel}! Bạn có thể vào học ngay.`);
+        alert(`Đã mua thành công khóa học ${selectedProductForPurchase.level}! Bạn có thể vào học ngay.`);
       } else if (selectedProductForPurchase.type === ProductType.FlashcardCollection) {
         alert(`Đã mua thành công ${selectedProductForPurchase.title}!`);
       }
+      window.dispatchEvent(new Event('storage'));
     } else if (!success && selectedProductForPurchase) {
       console.log("Purchase flow cancelled or failed for:", selectedProductForPurchase.title);
     }
     setSelectedProductForPurchase(null);
   };
 
+  // Listen for changes in localStorage (e.g., from other tabs)
   useEffect(() => {
-    const syncPurchased = () => {
-      setPurchasedCourses(getPurchasedCourses());
+    const syncPurchases = () => {
+      const idsFromStorage = getPurchasedProductIds();
+      setPurchasedProductIds(idsFromStorage);
+      console.log("Synced purchasedProductIds from storage event:", idsFromStorage);
     };
-    window.addEventListener('storage', syncPurchased);
-    return () => window.removeEventListener('storage', syncPurchased);
-  }, []);
+    window.addEventListener('storage', syncPurchases);
+    return () => window.removeEventListener('storage', syncPurchases);
+  }, []); // Empty dependency array, sets up listener once
+
 
   const courseProducts = allProducts.filter(p => p.type === ProductType.Course);
   const flashcardProducts = allProducts.filter(p => p.type === ProductType.FlashcardCollection);
@@ -114,14 +130,14 @@ const CourseList: React.FC = () => {
         Nội dung học tập
       </h1>
 
-      {purchasedCourses.length > 0 && (
+      {courseProducts.filter(course => purchasedProductIds.includes(course.id)).length > 0 && (
         <div className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-green-700">
             Khóa học đã mua
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {courseProducts
-              .filter((course) => course.level && purchasedCourses.includes(course.level))
+              .filter((course) => purchasedProductIds.includes(course.id))
               .map((course) => (
                 <div
                   key={course.id}
@@ -151,7 +167,7 @@ const CourseList: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4 text-red-700">Khóa học Luyện Thi</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {courseProducts
-            .filter((course) => !course.level || !purchasedCourses.includes(course.level))
+            .filter((course) => !purchasedProductIds.includes(course.id))
             .map((course) => {
               const isFree = course.price === 0;
               const canAccess = isFree;
@@ -179,7 +195,7 @@ const CourseList: React.FC = () => {
               );
             })}
         </div>
-        {courseProducts.filter((course) => !course.level || !purchasedCourses.includes(course.level)).length === 0 && !loading && (
+        {courseProducts.filter((course) => !purchasedProductIds.includes(course.id)).length === 0 && !loading && (
           <p className="text-gray-600">Bạn đã mua tất cả các khóa học hiện có.</p>
         )}
       </div>
@@ -188,27 +204,33 @@ const CourseList: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4 text-blue-700">Bộ Sưu Tập Flashcard</h2>
         {flashcardProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {flashcardProducts.map((product) => (
-              <div
-                key={product.id}
-                className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
-              >
-                {product.imageUrl && <img src={product.imageUrl} alt={product.title} className="w-full h-40 object-contain mb-3 rounded" />}
-                <h3 className="font-semibold text-lg mb-1">{product.title}</h3>
-                <p className="text-sm text-gray-600 mb-3 flex-grow">{product.description}</p>
-                <div className="text-center mt-auto">
-                  <div className="text-lg font-bold mb-3 text-red-600">
-                    {`${product.price.toLocaleString()} đ`}
+            {flashcardProducts.map((product) => {
+              const isFlashcardPurchased = purchasedProductIds.includes(product.id); // Use the state variable
+              return (
+                <div
+                  key={product.id}
+                  className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
+                >
+                  {product.imageUrl && <img src={product.imageUrl} alt={product.title} className="w-full h-40 object-contain mb-3 rounded" />}
+                  <h3 className="font-semibold text-lg mb-1">{product.title}</h3>
+                  <p className="text-sm text-gray-600 mb-3 flex-grow">{product.description}</p>
+                  <div className="text-center mt-auto">
+                    <div className="text-lg font-bold mb-3 text-red-600">
+                      {`${product.price.toLocaleString()} đ`}
+                    </div>
+                    <button
+                      onClick={() => handlePurchaseOrEnter(product)}
+                      className={`w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out text-white ${isFlashcardPurchased
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-red-500 hover:bg-red-600"
+                        }`}
+                    >
+                      {isFlashcardPurchased ? "Đã sở hữu" : "Mua ngay"}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handlePurchaseOrEnter(product)}
-                    className="w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out bg-red-500 hover:bg-red-600 text-white"
-                  >
-                    Mua ngay
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           !loading && <p className="text-gray-600">Không có bộ sưu tập flashcard nào.</p>

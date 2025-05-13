@@ -13,7 +13,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
   return [
     // Courses
     {
-      id: "d5f6e7a8-1234-5678-9abc-def012345678",
+      id: "D5F6E7A8-1234-5678-9ABC-DEF012345678",
       type: ProductType.Course,
       title: "Khóa Sơ cấp N5",
       description: "Thời hạn 8 tháng",
@@ -24,7 +24,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       level: "N5", // Add level
     },
     {
-      id: "e7a8b9c0-2345-6789-abcd-ef1234567890",
+      id: "E7A8B9C0-2345-6789-ABCD-EF1234567890",
       type: ProductType.Course,
       title: "Khóa Sơ cấp N4",
       description: "Thời hạn 8 tháng",
@@ -35,7 +35,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       level: "N4", // Add level
     },
     {
-      id: "f9c0d1e2-3456-7890-bcde-f23456789012",
+      id: "F9C0D1E2-3456-7890-BCDE-F23456789012",
       type: ProductType.Course,
       title: "Khóa N3",
       description: "Thời hạn 8 tháng",
@@ -46,7 +46,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       level: "N3", // Add level
     },
     {
-      id: "a1b2c3d4-4567-8901-cdef-345678901234",
+      id: "C3D4E5F6-7890-AB12-CD34-EF5678901234",
       type: ProductType.Course,
       title: "Khóa N2",
       description: "Thời hạn 8 tháng",
@@ -58,7 +58,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
     },
     // Flashcard Collections
     {
-      id: "eed28469-eaa1-4ae8-933c-b8786a8e5c1d",
+      id: "EED28469-EAA1-4AE8-933C-B8786A8E5C1D",
       type: ProductType.FlashcardCollection,
       title: "Bộ Flashcard N5",
       description: "500 từ vựng cơ bản",
@@ -67,7 +67,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       imageUrl: ImgFlahcard,
     },
     {
-      id: "b2a1c3d4-e5f6-7890-ab12-cd34ef567890",
+      id: "B2A1C3D4-E5F6-7890-AB12-CD34EF567890",
       type: ProductType.FlashcardCollection,
       title: "Bộ Flashcard N4",
       description: "700 từ vựng cơ bản",
@@ -76,7 +76,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
       imageUrl: ImgFlahcard,
     },
     {
-      id: "c3d4e5f6-7890-ab12-cd34-ef5678901234", // Changed from flashcard-4
+      id: "C3D4E5F6-7890-AB12-CD34-EF5678901234", // Changed from flashcard-4
       type: ProductType.FlashcardCollection,
       title: "Bộ Flashcard N3", // Changed from N4
       description: "1000 từ vựng trung cấp",

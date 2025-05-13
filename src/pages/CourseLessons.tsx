@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen, faHeadphones, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
+import { getPurchasedProductIds } from './CourseList'; // Import the correct function
+import { fetchProducts } from '../services/api/apiPurchase'; // Import product types and fetch function
+import { Product, ProductType } from '../types/purchase';
 // --- Define Lesson Structure ---
 interface Lesson {
     id: string;
@@ -42,17 +44,12 @@ const allLessonsData: Record<string, Lesson[]> = {
     // Add more levels and lessons as needed
 };
 
-// Helper function (same as in CourseList)
-const getPurchasedCourses = (): string[] => {
-    const purchased = localStorage.getItem('purchasedCourses');
-    return purchased ? JSON.parse(purchased) : [];
-};
-
 const CourseLessons: React.FC = () => {
     const { level } = useParams<{ level: string }>(); // Get level from URL
     const navigate = useNavigate();
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [hasAccess, setHasAccess] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true); // Add loading state
 
     useEffect(() => {
         if (!level) {
@@ -61,18 +58,49 @@ const CourseLessons: React.FC = () => {
             return;
         }
 
-        const purchased = getPurchasedCourses();
-        const isFree = level === "n0"; // Adjust free level check to match your data
-        const accessGranted = isFree || purchased.includes(level.toUpperCase()); // Ensure case consistency
+        const checkAccessAndLoadLessons = async () => {
+            setLoading(true);
+            try {
+                const allProductsData = await fetchProducts();
+                const localPurchasedProductIds = getPurchasedProductIds(); // Get IDs from localStorage
 
-        setHasAccess(accessGranted);
+                // Find the product corresponding to the current URL level
+                const currentCourseProduct = allProductsData.find(
+                    (product) =>
+                        product.type === ProductType.Course &&
+                        product.level?.toLowerCase() === level.toLowerCase()
+                );
 
-        if (accessGranted) {
-            // Fetch or filter lessons for the current level
-            setLessons(allLessonsData[level.toUpperCase()] || []); // Ensure level matches data keys
-        } else {
-            console.warn(`User does not have access to course level: ${level}`);
-        }
+                let accessGranted = false;
+                if (currentCourseProduct) {
+                    const isFree = currentCourseProduct.price === 0;
+                    const isPurchased = localPurchasedProductIds.includes(currentCourseProduct.id);
+                    accessGranted = isFree || isPurchased;
+                } else {
+                    // Handle case where level from URL doesn't match any product
+                    // For example, "n0" or "Sơ cấp" might be a free tier not in products, or an invalid level
+                    if (level.toLowerCase() === "n0" || level.toUpperCase() === "SƠ CẤP") { // Example: "n0" or "Sơ cấp" is conceptual free level
+                        accessGranted = true;
+                    } else {
+                        console.warn(`No product found for course level: ${level}`);
+                    }
+                }
+
+                setHasAccess(accessGranted);
+
+                if (accessGranted) {
+                    setLessons(allLessonsData[level.toUpperCase()] || []);
+                } else {
+                    console.warn(`User does not have access to course level: ${level}`);
+                }
+            } catch (error) {
+                console.error("Error checking access or loading lessons:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkAccessAndLoadLessons();
     }, [level, navigate]);
 
     // Group lessons by type
@@ -81,6 +109,10 @@ const CourseLessons: React.FC = () => {
 
     if (!level) {
         return <div>Đang tải...</div>; // Or some loading indicator
+    }
+
+    if (loading) { // Show loading indicator while checking access
+        return <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center justify-center text-center">Đang tải thông tin khóa học...</div>;
     }
 
     if (!hasAccess) {
@@ -177,4 +209,3 @@ const CourseLessons: React.FC = () => {
 };
 
 export default CourseLessons;
-
