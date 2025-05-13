@@ -1,17 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Định nghĩa kiểu cho context
 interface AuthContextType {
   isLoggedIn: boolean;
   token: string | null;
-  role: string | null; // Thêm role
-  login: (token: string, role: string) => void; // Cập nhật login để nhận role
+  role: string | null;
+  login: (token: string, role: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Hook để sử dụng AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -20,7 +18,6 @@ export const useAuth = () => {
   return context;
 };
 
-// Provider để bao bọc ứng dụng
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -35,12 +32,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   const login = (newToken: string, newRole: string) => {
+    if (!newToken || !newRole) {
+      console.error("Invalid login data:", { newToken, newRole });
+      throw new Error("Token and role are required for login");
+    }
     setIsLoggedIn(true);
     setToken(newToken);
     setRole(newRole);
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("token", newToken);
     localStorage.setItem("role", newRole);
+    console.log("Login successful, stored:", {
+      token: newToken,
+      role: newRole,
+    }); // Thêm log để xác nhận
   };
 
   const logout = () => {
