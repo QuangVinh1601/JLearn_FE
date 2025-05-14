@@ -21,8 +21,7 @@ const AdminFlashcardList: React.FC = () => {
   useEffect(() => {
     const fetchFlashcardLists = async () => {
       try {
-<<<<<<< HEAD:src/admin/pages/pagesOfFlashcard/AdminFlashcard.tsx
-        const response = await fetch("http://localhost/api/personal-flashcard", {
+        const response = await fetch("http://34.44.254.240:8080/api/personal-flashcard", {
           credentials: "include"
         });
         const result = await response.json();
@@ -32,16 +31,6 @@ const AdminFlashcardList: React.FC = () => {
             listName: item.listName,
           }))
         );
-=======
-        const data = await getPersonalFlashcardLists();
-        console.log("API Response:", data);
-        if (Array.isArray(data)) {
-          setFlashcardLists(data);
-        } else {
-          console.error("Unexpected API response format:", data);
-          setFlashcardLists([]);
-        }
->>>>>>> 32e996bfe63b08741c2faa79f60976b545e73b3b:src/admin/pages/pagesOfFlashcard/AdminFlashcardList.tsx
       } catch (error) {
         console.error("Error fetching flashcard lists:", error);
         setFlashcardLists([]);
@@ -56,8 +45,7 @@ const AdminFlashcardList: React.FC = () => {
     try {
       const listName = prompt("Nhập tên danh sách mới:");
       if (listName) {
-<<<<<<< HEAD:src/admin/pages/pagesOfFlashcard/AdminFlashcard.tsx
-        const response = await fetch("http://localhost/api/personal-flashcard", {
+        const response = await fetch("http://34.44.254.240:8080/api/personal-flashcard", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -67,24 +55,6 @@ const AdminFlashcardList: React.FC = () => {
         });
         const newList = await response.json();
         setFlashcardLists((prevLists) => [...prevLists, newList]);
-=======
-        const newList = await createPersonalFlashcardList(listName);
-        console.log("New List Response:", newList);
-        if (!newList || !newList.listId) {
-          console.error("listId is undefined or response is invalid:", newList);
-          alert(
-            "Tạo danh sách thành công nhưng không lấy được listId. Vui lòng kiểm tra lại!",
-          );
-          return;
-        }
-        setFlashcardLists((prevLists) => [
-          ...prevLists,
-          {
-            listId: newList.listId,
-            listName: newList.listName,
-          },
-        ]);
->>>>>>> 32e996bfe63b08741c2faa79f60976b545e73b3b:src/admin/pages/pagesOfFlashcard/AdminFlashcardList.tsx
         alert("Tạo danh sách thành công!");
       }
     } catch (error) {
@@ -108,7 +78,7 @@ const AdminFlashcardList: React.FC = () => {
   const handleDeleteList = async (listId: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa danh sách này?")) {
       try {
-        await fetch(`http://localhost/api/flashcards/${listId}`, {
+        await fetch(`http://34.44.254.240:8080/api/flashcards/${listId}`, {
           method: "DELETE",
           credentials: "include",
         });

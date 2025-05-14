@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { loginUser } from "../api/apiClient";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import CSS cho Toastify
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -20,12 +20,9 @@ const Login: React.FC = () => {
     try {
       const response = await loginUser(email, password);
       const { token, role } = response;
-      console.log("Role:", role);
-      console.log("Processed login response:", { token, role }); // Thêm log để debug
-      if (!token || !role) {
-        throw new Error("Token or role is missing in response");
-      }
+      console.log("Role: ", role );
       login(token, role);
+      // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!", {
         position: "top-right",
         autoClose: 3000,
@@ -35,21 +32,22 @@ const Login: React.FC = () => {
         draggable: true,
         theme: "light",
       });
+      // Chuyển hướng sau khi hiển thị thông báo
       setTimeout(() => {
         if (role === "Admin") {
+          console.log("Navigate to admin dashboard");
           navigate("/admin/dashboard");
         } else {
           navigate("/home");
         }
-      }, 1000);
+      }, 1000); // Chờ 1 giây để người dùng thấy thông báo
     } catch (err: any) {
-      console.error("Login error:", err); // Thêm log để debug lỗi
       const errorMessage =
         err.response?.data?.message ||
         err.response?.data?.error ||
-        err.message ||
         "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.";
       setError(errorMessage);
+      // Hiển thị thông báo lỗi
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
@@ -72,6 +70,7 @@ const Login: React.FC = () => {
           'url("https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/183983/Originals/cac-mau-background-4k-cuc-sac-net-1.png")',
       }}
     >
+      {/* Thêm ToastContainer */}
       <ToastContainer />
       <div className="max-w-md w-full space-y-8 bg-white border border-gray-300 rounded-md p-4 shadow-lg">
         <div>
