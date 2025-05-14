@@ -11,7 +11,7 @@ interface FlashcardList {
   listName: string;
 }
 
-const AdminFlashcard: React.FC = () => {
+const AdminFlashcardList: React.FC = () => {
   const [flashcardLists, setFlashcardLists] = useState<FlashcardList[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ const AdminFlashcard: React.FC = () => {
   useEffect(() => {
     const fetchFlashcardLists = async () => {
       try {
+<<<<<<< HEAD:src/admin/pages/pagesOfFlashcard/AdminFlashcard.tsx
         const response = await fetch("http://localhost/api/personal-flashcard", {
           credentials: "include"
         });
@@ -31,8 +32,19 @@ const AdminFlashcard: React.FC = () => {
             listName: item.listName,
           }))
         );
+=======
+        const data = await getPersonalFlashcardLists();
+        console.log("API Response:", data);
+        if (Array.isArray(data)) {
+          setFlashcardLists(data);
+        } else {
+          console.error("Unexpected API response format:", data);
+          setFlashcardLists([]);
+        }
+>>>>>>> 32e996bfe63b08741c2faa79f60976b545e73b3b:src/admin/pages/pagesOfFlashcard/AdminFlashcardList.tsx
       } catch (error) {
         console.error("Error fetching flashcard lists:", error);
+        setFlashcardLists([]);
       } finally {
         setLoading(false);
       }
@@ -44,6 +56,7 @@ const AdminFlashcard: React.FC = () => {
     try {
       const listName = prompt("Nhập tên danh sách mới:");
       if (listName) {
+<<<<<<< HEAD:src/admin/pages/pagesOfFlashcard/AdminFlashcard.tsx
         const response = await fetch("http://localhost/api/personal-flashcard", {
           method: "POST",
           headers: {
@@ -54,6 +67,24 @@ const AdminFlashcard: React.FC = () => {
         });
         const newList = await response.json();
         setFlashcardLists((prevLists) => [...prevLists, newList]);
+=======
+        const newList = await createPersonalFlashcardList(listName);
+        console.log("New List Response:", newList);
+        if (!newList || !newList.listId) {
+          console.error("listId is undefined or response is invalid:", newList);
+          alert(
+            "Tạo danh sách thành công nhưng không lấy được listId. Vui lòng kiểm tra lại!",
+          );
+          return;
+        }
+        setFlashcardLists((prevLists) => [
+          ...prevLists,
+          {
+            listId: newList.listId,
+            listName: newList.listName,
+          },
+        ]);
+>>>>>>> 32e996bfe63b08741c2faa79f60976b545e73b3b:src/admin/pages/pagesOfFlashcard/AdminFlashcardList.tsx
         alert("Tạo danh sách thành công!");
       }
     } catch (error) {
@@ -65,8 +96,6 @@ const AdminFlashcard: React.FC = () => {
   const handleEditList = (list: FlashcardList) => {
     const newName = prompt("Nhập tên mới cho danh sách:", list.listName);
     if (newName && newName !== list.listName) {
-      // Gọi API để cập nhật tên danh sách
-      // Vì backend chưa có API PUT, tôi sẽ giả lập hành vi này
       setFlashcardLists((prevLists) =>
         prevLists.map((l) =>
           l.listId === list.listId ? { ...l, listName: newName } : l,
@@ -95,6 +124,10 @@ const AdminFlashcard: React.FC = () => {
   };
 
   const handleViewFlashcards = (listId: string) => {
+    if (!listId) {
+      alert("List ID không hợp lệ. Vui lòng thử lại!");
+      return;
+    }
     navigate(`/admin/flashcard/list/${listId}`);
   };
 
@@ -106,7 +139,9 @@ const AdminFlashcard: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-xl sm:text-2xl font-bold">Quản lý PersonalFlashcardList</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">
+          Quản lý PersonalFlashcardList
+        </h1>
         <button
           onClick={handleCreateList}
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm sm:text-base"
@@ -214,4 +249,4 @@ const AdminFlashcard: React.FC = () => {
   );
 };
 
-export default AdminFlashcard;
+export default AdminFlashcardList;
