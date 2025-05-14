@@ -19,7 +19,8 @@ const Login: React.FC = () => {
     setError(null);
     try {
       const response = await loginUser(email, password);
-      const { token, role } = response;
+      const { token, role } = response.data;
+      console.log("Role:", role);
       login(token, role);
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!", {
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
       });
       // Chuyển hướng sau khi hiển thị thông báo
       setTimeout(() => {
-        if (role === "admin") {
+        if (role === "Admin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/home");

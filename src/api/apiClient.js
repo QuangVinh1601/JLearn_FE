@@ -46,6 +46,7 @@ const request = async (source, endpoint, options = {}) => {
   const baseUrl = BASE_URLS[source];
   const response = await axiosInstance({
     url: `${baseUrl}${endpoint}`,
+    withCredentials: true,
     ...options,
   });
   return response.data;

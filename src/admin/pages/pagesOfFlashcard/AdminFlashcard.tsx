@@ -21,12 +21,15 @@ const AdminFlashcard: React.FC = () => {
   useEffect(() => {
     const fetchFlashcardLists = async () => {
       try {
-        const data = await getPersonalFlashcardLists();
+        const response = await fetch("http://localhost/api/personal-flashcard", {
+          credentials: "include"
+        });
+        const result = await response.json();
         setFlashcardLists(
-          data.map((item: any) => ({
+          result.data.map((item: any) => ({
             listId: item.listId,
             listName: item.listName,
-          })),
+          }))
         );
       } catch (error) {
         console.error("Error fetching flashcard lists:", error);
@@ -41,8 +44,15 @@ const AdminFlashcard: React.FC = () => {
     try {
       const listName = prompt("Nhập tên danh sách mới:");
       if (listName) {
-        const newList = await createPersonalFlashcardList(listName);
-        console.log("enddd....")
+        const response = await fetch("http://localhost/api/personal-flashcard", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ listName }),
+        });
+        const newList = await response.json();
         setFlashcardLists((prevLists) => [...prevLists, newList]);
         alert("Tạo danh sách thành công!");
       }
@@ -69,9 +79,12 @@ const AdminFlashcard: React.FC = () => {
   const handleDeleteList = async (listId: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa danh sách này?")) {
       try {
-        await deletePersonalFlashcardList(listId);
+        await fetch(`http://localhost/api/flashcards/${listId}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
         setFlashcardLists((prevLists) =>
-          prevLists.filter((list) => list.listId !== listId),
+          prevLists.filter((list) => list.listId !== listId)
         );
         alert("Xóa danh sách thành công!");
       } catch (error) {
