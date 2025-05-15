@@ -103,7 +103,7 @@ const Header: React.FC = () => {
               </li>
               <li>
                 <NavLink
-                  to="/flashcards"
+                  to="/collection"
                   className={linkClassName}
                   onClick={handleNavClick}
                 >

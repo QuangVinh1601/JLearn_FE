@@ -103,7 +103,7 @@ function App() {
               }
             />
             <Route
-              path="/create-flash-card"
+              path="/create-flash-card/:id"
               element={
                 <ProtectedRoute>
                   <CreateFlashcards />
