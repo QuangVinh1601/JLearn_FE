@@ -38,6 +38,8 @@ import Skills from "./pages/Skills";
 import SpeakingTopics from "./pages/SpeakingTopics";
 import SpeakingTest from "./pages/SpeakingTest";
 import NotFound from "./pages/NotFound";
+import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
+import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
 // Component ProtectedRoute để kiểm tra đăng nhập và vai trò
 const ProtectedRoute: React.FC<{
@@ -86,6 +88,7 @@ function App() {
 
           {/* Protected Routes for authenticated users */}
           <Route>
+
             <Route
               path="/flashcards"
               element={
@@ -117,13 +120,12 @@ function App() {
                   <UpdateProfile />
                 </ProtectedRoute>
               }
+              
             />
             <Route
-              path="/course"
+              path="/course/:courseId/lessons" 
               element={
-                <ProtectedRoute>
-                  <CourseList />
-                </ProtectedRoute>
+                <LessonsPage />
               }
             />
             <Route
@@ -158,6 +160,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
 
             {/* Profile Routes */}
             <Route element={<MainLayout />}>
@@ -279,11 +282,11 @@ function App() {
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
-      </main>
+      </main >
 
       {!isAuthPage && !isAdminPage && (
         <button
-          onClick={() => navigate("/purchase")}
+          onClick={() => navigate("/course")}
           className="fixed bottom-16 sm:bottom-24 right-2 sm:right-4 z-50 bg-[#e82813] text-white rounded-full p-3 sm:p-4 shadow-lg hover:bg-red-700"
           aria-label="Go to purchase page"
         >

@@ -18,10 +18,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     if (!isLoggedIn) {
       alert("Vui lòng đăng nhập để mua sản phẩm.");
       navigate("/login");
-
       return;
     }
     setIsPurchaseWindowOpen(true);
+  };
+
+  const handlePurchaseFlowComplete = (success: boolean) => {
+    setIsPurchaseWindowOpen(false);
+    if (success) {
+      alert(`Đã mua thành công ${product.title}! Chi tiết sẽ được gửi qua email.`);
+    } else {
+      console.log(`Purchase flow cancelled or failed for ${product.title}`);
+    }
+  };
+
+  const handleCancelPurchase = () => {
+    setIsPurchaseWindowOpen(false);
+    console.log(`Purchase cancelled for ${product.title}`);
   };
 
   return (
@@ -67,7 +80,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {isPurchaseWindowOpen && (
         <InfoModal
           product={product}
-          togglePurchase={() => setIsPurchaseWindowOpen(false)}
+          onProceed={handlePurchaseFlowComplete}
+          onCancel={handleCancelPurchase}
         />
       )}
     </>

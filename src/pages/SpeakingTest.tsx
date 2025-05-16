@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faSpinner } from "@fortawesome/free-solid-svg-icons"; // Added faSpinner
+import { transcribeAudio } from "../api/apiClient"; // Import the transcribe API
 
 // Define possible states for the component
 type TestState =
@@ -193,14 +194,13 @@ const SpeakingTest: React.FC = () => {
   const stopRecording = () => {
     if (mediaRecorder.current && testState === "RECORDING") {
       console.log("Stopping recording (manual trigger)...");
-      mediaRecorder.current.stop(); // The onstop handler will handle further processing
+      mediaRecorder.current.stop();
 
       mediaRecorder.current.onstop = async () => {
         console.log("Recording stopped. Sending audio to /transcribe API...");
         setTestState("PROCESSING");
 
         try {
-          // Create Blob and FormData
           const mimeType = mediaRecorder.current?.mimeType || "audio/webm";
           const audioBlob = new Blob(audioChunks.current, { type: mimeType });
           const audioFile = new File(
@@ -208,24 +208,11 @@ const SpeakingTest: React.FC = () => {
             `recording_${Date.now()}.${mimeType.split("/")[1] || "webm"}`,
             { type: mimeType },
           );
-          const formData = new FormData();
-          formData.append("audio", audioFile);
-          formData.append("additional_text", questions[questionIndex] || ""); // Include the current question
 
-          // Send to /transcribe API
-          const response = await fetch("http://localhost:5000/transcribe", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!response.ok) {
-            throw new Error(`API Error: ${response.statusText}`);
-          }
-
-          const data = await response.json();
+          // Call the transcribe API
+          const data = await transcribeAudio(audioFile, questions[questionIndex] || "");
           console.log("API Response:", data);
 
-          // Format and display transcription and analysis
           const transcription =
             data.transcription || "Không có bản ghi âm nào được trả về.";
           const formattedAnalysis = formatApiResponse(
@@ -291,7 +278,7 @@ const SpeakingTest: React.FC = () => {
       case "REQUESTING_PERMISSION":
         return {
           text: "Đang yêu cầu quyền...",
-          onClick: () => {},
+          onClick: () => { },
           disabled: true,
           loading: true,
         };
@@ -312,7 +299,7 @@ const SpeakingTest: React.FC = () => {
       case "PROCESSING":
         return {
           text: "処理中... (Đang xử lý...)",
-          onClick: () => {},
+          onClick: () => { },
           disabled: true,
           loading: true,
         }; // <-- TRANSLATED
@@ -351,7 +338,7 @@ const SpeakingTest: React.FC = () => {
       default:
         return {
           text: "状態不明 (Trạng thái Không xác định)",
-          onClick: () => {},
+          onClick: () => { },
           disabled: true,
           loading: false,
         }; // <-- TRANSLATED
@@ -472,13 +459,12 @@ const SpeakingTest: React.FC = () => {
               onClick={buttonProps.onClick}
               disabled={buttonProps.disabled || buttonProps.loading}
               className={`px-6 py-3 rounded-lg text-white font-semibold transition-all duration-200 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2 min-w-[200px]
-                                ${
-                                  buttonProps.disabled || buttonProps.loading
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : testState === "RECORDING"
-                                      ? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
-                                      : "bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50"
-                                }`}
+                                ${buttonProps.disabled || buttonProps.loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : testState === "RECORDING"
+                    ? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
+                    : "bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50"
+                }`}
             >
               {buttonProps.loading && <FontAwesomeIcon icon={faSpinner} spin />}
               <span>{buttonProps.text}</span>

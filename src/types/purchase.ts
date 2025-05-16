@@ -13,12 +13,15 @@ export interface Product {
   code: string;
   discountCode?: string;
   imageUrl?: string;
+  level?: string; // Add level for courses (e.g., "N5", "N4")
 }
 
 export interface CustomerInfo {
   name: string;
   phone: string;
   email: string;
+  userId: string; // Add userId
+  collectionId: string; // Add collectionId
 }
 
 export interface PurchaseResponse {
@@ -27,4 +30,4 @@ export interface PurchaseResponse {
   orderId?: string;
 }
 
-export type PaymentMethod = "bank" | "office";
+export type PaymentMethod = "bank" | "office" | "zalopay";

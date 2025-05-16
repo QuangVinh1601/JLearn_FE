@@ -1,0 +1,130 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookOpen, faHeadphones, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
+interface Lesson {
+    id: string;
+    title: string;
+    type: 'reading' | 'listening';
+}
+
+const allLessonsData: Record<string, Lesson[]> = {
+    "SƠ CẤP": [
+        { id: 'sc-r1', title: 'Bài đọc Bảng chữ cái Hiragana', type: 'reading' },
+        { id: 'sc-r2', title: 'Bài đọc Bảng chữ cái Katakana', type: 'reading' },
+        { id: 'sc-l1', title: 'Nghe và nhận biết âm cơ bản', type: 'listening' },
+        { id: 'sc-l2', title: 'Nghe và lặp lại từ đơn giản', type: 'listening' },
+    ],
+    "N5": [
+        { id: 'n5-r1', title: 'Bài đọc hiểu N5 - Chủ đề Gia đình', type: 'reading' },
+        { id: 'n5-r2', title: 'Bài đọc hiểu N5 - Chủ đề Mua sắm', type: 'reading' },
+        { id: 'n5-r3', title: 'Bài đọc hiểu N5 - Chủ đề Trường học', type: 'reading' },
+        { id: 'n5-l1', title: 'Bài nghe hiểu N5 - Giới thiệu bản thân', type: 'listening' },
+        { id: 'n5-l2', title: 'Bài nghe hiểu N5 - Hỏi đường', type: 'listening' },
+        { id: 'n5-l3', title: 'Bài nghe hiểu N5 - Tại nhà hàng', type: 'listening' },
+    ],
+    "N4": [
+        { id: 'n5-r1', title: 'Bài đọc hiểu N4 - Chủ đề Gia đình', type: 'reading' },
+        { id: 'n5-r2', title: 'Bài đọc hiểu N5 - Chủ đề Mua sắm', type: 'reading' },
+        { id: 'n5-r3', title: 'Bài đọc hiểu N5 - Chủ đề Trường học', type: 'reading' },
+        { id: 'n5-l1', title: 'Bài nghe hiểu N5 - Giới thiệu bản thân', type: 'listening' },
+        { id: 'n5-l2', title: 'Bài nghe hiểu N5 - Hỏi đường', type: 'listening' },
+        { id: 'n5-l3', title: 'Bài nghe hiểu N5 - Tại nhà hàng', type: 'listening' },
+    ],
+    // Add more levels and lessons as needed
+};
+
+const LessonsPage: React.FC = () => {
+    const { courseId } = useParams<{ courseId: string }>();
+    const navigate = useNavigate();
+    const [lessons, setLessons] = useState<Lesson[]>([]);
+
+    useEffect(() => {
+        if (!courseId) {
+            navigate('/course');
+            return;
+        }
+
+        setLessons(allLessonsData[courseId.toUpperCase()] || []);
+    }, [courseId, navigate]);
+
+    const readingLessons = lessons.filter(lesson => lesson.type === 'reading');
+    const listeningLessons = lessons.filter(lesson => lesson.type === 'listening');
+
+    if (!courseId) {
+        return <div>Đang tải...</div>;
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-100 p-6 md:p-10">
+            <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-8 border border-gray-200">
+                <button
+                    onClick={() => navigate('/course')}
+                    className="mb-6 text-red-600 hover:text-red-800 font-medium flex items-center"
+                    title="Quay lại danh sách khóa học"
+                >
+                    <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+                    Danh sách khóa học
+                </button>
+
+                <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+                    Bài tập Khóa học {courseId}
+                </h1>
+                <p className="text-center text-gray-500 mb-10">Chọn bài tập để bắt đầu luyện tập.</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h2 className="text-2xl font-semibold mb-5 text-red-700 border-b-2 border-red-200 pb-2 flex items-center">
+                            <FontAwesomeIcon icon={faBookOpen} className="mr-3" />
+                            Bài tập Đọc
+                        </h2>
+                        {readingLessons.length > 0 ? (
+                            <ul className="space-y-3">
+                                {readingLessons.map((lesson) => (
+                                    <li key={lesson.id}>
+                                        <Link
+                                            to={`/exercise/${lesson.id}`}
+                                            className="block p-4 bg-red-50 rounded-lg hover:bg-red-100 border border-red-200 hover:shadow-sm transition-all duration-200"
+                                            title={`Bắt đầu bài tập: ${lesson.title}`}
+                                        >
+                                            <span className="text-gray-800 font-medium">{lesson.title}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-500 italic">Chưa có bài tập đọc cho cấp độ này.</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <h2 className="text-2xl font-semibold mb-5 text-blue-700 border-b-2 border-blue-200 pb-2 flex items-center">
+                            <FontAwesomeIcon icon={faHeadphones} className="mr-3" />
+                            Bài tập Nghe
+                        </h2>
+                        {listeningLessons.length > 0 ? (
+                            <ul className="space-y-3">
+                                {listeningLessons.map((lesson) => (
+                                    <li key={lesson.id}>
+                                        <Link
+                                            to={`/exercise/${lesson.id}`}
+                                            className="block p-4 bg-blue-50 rounded-lg hover:bg-blue-100 border border-blue-200 hover:shadow-sm transition-all duration-200"
+                                            title={`Bắt đầu bài tập: ${lesson.title}`}
+                                        >
+                                            <span className="text-gray-800 font-medium">{lesson.title}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-500 italic">Chưa có bài tập nghe cho cấp độ này.</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default LessonsPage;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import { loginUser } from "../api/apiClient";
+import { loginUser, getCollections } from "../api/apiClient";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import CSS cho Toastify
 
@@ -19,9 +19,20 @@ const Login: React.FC = () => {
     setError(null);
     try {
       const response = await loginUser(email, password);
-      const { token, role } = response;
-      console.log("Role: ", role );
+
+      const { token, role, userID } = response.data; // Access userID from response.data
+
       login(token, role);
+
+      // Lưu userID vào local storage
+      localStorage.setItem("userID", userID);
+
+      // Gọi API để lấy danh sách collection ID và lưu vào local storage
+      const collectionsResponse = await getCollections(userID);
+      localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
+      console.log("Collections:", collectionsResponse.collections);
+
+
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!", {
         position: "top-right",
@@ -32,6 +43,7 @@ const Login: React.FC = () => {
         draggable: true,
         theme: "light",
       });
+
       // Chuyển hướng sau khi hiển thị thông báo
       setTimeout(() => {
         if (role === "Admin") {
