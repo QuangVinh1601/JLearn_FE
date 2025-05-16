@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import {
-  getFlashcard,
-  addFlashcard,
-  updateFlashcard,
-  createPersonalFlashcardList,
-} from "../../../api/apiClient";
+import { getFlashcard, updateFlashcard } from "../../../api/apiClient";
 
 interface Flashcard {
   id: string;
@@ -15,7 +10,7 @@ interface Flashcard {
   exampleSentence: string;
   publicImageId?: string;
   listId?: string;
-  imageFile?: string;
+  imageFile?: File; // Add imageFile to the interface
 }
 
 const EditFlashcard: React.FC = () => {
@@ -37,7 +32,7 @@ const EditFlashcard: React.FC = () => {
     const fetchFlashcard = async () => {
       const listId = new URLSearchParams(location.search).get("listId");
       if (!listId) {
-        setError("Vui lòng tạo PersonalFlashcardList trước!");
+        setError("Không tìm thấy danh sách!");
         setLoading(false);
         return;
       }
@@ -60,16 +55,7 @@ const EditFlashcard: React.FC = () => {
           setLoading(false);
         }
       } else {
-        setDetails({
-          id: `${Date.now()}`,
-          japaneseWord: "",
-          romaji: "",
-          vietnameseMeaning: "",
-          exampleSentence: "",
-          publicImageId: "",
-          listId: listId,
-          imageFile: "",
-        });
+        setError("Không tìm thấy flashcard");
         setLoading(false);
       }
     };
@@ -83,6 +69,18 @@ const EditFlashcard: React.FC = () => {
         ...details,
         [name]: value,
       });
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (details) {
+      const file = e.target.files?.[0];
+      if (file) {
+        setDetails({
+          ...details,
+          imageFile: file,
+        });
+      }
     }
   };
 
@@ -114,47 +112,20 @@ const EditFlashcard: React.FC = () => {
 
     setSaving(true);
     try {
-      if (id) {
-        await updateFlashcard(id, {
-          japaneseWord: details.japaneseWord,
-          romaji: details.romaji,
-          vietnameseMeaning: details.vietnameseMeaning,
-          exampleSentence: details.exampleSentence,
-          publicImageId: details.publicImageId || "",
-        });
-        alert("Cập nhật flashcard thành công!");
-      } else {
-        await addFlashcard({
-          japaneseWord: details.japaneseWord,
-          romaji: details.romaji,
-          vietnameseMeaning: details.vietnameseMeaning,
-          exampleSentence: details.exampleSentence,
-          publicImageId: details.publicImageId || "",
-          listId: details.listId,
-          imageFile: details.imageFile || "",
-        });
-        alert("Thêm flashcard thành công!");
-      }
-      navigate(`/admin/flashcard?listId=${details.listId}`, {
-        state: { updatedFlashcard: details },
+      await updateFlashcard(id!, {
+        japaneseWord: details.japaneseWord,
+        romaji: details.romaji,
+        vietnameseMeaning: details.vietnameseMeaning,
+        exampleSentence: details.exampleSentence,
+        publicImageId: details.publicImageId || "",
       });
+      alert("Cập nhật flashcard thành công!");
+      navigate(`/admin/flashcard/list/${details.listId}`);
     } catch (error) {
       console.error("Error saving flashcard:", error);
       alert("Lưu flashcard thất bại!");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleCreateList = async () => {
-    try {
-      const listName = prompt("Nhập tên danh sách mới:");
-      if (listName) {
-        const newList = await createPersonalFlashcardList(listName);
-        navigate(`/admin/flashcard/add?listId=${newList.listId}`);
-      }
-    } catch (error) {
-      setError("Không thể tạo danh sách mới. Vui lòng thử lại!");
     }
   };
 
@@ -165,19 +136,23 @@ const EditFlashcard: React.FC = () => {
         {error && (
           <div className="text-center">
             <p className="text-red-500">{error}</p>
-            <button
-              onClick={handleCreateList}
-              className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
-            >
-              Tạo PersonalFlashcardList
-            </button>
+            {details?.listId && (
+              <button
+                onClick={() =>
+                  navigate(`/admin/flashcard/list/${details.listId}`)
+                }
+                className="mt-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+              >
+                Quay lại
+              </button>
+            )}
           </div>
         )}
 
         {!loading && !error && details && (
           <form onSubmit={handleSave}>
             <h1 className="text-xl sm:text-2xl font-bold mb-6">
-              {id ? "Chỉnh sửa Flashcard" : "Thêm Flashcard"}
+              Chi tiết Flashcard
             </h1>
 
             <div className="mb-4">
@@ -268,6 +243,22 @@ const EditFlashcard: React.FC = () => {
 
             <div className="mb-4">
               <label className="block mb-2 text-sm sm:text-base font-semibold">
+                ImageFile (Optional - API does not support updating ImageFile)
+              </label>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="w-full p-2 border rounded text-sm sm:text-base border-gray-300"
+                disabled
+              />
+              <p className="text-gray-500 text-xs sm:text-sm mt-1">
+                Note: The current API does not support updating ImageFile.
+                Please update the backend API to support this feature.
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block mb-2 text-sm sm:text-base font-semibold">
                 PublicImageId (Optional)
               </label>
               <input
@@ -294,7 +285,7 @@ const EditFlashcard: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  navigate(`/admin/flashcard?listId=${details.listId}`)
+                  navigate(`/admin/flashcard/list/${details.listId}`)
                 }
                 className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm sm:text-base"
               >

@@ -19,7 +19,9 @@ const Login: React.FC = () => {
     setError(null);
     try {
       const response = await loginUser(email, password);
+
       const { token, role, userID } = response.data; // Access userID from response.data
+
       login(token, role);
 
       // Lưu userID vào local storage
@@ -44,7 +46,8 @@ const Login: React.FC = () => {
 
       // Chuyển hướng sau khi hiển thị thông báo
       setTimeout(() => {
-        if (role === "admin") {
+        if (role === "Admin") {
+          console.log("Navigate to admin dashboard");
           navigate("/admin/dashboard");
         } else {
           navigate("/home");
