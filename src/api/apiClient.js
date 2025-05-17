@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URLS = {
   dotnet: "http://34.44.254.240:8080",
-  python: "http://localhost:5000", // Added Python backend URL
+  python: "http://34.44.254.240:5000", // Added Python backend URL
 };
 
 // Hàm refresh token
