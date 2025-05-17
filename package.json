@@ -30,11 +30,13 @@
     "fortawesome": "^0.0.1-security",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.453.0",
+    "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
     "tailwindcss": "^3.4.14",
     "typescript": "^4.9.5",
     "update": "^0.7.4",
@@ -67,6 +69,7 @@
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
+    "@types/qrcode.react": "^3.0.0",
     "@types/react-chartjs-2": "^2.0.2",
     "prettier": "^3.3.3"
   }

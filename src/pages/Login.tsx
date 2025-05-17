@@ -1,32 +1,76 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../components/AuthContext"; // Import useAuth
+import { useAuth } from "../components/AuthContext";
+import { loginUser, getCollections } from "../api/apiClient";
+import { toast, ToastContainer } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import CSS cho Toastify
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Lấy hàm login từ context
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Giả sử dữ liệu đăng nhập thành công cho người dùng
-    if (email === "example@example.com" && password === "123") {
-      alert("Đăng nhập thành công!");
-      login();
-      navigate("/profile");
-      // Đảm bảo rằng sau khi đăng nhập thành công, người dùng sẽ được điều hướng đến một trang khác
-      window.location.href = "/home";
-    }
-    // Giả sử dữ liệu đăng nhập thành công cho admin
-    else if (email === "admin@example.com" && password === "admin123") {
-      alert("Đăng nhập thành công!");
-      login();
-      navigate("/admin");
-      // Đảm bảo rằng sau khi đăng nhập thành công, admin sẽ được điều hướng đến một trang khác
-      window.location.href = "/admin/dashboard";
-    } else {
-      alert("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await loginUser(email, password);
+
+      const { token, role, userID } = response.data; // Access userID from response.data
+
+      login(token, role);
+
+      // Lưu userID vào local storage
+      localStorage.setItem("userID", userID);
+
+      // Gọi API để lấy danh sách collection ID và lưu vào local storage
+      const collectionsResponse = await getCollections(userID);
+      localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
+      console.log("Collections:", collectionsResponse.collections);
+
+
+      // Hiển thị thông báo thành công
+      toast.success("Đăng nhập thành công!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+
+      // Chuyển hướng sau khi hiển thị thông báo
+      setTimeout(() => {
+        if (role === "Admin") {
+          console.log("Navigate to admin dashboard");
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/home");
+        }
+      }, 1000); // Chờ 1 giây để người dùng thấy thông báo
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.";
+      setError(errorMessage);
+      // Hiển thị thông báo lỗi
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,8 +82,9 @@ const Login: React.FC = () => {
           'url("https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/183983/Originals/cac-mau-background-4k-cuc-sac-net-1.png")',
       }}
     >
+      {/* Thêm ToastContainer */}
+      <ToastContainer />
       <div className="max-w-md w-full space-y-8 bg-white border border-gray-300 rounded-md p-4 shadow-lg">
-        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-red-900 leading-tight">
             HỌC TIẾNG NHẬT CÙNG
@@ -52,8 +97,8 @@ const Login: React.FC = () => {
           </p>
         </div>
 
-        {/* Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && <p className="text-red-500 text-center">{error}</p>}
           <div className="space-y-4">
             <div>
               <label
@@ -70,7 +115,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                placeholder="Email hoặc tên đăng nhập"
+                placeholder="Email"
               />
             </div>
 
@@ -96,9 +141,31 @@ const Login: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-3 px-4 rounded-full text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            disabled={loading}
+            className={`w-full flex justify-center py-3 px-4 rounded-full text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            Đăng nhập
+            {loading ? (
+              <span className="flex items-center">
+                <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                Đang đăng nhập...
+              </span>
+            ) : (
+              "Đăng nhập"
+            )}
           </button>
 
           <div className="text-center">
@@ -111,7 +178,6 @@ const Login: React.FC = () => {
           </div>
         </form>
 
-        {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
@@ -123,7 +189,6 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Social Login */}
         <div className="grid grid-cols-2 gap-4">
           <button className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50">
             <img
@@ -139,7 +204,6 @@ const Login: React.FC = () => {
           </button>
         </div>
 
-        {/* Register Link */}
         <div className="text-center text-sm">
           <span className="text-gray-600">Bạn chưa có tài khoản? </span>
           <Link to="/register" className="text-blue-600 hover:text-blue-800">

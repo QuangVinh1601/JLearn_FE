@@ -1,130 +1,149 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import logo from "../assets/logo/logo.png";
 import profile from "../assets/images/profile-icon.png";
 import { useAuth } from "./AuthContext";
+import { UserContext } from "../contexts/UserContext";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for hamburger menu
 
-  // Function to handle logout and navigation
+  const { isLoggedIn, logout, role } = useAuth(); // Thêm role từ useAuth
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
     navigate("/home");
-    setIsMenuOpen(false); // Close menu on logout
+    setIsMenuOpen(false);
   };
 
-  // Function to handle navigation link clicks and close menu
   const handleNavClick = () => {
-    setIsMenuOpen(false); // Close menu when a link is clicked
+    setIsMenuOpen(false);
   };
 
-  // Define NavLink class based on active state
   const linkClassName = ({ isActive }: { isActive: boolean }) =>
-    `hover:text-red-500 text-lg ${isActive ? "text-red-500 font-semibold" : "text-gray-700"}`; // Added font-semibold for active link
+    `hover:text-red-500 text-lg ${isActive ? "text-red-500 font-semibold" : "text-gray-700"}`;
 
   return (
-    // Use py-2 for vertical padding, h-16 for fixed height
-    <header className="flex items-center justify-between px-4 sm:px-6 py-2 bg-[#F5E6CA] border-b border-gray-200 h-16 shadow-sm relative"> {/* Added relative positioning */}
-
-      {/* Left section: Logo */}
+    <header className="flex items-center justify-between px-4 sm:px-6 py-2 bg-[#F5E6CA] border-b border-gray-200 h-16 shadow-sm relative">
       <div className="flex-shrink-0">
         <img
           src={logo}
           alt="JLearn Logo"
-          // Adjusted logo size for consistency, slightly larger on sm+
           className="h-12 sm:h-14 w-auto cursor-pointer"
           onClick={() => {
             navigate("/");
-            handleNavClick(); // Close menu on logo click
+            handleNavClick();
           }}
         />
       </div>
-
-      {/* Center: Hamburger Button (Mobile) */}
       <div className="sm:hidden flex-shrink-0">
         <button
           className="text-2xl text-gray-700 hover:text-red-500"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
-          aria-expanded={isMenuOpen} // Added accessibility attribute
+          aria-expanded={isMenuOpen}
         >
           ☰
         </button>
       </div>
-
-      {/* Center: Navigation Menu (Desktop and Mobile Dropdown) */}
       <nav
-        className={`${
-          isMenuOpen ? "block" : "hidden"
-        } sm:flex sm:flex-grow sm:justify-center absolute sm:static top-full left-0 right-0 bg-[#F5E6CA] sm:bg-transparent p-4 sm:p-0 z-40 shadow-md sm:shadow-none border-b sm:border-none border-gray-200`} // Adjusted positioning and styling for dropdown
+        className={`${isMenuOpen ? "block" : "hidden"
+          } sm:flex sm:flex-grow sm:justify-center absolute sm:static top-full left-0 right-0 bg-[#F5E6CA] sm:bg-transparent p-4 sm:p-0 z-40 shadow-md sm:shadow-none border-b sm:border-none border-gray-200`}
       >
-        {/* Use Poppins font, adjust spacing */}
         <ul className="font-poppins flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 md:space-x-8">
-          {/* List items with NavLinks */}
           <li>
-            <NavLink to="/home" className={linkClassName} onClick={handleNavClick}>
+            <NavLink
+              to="/home"
+              className={linkClassName}
+              onClick={handleNavClick}
+            >
               Trang chủ
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/course" className={linkClassName} onClick={handleNavClick}> {/* Changed from /courses */}
-              Khóa học
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/skills" className={linkClassName} onClick={handleNavClick}>
-              Kỹ năng
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/translate" className={linkClassName} onClick={handleNavClick}>
-              Tra cứu
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/flashcards" className={linkClassName} onClick={handleNavClick}>
-              Thẻ ghi nhớ
-            </NavLink>
-          </li>
-          {/* Removed /reviews and /contact as they weren't in the merged App.tsx */}
-          {/* Profile Icon integrated into Nav for logged-in users on larger screens */}
+          {role === "admin" ? (
+            // Menu cho Admin
+            <li>
+              <NavLink
+                to="/admin/dashboard"
+                className={linkClassName}
+                onClick={handleNavClick}
+              >
+                Quản trị
+              </NavLink>
+            </li>
+          ) : (
+            // Menu cho User hoặc chưa đăng nhập
+            <>
+              <li>
+                <NavLink
+                  to="/course"
+                  className={linkClassName}
+                  onClick={handleNavClick}
+                >
+                  {" "}
+                  {/* Changed from /courses */}
+                  Khóa học
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/skills"
+                  className={linkClassName}
+                  onClick={handleNavClick}
+                >
+                  Kỹ năng
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/translate"
+                  className={linkClassName}
+                  onClick={handleNavClick}
+                >
+                  Tra cứu
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/collection"
+                  className={linkClassName}
+                  onClick={handleNavClick}
+                >
+                  Thẻ ghi nhớ
+                </NavLink>
+              </li>
+            </>
+          )}
           {isLoggedIn && (
-            <li className="hidden sm:flex items-center ml-4"> {/* Hide on mobile, show on sm+, add margin */}
+            <li className="hidden sm:flex items-center ml-4">
               <img
                 src={profile}
                 alt="Profile Icon"
-                 // Consistent size, added border
                 className="h-10 w-10 rounded-full hover:cursor-pointer border border-gray-300"
                 onClick={() => {
-                  navigate("/profileProfile");
-                  handleNavClick(); // Close menu
+                  navigate("/profile");
+                  handleNavClick();
                 }}
               />
             </li>
           )}
-           {/* Profile link for mobile dropdown */}
-           {isLoggedIn && (
-             <li className="sm:hidden border-t border-gray-200 pt-4 mt-4"> {/* Show only on mobile, add separator */}
-                <NavLink
-                    to="/profileProfile"
-                    className={linkClassName}
-                    onClick={handleNavClick}
-                >
-                    Hồ sơ
-                </NavLink>
-             </li>
-           )}
+          {isLoggedIn && (
+            <li className="sm:hidden border-t border-gray-200 pt-4 mt-4">
+              <NavLink
+                to="/profile"
+                className={linkClassName}
+                onClick={handleNavClick}
+              >
+                Hồ sơ
+              </NavLink>
+            </li>
+          )}
         </ul>
       </nav>
-
-      {/* Right: Login/Logout Button (Desktop) - Adjusted for spacing */}
-      <div className="hidden sm:flex items-center flex-shrink-0 ml-4"> {/* Hide on mobile, show on sm+ */}
+      <div className="hidden sm:flex items-center flex-shrink-0 ml-4">
         {isLoggedIn ? (
           <button
-             // Reverted to less rounded corners, adjusted padding/height slightly
             className="bg-red-500 text-white h-9 px-5 rounded-md hover:bg-red-600 text-sm font-medium transition duration-150 ease-in-out shadow-sm whitespace-nowrap"
             onClick={handleLogout}
           >
@@ -132,44 +151,43 @@ const Header: React.FC = () => {
           </button>
         ) : (
           <button
-            // Reverted to less rounded corners, adjusted padding/height slightly
             className="bg-red-500 text-white h-9 px-5 rounded-md hover:bg-red-600 text-sm font-medium transition duration-150 ease-in-out shadow-sm whitespace-nowrap"
             onClick={() => {
               navigate("/login");
-              handleNavClick(); // Close menu
+              handleNavClick();
             }}
           >
             Đăng nhập
           </button>
         )}
       </div>
-
-        {/* Login/Logout Button for mobile dropdown */}
-        {isMenuOpen && (
-            <div className="sm:hidden absolute top-full left-0 right-0 bg-[#F5E6CA] p-4 z-40 shadow-md border-b border-gray-200">
-                 {isLoggedIn ? (
-                    <button
-                        className="w-full bg-red-500 text-white h-9 px-5 rounded-md hover:bg-red-600 text-sm font-medium transition duration-150 ease-in-out shadow-sm whitespace-nowrap"
-                        onClick={handleLogout}
-                    >
-                        Đăng xuất
-                    </button>
-                    ) : (
-                    <button
-                        className="w-full bg-red-500 text-white h-9 px-5 rounded-md hover:bg-red-600 text-sm font-medium transition duration-150 ease-in-out shadow-sm whitespace-nowrap"
-                        onClick={() => {
-                        navigate("/login");
-                        handleNavClick(); // Close menu
-                        }}
-                    >
-                        Đăng nhập
-                    </button>
-                 )}
-            </div>
-        )}
-
+      {isMenuOpen && (
+        <div className="sm:hidden absolute top-full left-0 right-0 bg-[#F5E6CA] p-4 z-40 shadow-md border-b border-gray-200">
+          {isLoggedIn ? (
+            <button
+              className="w-full bg-red-500 text-white h-9 px-5 rounded-md hover:bg-red-600 text-sm font-medium transition duration-150 ease-in-out shadow-sm whitespace-nowrap"
+              onClick={handleLogout}
+            >
+              Đăng xuất
+            </button>
+          ) : (
+            <button
+              className="w-full bg-red-500 text-white h-9 px-5 rounded-md hover:bg-red-600 text-sm font-medium transition duration-150 ease-in-out shadow-sm whitespace-nowrap"
+              onClick={() => {
+                navigate("/login");
+                handleNavClick();
+              }}
+            >
+              Đăng nhập
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 };
 
 export default Header;
+
+
+

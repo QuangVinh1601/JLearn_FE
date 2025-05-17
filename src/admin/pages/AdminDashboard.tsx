@@ -92,8 +92,10 @@ const AdminDashboard: React.FC = () => {
   ];
 
   // Calculate percentages safely
-  const userGrowthPercentage = totalUsers > 0 ? (newUsers / totalUsers) * 100 : 0;
-  const revenuePercentage = totalClicks > 0 ? ((totalClicks * 30) / 10000) * 100 : 0;
+  const userGrowthPercentage =
+    totalUsers > 0 ? (newUsers / totalUsers) * 100 : 0;
+  const revenuePercentage =
+    totalClicks > 0 ? ((totalClicks * 30) / 10000) * 100 : 0;
 
   const doughnutData = (label: string, data: number, color: string) => ({
     labels: [label, "Other"],

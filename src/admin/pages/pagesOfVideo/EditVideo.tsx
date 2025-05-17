@@ -168,7 +168,9 @@ const EditVideo: React.FC = () => {
                 value={details.description}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.description ? "border-red-500" : "border-gray-300"
+                  validationErrors.description
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
                 rows={4}
               />
@@ -189,7 +191,9 @@ const EditVideo: React.FC = () => {
                 value={details.category}
                 onChange={handleInputChange}
                 className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.category ? "border-red-500" : "border-gray-300"
+                  validationErrors.category
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
               />
               {validationErrors.category && (
