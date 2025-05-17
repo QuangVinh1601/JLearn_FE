@@ -85,6 +85,14 @@ export const loginUser = async (email, password) => {
     response.data?.role ||
     response.data?.userRole ||
     (email === "admin@gmail.com" ? "admin" : "user");
+  const userID = 
+    response.userID || 
+    response.userId || 
+    response.user_id || 
+    response.data?.userID || 
+    response.data?.userId || 
+    response.data?.user_id || 
+    null;
   if (!token) {
     throw new Error("No token received from API");
   }
