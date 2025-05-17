@@ -9,6 +9,7 @@ import {
 interface FlashcardList {
   listId: string;
   listName: string;
+  description: string; // Added description field
 }
 
 const AdminFlashcardList: React.FC = () => {
@@ -21,15 +22,19 @@ const AdminFlashcardList: React.FC = () => {
   useEffect(() => {
     const fetchFlashcardLists = async () => {
       try {
-        const response = await fetch("http://34.44.254.240:8080/api/personal-flashcard", {
-          credentials: "include"
-        });
+        const response = await fetch(
+          "http://34.44.254.240:8080/api/personal-flashcard",
+          {
+            credentials: "include",
+          },
+        );
         const result = await response.json();
         setFlashcardLists(
           result.data.map((item: any) => ({
             listId: item.listId,
             listName: item.listName,
-          }))
+            description: item.description, // Added description mapping
+          })),
         );
       } catch (error) {
         console.error("Error fetching flashcard lists:", error);
@@ -44,15 +49,19 @@ const AdminFlashcardList: React.FC = () => {
   const handleCreateList = async () => {
     try {
       const listName = prompt("Nhập tên danh sách mới:");
-      if (listName) {
-        const response = await fetch("http://34.44.254.240:8080/api/personal-flashcard", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      const description = prompt("Nhập mô tả cho danh sách mới:"); // Added description prompt
+      if (listName && description) {
+        const response = await fetch(
+          "http://34.44.254.240:8080/api/personal-flashcard",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ listName, description }), // Added description to the request body
           },
-          credentials: "include",
-          body: JSON.stringify({ listName }),
-        });
+        );
         const newList = await response.json();
         setFlashcardLists((prevLists) => [...prevLists, newList]);
         alert("Tạo danh sách thành công!");
@@ -65,10 +74,11 @@ const AdminFlashcardList: React.FC = () => {
 
   const handleEditList = (list: FlashcardList) => {
     const newName = prompt("Nhập tên mới cho danh sách:", list.listName);
-    if (newName && newName !== list.listName) {
+    const newDescription = prompt("Nhập mô tả mới cho danh sách:", list.description); // Added description prompt for edit
+    if (newName !== list.listName || newDescription !== list.description) {
       setFlashcardLists((prevLists) =>
         prevLists.map((l) =>
-          l.listId === list.listId ? { ...l, listName: newName } : l,
+          l.listId === list.listId ? { ...l, listName: newName || l.listName, description: newDescription || l.description } : l,
         ),
       );
       alert("Cập nhật danh sách thành công!");
@@ -83,7 +93,7 @@ const AdminFlashcardList: React.FC = () => {
           credentials: "include",
         });
         setFlashcardLists((prevLists) =>
-          prevLists.filter((list) => list.listId !== listId)
+          prevLists.filter((list) => list.listId !== listId),
         );
         alert("Xóa danh sách thành công!");
       } catch (error) {
@@ -141,6 +151,9 @@ const AdminFlashcardList: React.FC = () => {
                     Tên danh sách
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Mô tả
+                  </th> {/* Added description column */}
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Thao tác
                   </th>
                 </tr>
@@ -153,6 +166,9 @@ const AdminFlashcardList: React.FC = () => {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm">
                       {list.listName}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {list.description} {/* Display description */}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center space-x-2">

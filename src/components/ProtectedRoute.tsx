@@ -15,7 +15,8 @@ const ProtectedRoute = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && role !== requiredRole) {
+  if (requiredRole && role?.toLowerCase() !== requiredRole.toLowerCase()) {
+    console.log("Role mismatch:", { role, requiredRole });
     return <Navigate to="/404" replace />;
   }
 

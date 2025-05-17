@@ -36,16 +36,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       console.error("Invalid login data:", { newToken, newRole });
       throw new Error("Token and role are required for login");
     }
+    const normalizedRole = newRole.toLowerCase();
     setIsLoggedIn(true);
     setToken(newToken);
-    setRole(newRole);
+    setRole(normalizedRole);
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newRole);
+    localStorage.setItem("role", normalizedRole);
     console.log("Login successful, stored:", {
       token: newToken,
-      role: newRole,
-    }); // Thêm log để xác nhận
+      role: normalizedRole,
+    });
   };
 
   const logout = () => {
