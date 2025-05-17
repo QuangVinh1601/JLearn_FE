@@ -4,7 +4,6 @@ const BASE_URLS = {
   dotnet: "http://34.44.254.240:8080",
 
   python: "http://localhost:5000", // Added Python backend URL
-
 };
 
 // Hàm refresh token
@@ -72,26 +71,47 @@ export const loginUser = async (email, password) => {
     method: "POST",
     data: { email, password },
   });
-  console.log("Raw API response from loginUser:", response); // Thêm log để debug
-  // Chuẩn hóa phản hồi
+  console.log("Raw API response from loginUser:", response);
+
   const token =
     response.token ||
     response.accessToken ||
     response.data?.token ||
     response.data?.accessToken;
-  const role =
-    response.role ||
-    response.userRole ||
-    response.data?.role ||
-    response.data?.userRole ||
-    (email === "admin@gmail.com" ? "admin" : "user");
+
+  // Ưu tiên kiểm tra email trước khi gán role từ API
+  let role;
+  if (email === "admin@gmail.com") {
+    role = "admin";
+  } else {
+    role =
+      response.role ||
+      response.userRole ||
+      response.data?.role ||
+      response.data?.userRole ||
+      "user";
+  }
+
+  // Chuẩn hóa role từ API nếu cần
+  if (typeof role === "number") {
+    role = role === 1 ? "admin" : "user";
+  } else if (role) {
+    role = role.toLowerCase();
+  }
+
+  const userID =
+    response.userID ||
+    response.data?.userID ||
+    response.data?.userId ||
+    response.data?.id;
+
   if (!token) {
     throw new Error("No token received from API");
   }
-  return { token, role };
+
+  return { token, role, userID };
 };
 
-// Các hàm khác không thay đổi
 export const registerUser = async (userData) => {
   return await request("dotnet", "/api/authen/register", {
     method: "POST",
@@ -114,6 +134,7 @@ export const createPersonalFlashcardList = async (listName, description) => {
     return {
       listId: newList.ListID,
       listName: newList.ListName,
+      description: newList.description || newList.Description || "",
       flashcardItemGuests: newList.FlashcardItemGuests,
     };
   }
@@ -123,13 +144,13 @@ export const createPersonalFlashcardList = async (listName, description) => {
 export const getFlashcards = async (listId) => {
   try {
     console.log(`Fetching flashcards for list ID: ${listId}`);
-    
+
     const response = await request("dotnet", `/api/flashcards/all/${listId}`, {
       method: "GET",
     });
-    
+
     console.log("Raw response from getFlashcards:", response);
-    
+
     // Check if response has data property and it's an array
     if (response && response.data && Array.isArray(response.data)) {
       return response.data.map((item) => ({
@@ -140,7 +161,7 @@ export const getFlashcards = async (listId) => {
         exampleSentence: item.exampleSentence || "",
         imageUrl: item.urlImageExample || "",
         publicImageId: item.publicImageId || "",
-        personalListID: item.personalListID
+        personalListID: item.personalListID,
       }));
     }
     // If response itself is an array
@@ -153,10 +174,10 @@ export const getFlashcards = async (listId) => {
         exampleSentence: item.exampleSentence || "",
         imageUrl: item.urlImageExample || "",
         publicImageId: item.publicImageId || "",
-        personalListID: item.personalListID
+        personalListID: item.personalListID,
       }));
     }
-    
+
     return [];
   } catch (error) {
     console.error("Error in getFlashcards:", error);
@@ -168,16 +189,16 @@ export const getPersonalFlashcardLists = async () => {
   const response = await request("dotnet", "/api/personal-flashcard/user", {
     method: "GET",
   });
-  
+
   console.log("Raw response from getPersonalFlashcardLists:", response);
-  
+
   // Check if response has data property and it's an array
   if (response && response.data && Array.isArray(response.data)) {
     return response.data.map((item) => ({
       listId: item.listID,
       listName: item.listName,
       description: item.description || "",
-      flashcards: item.flashcards
+      flashcards: item.flashcards,
     }));
   }
   // If response itself is an array (fallback)
@@ -186,10 +207,10 @@ export const getPersonalFlashcardLists = async () => {
       listId: item.listID,
       listName: item.listName || item.ListName,
       description: item.description || item.Description || "",
-      flashcards: item.flashcards
+      flashcards: item.flashcards,
     }));
   }
-  
+
   return [];
 };
 
@@ -246,8 +267,14 @@ export const deleteFlashcard = async (flashcardId) => {
 };
 
 // Tạo ZaloPay order
-export const createZaloPayOrder = async (amount, description, userId, collectionId) => {
-  return await request("python", "/create_order", { // Updated to use Python backend
+export const createZaloPayOrder = async (
+  amount,
+  description,
+  userId,
+  collectionId,
+) => {
+  return await request("python", "/create_order", {
+    // Updated to use Python backend
     method: "POST",
     data: {
       amount,
@@ -260,7 +287,8 @@ export const createZaloPayOrder = async (amount, description, userId, collection
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/order_status", { // Updated to use Python backend
+  return await request("python", "/order_status", {
+    // Updated to use Python backend
     method: "GET",
     params: { apptransid },
   });
@@ -272,7 +300,8 @@ export const transcribeAudio = async (audioFile, additionalText) => {
   formData.append("audio", audioFile);
   formData.append("additional_text", additionalText);
 
-  return await request("python", "/transcribe", { // Updated to use Python backend
+  return await request("python", "/transcribe", {
+    // Updated to use Python backend
     method: "POST",
     data: formData,
     headers: {
@@ -283,7 +312,8 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("python", "/get_collections", { // Using Python backend
+  return await request("python", "/get_collections", {
+    // Using Python backend
     method: "GET",
     params: { user_id: userId },
   });

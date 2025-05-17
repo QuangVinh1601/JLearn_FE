@@ -26,7 +26,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handlePurchaseFlowComplete = (success: boolean) => {
     setIsPurchaseWindowOpen(false);
     if (success) {
-      alert(`Đã mua thành công ${product.title}! Chi tiết sẽ được gửi qua email.`);
+      alert(
+        `Đã mua thành công ${product.title}! Chi tiết sẽ được gửi qua email.`,
+      );
     } else {
       console.log(`Purchase flow cancelled or failed for ${product.title}`);
     }

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import { loginUser, getCollections } from "../api/apiClient";
+import { loginUser } from "../api/apiClient";
+// import {getCollections } from "../api/apiClient";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import CSS cho Toastify
 
@@ -20,7 +21,13 @@ const Login: React.FC = () => {
     try {
       const response = await loginUser(email, password);
 
-      const { token, role, userID } = response.data; // Access userID from response.data
+      const { token, role, userID } = response; // Access userID from response.data
+      console.log("Login API response:", response);
+
+      if (!userID) {
+        console.warn("userID not found in response:", response);
+        throw new Error("User ID not received from API");
+      }
 
       login(token, role);
 
@@ -28,10 +35,9 @@ const Login: React.FC = () => {
       localStorage.setItem("userID", userID);
 
       // Gọi API để lấy danh sách collection ID và lưu vào local storage
-      const collectionsResponse = await getCollections(userID);
-      localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
-      console.log("Collections:", collectionsResponse.collections);
-
+      // const collectionsResponse = await getCollections(userID);
+      // localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
+      // console.log("Collections:", collectionsResponse.collections);
 
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!", {
@@ -46,13 +52,13 @@ const Login: React.FC = () => {
 
       // Chuyển hướng sau khi hiển thị thông báo
       setTimeout(() => {
-        if (role === "Admin") {
+        if (role === "admin") {
           console.log("Navigate to admin dashboard");
           navigate("/admin/dashboard");
         } else {
           navigate("/home");
         }
-      }, 1000); // Chờ 1 giây để người dùng thấy thông báo
+      }, 1000);
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message ||
