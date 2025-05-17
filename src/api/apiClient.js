@@ -88,7 +88,7 @@ export const loginUser = async (email, password) => {
   if (!token) {
     throw new Error("No token received from API");
   }
-  return { token, role };
+  return { token, role, userID };
 };
 
 // Các hàm khác không thay đổi

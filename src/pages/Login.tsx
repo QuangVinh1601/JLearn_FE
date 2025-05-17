@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     try {
       const response = await loginUser(email, password);
 
-      const { token, role, userID } = response.data; // Access userID from response.data
+      const { token, role, userID } = response; // Access properties directly from response
 
       login(token, role);
 
