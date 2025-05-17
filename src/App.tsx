@@ -41,7 +41,7 @@ import NotFound from "./pages/NotFound";
 import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
 import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
-// Component ProtectedRoute để kiểm tra đăng nhập và vai trò
+
 const ProtectedRoute: React.FC<{
   children: JSX.Element;
   requiredRole?: string;
