@@ -28,9 +28,9 @@ const Login: React.FC = () => {
       localStorage.setItem("userID", userID);
 
       // Gọi API để lấy danh sách collection ID và lưu vào local storage
-      const collectionsResponse = await getCollections(userID);
-      localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
-      console.log("Collections:", collectionsResponse.collections);
+      // const collectionsResponse = await getCollections(userID);
+      // localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
+      // console.log("Collections:", collectionsResponse.collections);
 
 
       // Hiển thị thông báo thành công
