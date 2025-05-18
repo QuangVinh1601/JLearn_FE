@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "http://localhost",
-
-  python: "http://localhost:5000", // Added Python backend URL
+  dotnet: "http://34.44.254.240:8080",
+  python: "http://34.44.254.240:5000", // Added Python backend URL
 };
 
 // Hàm refresh token
@@ -99,11 +98,14 @@ export const loginUser = async (email, password) => {
     role = role.toLowerCase();
   }
 
-  const userID =
-    response.userID ||
-    response.data?.userID ||
-    response.data?.userId ||
-    response.data?.id;
+  const userID = 
+    response.userID || 
+    response.userId || 
+    response.user_id || 
+    response.data?.userID || 
+    response.data?.userId || 
+    response.data?.user_id || 
+    null;
 
   if (!token) {
     throw new Error("No token received from API");
