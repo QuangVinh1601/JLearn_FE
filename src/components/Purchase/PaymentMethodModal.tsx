@@ -77,7 +77,10 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           customerInfo.collectionId, // Pass the collectionId
         );
 
-        if (response.zalopay_response.returncode === 1 && response.zalopay_response.orderurl) {
+        if (
+          response.zalopay_response.returncode === 1 &&
+          response.zalopay_response.orderurl
+        ) {
           setZaloPayOrderUrl(response.zalopay_response.orderurl);
           setZaloPayAppTransId(response.order_payload.apptransid);
           setZaloPayQRCode((response.zalopay_response as any).qrcode); // Set qrcode state
@@ -117,7 +120,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
     } catch (err: any) {
       setZaloPayError(
         "Lỗi kiểm tra trạng thái ZaloPay: " +
-        (err.response?.data?.error || err.message),
+          (err.response?.data?.error || err.message),
       );
     } finally {
       setCheckingStatus(false);
@@ -148,7 +151,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           console.error("Error checking ZaloPay status:", err);
           setZaloPayError(
             "Lỗi kiểm tra trạng thái ZaloPay: " +
-            (err.response?.data?.error || err.message),
+              (err.response?.data?.error || err.message),
           );
         }
       }, 5000); // Check every 5 seconds
@@ -257,12 +260,27 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             <div className="my-4 p-4 border border-blue-300 rounded bg-blue-50 text-center">
               <h3 className="text-lg font-semibold mb-3 text-black-800">
                 Thanh toán với
-                <img src={ZaloPayLogo} alt="ZaloPay Logo" style={{ width: '60px', height: '20px', display: 'inline-block', marginLeft: '5px', marginTop: '-5px', marginRight: '5px' }} />
+                <img
+                  src={ZaloPayLogo}
+                  alt="ZaloPay Logo"
+                  style={{
+                    width: "60px",
+                    height: "20px",
+                    display: "inline-block",
+                    marginLeft: "5px",
+                    marginTop: "-5px",
+                    marginRight: "5px",
+                  }}
+                />
                 bằng mã QR
               </h3>
               {/* Use qrcode state variable with QRCodeCanvas */}
               {zaloPayQRCode && (
-                <div style={{ margin: "0 auto", width: "250px", height: "250px" }}> {/* Slightly smaller QR area */}
+                <div
+                  style={{ margin: "0 auto", width: "250px", height: "250px" }}
+                >
+                  {" "}
+                  {/* Slightly smaller QR area */}
                   <QRCodeCanvas
                     value={zaloPayQRCode}
                     size={250}
@@ -275,13 +293,25 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
               )}
               {/* Countdown Timer */}
               <p className="text-black-600 font-bold mt-3">
-                Thời gian quét mã QR để thanh toán còn: <span className="text-blue-600">{formatTime(countdown)}</span>
+                Thời gian quét mã QR để thanh toán còn:{" "}
+                <span className="text-blue-600">{formatTime(countdown)}</span>
               </p>
 
               {/* Payment Instructions */}
               <div className="mt-4 text-left">
-                <p className="font-semibold mb-2">Hướng dẫn thanh toán:
-                  <img src={ZaloPayLogo} alt="ZaloPay Logo" style={{ width: '60px', height: '20px', display: 'inline-block', marginLeft: '5px', marginTop: '-5px' }} />
+                <p className="font-semibold mb-2">
+                  Hướng dẫn thanh toán:
+                  <img
+                    src={ZaloPayLogo}
+                    alt="ZaloPay Logo"
+                    style={{
+                      width: "60px",
+                      height: "20px",
+                      display: "inline-block",
+                      marginLeft: "5px",
+                      marginTop: "-5px",
+                    }}
+                  />
                 </p>
                 <ol className="list-decimal list-inside text-gray-700">
                   <li>Bước 1: Mở ứng dụng ZaloPay</li>
@@ -309,25 +339,32 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           {/* ZaloPay Status Display */}
           {zaloPayStatus && (
             <div
-              className={`my-4 p-3 border rounded ${zaloPayStatus.returncode === 1
-                ? "border-green-400 bg-green-50"
-                : zaloPayStatus.returncode === 3
-                  ? "border-red-400 bg-red-50"
-                  : "border-yellow-400 bg-yellow-50"
-                }`}
+              className={`my-4 p-3 border rounded ${
+                zaloPayStatus.returncode === 1
+                  ? "border-green-400 bg-green-50"
+                  : zaloPayStatus.returncode === 3
+                    ? "border-red-400 bg-red-50"
+                    : "border-yellow-400 bg-yellow-50"
+              }`}
             >
               <h4 className="font-semibold">Kết quả kiểm tra:</h4>
               <pre className="text-sm whitespace-pre-wrap">
                 {JSON.stringify(zaloPayStatus, null, 2)}
               </pre>
               {zaloPayStatus.returncode === 1 && (
-                <p className="text-green-700 font-bold mt-2">Thanh toán thành công!</p>
+                <p className="text-green-700 font-bold mt-2">
+                  Thanh toán thành công!
+                </p>
               )}
               {zaloPayStatus.returncode === 3 && (
-                <p className="text-red-700 font-bold mt-2">Thanh toán thất bại.</p>
+                <p className="text-red-700 font-bold mt-2">
+                  Thanh toán thất bại.
+                </p>
               )}
               {zaloPayStatus.returncode === 2 && (
-                <p className="text-yellow-700 font-bold mt-2">Đơn hàng đang chờ thanh toán...</p>
+                <p className="text-yellow-700 font-bold mt-2">
+                  Đơn hàng đang chờ thanh toán...
+                </p>
               )}
             </div>
           )}
@@ -346,12 +383,13 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             <div className="mb-4">
               <ul className="list-disc list-inside text-gray-700">
                 <li>
-                  Khi bạn nộp chuột vào xác nhận đơn hàng, bạn đã đồng ý với Điều
-                  khoản sử dụng và Chính sách bảo mật của website dungmori.com
+                  Khi bạn nộp chuột vào xác nhận đơn hàng, bạn đã đồng ý với
+                  Điều khoản sử dụng và Chính sách bảo mật của website
+                  dungmori.com
                 </li>
                 <li>
-                  Sau khi chuyển khoản thành công bạn vui lòng liên hệ lại theo số
-                  hotline của trung tâm: 0969-86-84-85 hoặc inbox trực tiếp
+                  Sau khi chuyển khoản thành công bạn vui lòng liên hệ lại theo
+                  số hotline của trung tâm: 0969-86-84-85 hoặc inbox trực tiếp
                   fanpage Facebook Dũng Mori của trung tâm.
                 </li>
               </ul>

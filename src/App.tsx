@@ -88,7 +88,6 @@ function App() {
 
           {/* Protected Routes for authenticated users */}
           <Route>
-
             <Route
               path="/flashcards"
               element={
@@ -120,14 +119,8 @@ function App() {
                   <UpdateProfile />
                 </ProtectedRoute>
               }
-              
             />
-            <Route
-              path="/course/:courseId/lessons" 
-              element={
-                <LessonsPage />
-              }
-            />
+            <Route path="/course/:courseId/lessons" element={<LessonsPage />} />
             <Route
               path="/skills"
               element={
@@ -160,7 +153,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
 
             {/* Profile Routes */}
             <Route element={<MainLayout />}>
@@ -282,7 +274,7 @@ function App() {
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
-      </main >
+      </main>
 
       {!isAuthPage && !isAdminPage && (
         <button

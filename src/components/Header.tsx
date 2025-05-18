@@ -48,8 +48,9 @@ const Header: React.FC = () => {
         </button>
       </div>
       <nav
-        className={`${isMenuOpen ? "block" : "hidden"
-          } sm:flex sm:flex-grow sm:justify-center absolute sm:static top-full left-0 right-0 bg-[#F5E6CA] sm:bg-transparent p-4 sm:p-0 z-40 shadow-md sm:shadow-none border-b sm:border-none border-gray-200`}
+        className={`${
+          isMenuOpen ? "block" : "hidden"
+        } sm:flex sm:flex-grow sm:justify-center absolute sm:static top-full left-0 right-0 bg-[#F5E6CA] sm:bg-transparent p-4 sm:p-0 z-40 shadow-md sm:shadow-none border-b sm:border-none border-gray-200`}
       >
         <ul className="font-poppins flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 md:space-x-8">
           <li>
@@ -188,6 +189,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-
-
-
