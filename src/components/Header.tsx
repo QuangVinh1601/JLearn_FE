@@ -78,7 +78,7 @@ const Header: React.FC = () => {
             <>
               <li>
                 <NavLink
-                  to="/course"
+                  to="/purchase"
                   className={linkClassName}
                   onClick={handleNavClick}
                 >
