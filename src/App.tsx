@@ -96,14 +96,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/collection"
-              element={
-                <ProtectedRoute>
-                  <CollectionFlashcards />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/collection" element={<CollectionFlashcards />} />
             <Route
               path="/create-flash-card/:id"
               element={
