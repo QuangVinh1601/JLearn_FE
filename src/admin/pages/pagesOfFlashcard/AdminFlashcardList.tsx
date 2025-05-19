@@ -74,11 +74,20 @@ const AdminFlashcardList: React.FC = () => {
 
   const handleEditList = (list: FlashcardList) => {
     const newName = prompt("Nhập tên mới cho danh sách:", list.listName);
-    const newDescription = prompt("Nhập mô tả mới cho danh sách:", list.description); // Added description prompt for edit
+    const newDescription = prompt(
+      "Nhập mô tả mới cho danh sách:",
+      list.description,
+    ); // Added description prompt for edit
     if (newName !== list.listName || newDescription !== list.description) {
       setFlashcardLists((prevLists) =>
         prevLists.map((l) =>
-          l.listId === list.listId ? { ...l, listName: newName || l.listName, description: newDescription || l.description } : l,
+          l.listId === list.listId
+            ? {
+                ...l,
+                listName: newName || l.listName,
+                description: newDescription || l.description,
+              }
+            : l,
         ),
       );
       alert("Cập nhật danh sách thành công!");
@@ -152,7 +161,8 @@ const AdminFlashcardList: React.FC = () => {
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Mô tả
-                  </th> {/* Added description column */}
+                  </th>{" "}
+                  {/* Added description column */}
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Thao tác
                   </th>
