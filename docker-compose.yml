@@ -7,8 +7,6 @@ services:
       - "5001:80"        # HTTP cho front-end
       - "443:443"        # HTTPS cho front-end
     volumes:
-      # Nginx config tuỳ chỉnh cho front-end
-      - /home/nguyenhuuquangvinh/jlearn_fe_app/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       # Thư mục chứa chứng chỉ SSL từ Let's Encrypt
       - /etc/letsencrypt/live/japstudy.id.vn:/etc/nginx/certs:ro
     restart: unless-stopped
