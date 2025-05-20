@@ -3,12 +3,7 @@ version: "3.8"
 services:
   frontend:
     image: quangvinh1601/jlearn_fe_app:latest
-    ports:
-      - "5001:80"        # HTTP cho front-end
-      - "443:443"        # HTTPS cho front-end
-    volumes:
-      - /etc/letsencrypt/live/japstudy.id.vn/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
-      - /etc/letsencrypt/live/japstudy.id.vn/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+    container_name: jlearn_fe_app-frontend-1
     restart: unless-stopped
     networks:
       - my_network
