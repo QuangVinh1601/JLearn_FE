@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URLS = {
   dotnet: "https://japstudy.id.vn",
-  python: "http://34.44.254.240:5000", 
+  python: "https://japstudy.id.vn", 
 };
 
 // Hàm refresh token
@@ -275,7 +275,7 @@ export const createZaloPayOrder = async (
   userId,
   collectionId,
 ) => {
-  return await request("python", "/create_order", {
+  return await request("python", "/api/ml/create_order", {
     // Updated to use Python backend
     method: "POST",
     data: {
@@ -289,7 +289,7 @@ export const createZaloPayOrder = async (
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/order_status", {
+  return await request("python", "/api/ml/order_status", {
     // Updated to use Python backend
     method: "GET",
     params: { apptransid },
@@ -302,7 +302,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
   formData.append("audio", audioFile);
   formData.append("additional_text", additionalText);
 
-  return await request("python", "/transcribe", {
+  return await request("python", "/api/ml/transcribe", {
     // Updated to use Python backend
     method: "POST",
     data: formData,
@@ -314,7 +314,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("python", "/get_collections", {
+  return await request("python", "/api/ml/get_collections", {
     // Using Python backend
     method: "GET",
     params: { user_id: userId },
