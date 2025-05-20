@@ -20,17 +20,19 @@ const Login: React.FC = () => {
     try {
       const response = await loginUser(email, password);
 
-      const { token, role, userID } = response.data; // Access userID from response.data
+      const { token, role, userID } = response; // Access userID from response.data
 
       login(token, role);
 
       // Lưu userID vào local storage
       localStorage.setItem("userID", userID);
 
-      // Gọi API để lấy danh sách collection ID và lưu vào local storage
-      const collectionsResponse = await getCollections(userID);
-      localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
-      console.log("Collections:", collectionsResponse.collections);
+      if (role !== "admin") {
+        const collectionsResponse = await getCollections(userID);
+        localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
+        console.log("Collections:", collectionsResponse.collections);
+      }
+
 
 
       // Hiển thị thông báo thành công

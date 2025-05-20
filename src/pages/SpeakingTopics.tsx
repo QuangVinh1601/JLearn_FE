@@ -72,11 +72,6 @@ const SpeakingTopics: React.FC = () => {
                 ))}
               </ul>
             </div>
-
-            {/* Optional: Add a footer or keep it clean */}
-            {/* <div className="mt-auto pt-4 border-t border-gray-200 text-center">
-                            <p className="text-xs text-gray-400">Chọn một câu hỏi ở trên để bắt đầu bài kiểm tra.</p> // <-- TRANSLATED (Commented out)
-                        </div> */}
           </div>
         ))}
       </div>

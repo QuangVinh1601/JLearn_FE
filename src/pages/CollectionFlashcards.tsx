@@ -20,54 +20,52 @@ function CollectionFlashcards() {
       setLoading(true);
       const result = await getPersonalFlashcardLists(); // Use the method from apiClient.js
       console.log("API Response:", result); // Debugging log
-  
+
       // Map the result to the desired format
       setCollections(
         result.map((item: any) => ({
-          id: item.listId, // Use the correct property name from the API response
+          id: item.listId,
           title: item.listName,
-          description: item.description || "No description available", // Handle missing user data
+          description: item.description || "No description available",
         }))
       );
     } catch (error) {
       console.error("Error fetching flashcard collections:", error);
-      setCollections([]); // Set an empty list on error
+      setCollections([]);
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchCollections();
   }, []);
 
-      // Handle form submission
- // Handle form submission
-// Handle form submission
-const handleCreateCollection = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!newListName.trim()) return;
 
-  try {
-    setSubmitting(true);
-    // Call API to create new collection
-    const result = await createPersonalFlashcardList(newListName, newDescription);
-    console.log("New collection created:", result);
-    
-    // Reset form and close modal
-    setNewListName("");
-    setNewDescription("");
-    setShowModal(false);
-    
-    // Fetch collections again to get the updated list including the newly created one
-    fetchCollections();
-  } catch (error) {
-    console.error("Error creating new collection:", error);
-    alert("Failed to create collection. Please try again.");
-  } finally {
-    setSubmitting(false);
-  }
-};  
+  const handleCreateCollection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newListName.trim()) return;
+
+    try {
+      setSubmitting(true);
+      // Call API to create new collection
+      const result = await createPersonalFlashcardList(newListName, newDescription);
+      console.log("New collection created:", result);
+
+      // Reset form and close modal
+      setNewListName("");
+      setNewDescription("");
+      setShowModal(false);
+
+      // Fetch collections again to get the updated list including the newly created one
+      fetchCollections();
+    } catch (error) {
+      console.error("Error creating new collection:", error);
+      alert("Failed to create collection. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
   if (loading) {
     return <p>Loading...</p>; // Show a loading message while fetching data
   }
@@ -87,12 +85,12 @@ const handleCreateCollection = async (e: React.FormEvent) => {
           <div
             key={item.id}
             className="bg-white border border-gray-200 rounded-xl p-4 shadow hover:shadow-md transition"
-             onClick={() => {
-              navigate(`/create-flash-card/${item.id}`, { 
-                state: { 
+            onClick={() => {
+              navigate(`/create-flash-card/${item.id}`, {
+                state: {
                   listId: item.id,
                   listName: item.title
-                } 
+                }
               });
             }}
           >
@@ -103,12 +101,12 @@ const handleCreateCollection = async (e: React.FormEvent) => {
           </div>
         ))}
       </div>
-            {/* Modal for creating a new collection */}
+      {/* Modal for creating a new collection */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h3 className="text-xl font-semibold mb-4">Tạo bộ sưu tập mới</h3>
-            
+
             <form onSubmit={handleCreateCollection}>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="listName">
@@ -124,7 +122,7 @@ const handleCreateCollection = async (e: React.FormEvent) => {
                   required
                 />
               </div>
-              
+
               <div className="mb-6">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                   Mô tả
@@ -138,7 +136,7 @@ const handleCreateCollection = async (e: React.FormEvent) => {
                   rows={3}
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <button
                   type="button"

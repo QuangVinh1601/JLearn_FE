@@ -3,8 +3,8 @@ import axios from "axios";
 const BASE_URLS = {
   dotnet: "http://34.44.254.240:8080",
 
-  python: "http://localhost:5000", // Added Python backend URL
-
+  // python: "http://34.44.254.240:5000", // Added Python backend URL
+python: "http://localhost:5000",
 };
 
 // Hàm refresh token
@@ -79,16 +79,35 @@ export const loginUser = async (email, password) => {
     response.accessToken ||
     response.data?.token ||
     response.data?.accessToken;
-  const role =
-    response.role ||
-    response.userRole ||
-    response.data?.role ||
-    response.data?.userRole ||
-    (email === "admin@gmail.com" ? "admin" : "user");
+   let role;
+  if (email === "admin@gmail.com") {
+    role = "admin";
+  } else {
+    role =
+      response.role ||
+      response.userRole ||
+      response.data?.role ||
+      response.data?.userRole ||
+      "user";
+  }
+
+  // Chuẩn hóa role từ API nếu cần
+  if (typeof role === "number") {
+    role = role === 1 ? "admin" : "user";
+  } else if (role) {
+    role = role.toLowerCase();
+  }
+
+  const userID =
+    response.userID ||
+    response.data?.userID ||
+    response.data?.userId ||
+    response.data?.id;
+
   if (!token) {
     throw new Error("No token received from API");
   }
-  return { token, role };
+  return { token, role, userID };
 };
 
 // Các hàm khác không thay đổi
@@ -288,3 +307,25 @@ export const getCollections = async (userId) => {
     params: { user_id: userId },
   });
 };
+
+export const getAdminMetrics = async () => {
+  return await request("python", "/admin/metrics", {
+    method: "GET",
+    withCredentials: true,
+  });
+};
+
+// export const getAdminUsers = async () => {
+//   return await request("python", "/admin/users", {
+//     method: "GET",
+//     withCredentials: true,
+//   });
+// };
+
+// export const getAdminTransactions = async () => {
+//   return await request("python", "/admin/transactions", {
+//     method: "GET",
+//     withCredentials: true,
+//   });
+// };
+

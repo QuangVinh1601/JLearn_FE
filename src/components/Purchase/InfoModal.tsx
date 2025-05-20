@@ -17,14 +17,13 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
     name: "",
     phone: "",
     email: "",
-    userId: "", // Ensure userId is initialized
-    collectionId: "", // Ensure collectionId is initialized
+    userId: "",
+    collectionId: "",
   });
   const [isPaymentMethodOpen, setIsPaymentMethodOpen] =
     useState<boolean>(false);
 
   useEffect(() => {
-    // Lấy userId từ local storage và collectionId từ product.id
     const storedUserId = localStorage.getItem("userID") || "";
     setCustomerInfo((prev) => ({
       ...prev,
@@ -33,22 +32,7 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
     }));
   }, [product.id]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCustomerInfo((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = () => {
-    if (
-      !customerInfo.name ||
-      !customerInfo.phone ||
-      !customerInfo.email ||
-      !customerInfo.userId || // Validate userId
-      !customerInfo.collectionId // Validate collectionId
-    ) {
-      alert("Vui lòng điền đầy đủ thông tin.");
-      return;
-    }
     setIsPaymentMethodOpen(true);
   };
 
@@ -61,80 +45,8 @@ const InfoModal: React.FC<PurchaseModalProps> = ({
     <>
       <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
         <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                Thông tin khách hàng
-              </h2>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Họ và tên <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={customerInfo.name}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                  placeholder="Ví dụ: Nguyễn Văn A"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Số điện thoại <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={customerInfo.phone}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                  placeholder="Ví dụ: +84353230012"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={customerInfo.email}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                  placeholder="Ví dụ: emailvidu@gmail.com"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  User ID <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="userId"
-                  value={customerInfo.userId}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                  placeholder="Nhập User ID"
-                  disabled // Không cho phép chỉnh sửa User ID
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Collection ID <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="collectionId"
-                  value={customerInfo.collectionId}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                  placeholder="Nhập Collection ID"
-                  disabled // Không cho phép chỉnh sửa Collection ID
-                />
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 gap-6">
+            {/* Ẩn phần thông tin khách hàng */}
             <div>
               <h2 className="text-xl font-semibold mb-4 text-gray-800">
                 Thông tin đơn hàng
