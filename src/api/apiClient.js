@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: `${process.env.REACT_APP_API_URL}`,
-  python: "https://34.44.254.240:5000", // Added Python backend URL
+  dotnet: "https://japstudy.id.vn",
+  python: "https://japstudy.id.vn", // Added Python backend URL
 };
 
 // Hàm refresh token
