@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "https://34.44.254.240:8080",
+  dotnet: `${process.env.REACT_APP_API_URL}`,
   python: "https://34.44.254.240:5000", // Added Python backend URL
 };
 
