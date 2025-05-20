@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "https://34.44.254.240:8080",
-  python: "https://34.44.254.240:5000", 
+  dotnet: "https://japstudy.id.vn",
+  python: "http://34.44.254.240:5000", 
 };
 
 // Hàm refresh token
