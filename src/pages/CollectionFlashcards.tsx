@@ -30,6 +30,7 @@ function CollectionFlashcards() {
       setCollections(
         result.map((item: any) => ({
           id: item.listId,
+          id: item.listId,
           title: item.listName,
           description: item.description || "No description available",
         })),
@@ -39,6 +40,7 @@ function CollectionFlashcards() {
       setCollections([]);
     }
   };
+
 
   useEffect(() => {
     fetchCollections();
