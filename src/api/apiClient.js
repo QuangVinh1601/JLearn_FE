@@ -320,3 +320,25 @@ export const getCollections = async (userId) => {
     params: { user_id: userId },
   });
 };
+
+export const getAdminMetrics = async () => {
+  return await request("python", "/admin/metrics", {
+    method: "GET",
+    withCredentials: true,
+  });
+};
+
+// export const getAdminUsers = async () => {
+//   return await request("python", "/admin/users", {
+//     method: "GET",
+//     withCredentials: true,
+//   });
+// };
+
+// export const getAdminTransactions = async () => {
+//   return await request("python", "/admin/transactions", {
+//     method: "GET",
+//     withCredentials: true,
+//   });
+// };
+

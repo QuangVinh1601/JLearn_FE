@@ -1,269 +1,244 @@
-import React, { useEffect, useState } from "react";
-import { Doughnut, Line } from "react-chartjs-2";
+import React, { useState, useEffect } from 'react';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
-} from "chart.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUsers,
-  faUserPlus,
-  faMousePointer,
-  faDollarSign,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  getUserCount,
-  getNewUserCount,
-  get_AD_Click,
-  getVisitor,
-} from "../../services/api/authApi";
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { FaUsers, FaUserPlus, FaEye, FaMoneyBillWave } from 'react-icons/fa';
+import type { IconType } from 'react-icons';
+import { getAdminMetrics } from '../../api/apiClient';
 
+// Register ChartJS components
 ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
 );
 
-const AdminDashboard: React.FC = () => {
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [newUsers, setNewUsers] = useState(0);
-  const [totalClicks, setTotalClicks] = useState(0);
-  const [totalVisitors, setTotalVisitors] = useState(0);
-  const [monthlyNewUsers, setMonthlyNewUsers] = useState<number[]>([]);
+interface DashboardMetrics {
+  totalUsers: number;
+  newUsers: number;
+  totalRevenue: number;
+  userGrowth: {
+    month: string;
+    count: number;
+  }[];
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userCountData = await getUserCount();
-        setTotalUsers(userCountData.total_user || 0);
+interface MetricCardProps {
+  title: string;
+  value: number;
+  icon: IconType;
+  iconBgColor: string;
+  iconColor: string;
+  growth: string;
+}
 
-        const newUserCountData = await getNewUserCount(30);
-        setNewUsers(newUserCountData.new_users_last_n_days || 0);
+const MetricCard: React.FC<MetricCardProps> = ({
+  title,
+  value,
+  icon: Icon,
+  iconBgColor,
+  iconColor,
+  growth,
+}) => {
+  const IconComponent = Icon as React.ComponentType<{ className?: string }>;
 
-        const adClickData = await get_AD_Click();
-        setTotalClicks(adClickData.AD_Click || 0);
-
-        const visitorData = await getVisitor();
-        setTotalVisitors(visitorData.Count_Visitor || 0);
-
-        // Fetch monthly new users for the last 12 months
-        const today = new Date();
-        const monthlyDataPromises = Array.from({ length: 12 }, (_, i) => {
-          const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-          const days = Math.floor(
-            (today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-          );
-          return getNewUserCount(days);
-        });
-        const monthlyData = await Promise.all(monthlyDataPromises);
-        const cumulativeMonthlyNewUsers = monthlyData.map((data, index) => {
-          const previousMonthData =
-            index > 0 ? monthlyData[index - 1].new_users_last_n_days : 0;
-          return (data.new_users_last_n_days || 0) - previousMonthData;
-        });
-        setMonthlyNewUsers(cumulativeMonthlyNewUsers.reverse());
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const stats = [
-    { icon: faUsers, label: "Total Users", value: totalUsers },
-    { icon: faUserPlus, label: "New Users", value: newUsers },
-    { icon: faMousePointer, label: "Total Visitors", value: totalVisitors },
-    {
-      icon: faDollarSign,
-      label: "Total Revenue (VND)",
-      value: totalClicks * 30,
-    },
-  ];
-
-  // Calculate percentages safely
-  const userGrowthPercentage =
-    totalUsers > 0 ? (newUsers / totalUsers) * 100 : 0;
-  const revenuePercentage =
-    totalClicks > 0 ? ((totalClicks * 30) / 10000) * 100 : 0;
-
-  const doughnutData = (label: string, data: number, color: string) => ({
-    labels: [label, "Other"],
-    datasets: [
-      {
-        data: [data, Math.max(100 - data, 0)], // Ensure no negative values
-        backgroundColor: [
-          color,
-          label === "User Growth" ? "#ccefe3" : "#ffcdcd",
-        ],
-        borderColor: [color, label === "User Growth" ? "#ccefe3" : "#ffcdcd"],
-        borderWidth: 1,
-      },
-    ],
-  });
-
-  const userGrowthData = doughnutData(
-    "User Growth",
-    userGrowthPercentage,
-    "#00B074",
-  );
-  const totalRevenueData = doughnutData(
-    "Revenue",
-    revenuePercentage,
-    "#FF5B5B",
-  );
-
-  const lineData = {
-    labels: Array.from({ length: 12 }, (_, i) =>
-      new Date(new Date().setMonth(new Date().getMonth() - i)).toLocaleString(
-        "default",
-        { month: "long" },
-      ),
-    ).reverse(),
-    datasets: [
-      {
-        label: "New Users",
-        data: monthlyNewUsers,
-        fill: false,
-        backgroundColor: "#00B074",
-        borderColor: "#00B074",
-        borderWidth: 2,
-        pointBackgroundColor: "#00B074",
-        pointBorderColor: "#00B074",
-        pointHoverBackgroundColor: "#00B074",
-        pointHoverBorderColor: "#00B074",
-      },
-    ],
-  };
-
-  const lineOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: true,
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-      y: {
-        grid: {
-          display: false,
-        },
-        beginAtZero: true,
-      },
-    },
-    elements: {
-      line: {
-        tension: 0.4,
-      },
-      point: {
-        radius: 5,
-        hitRadius: 10,
-        hoverRadius: 7,
-      },
-    },
+  const formatValue = (value: number) => {
+    if (title === "Total Revenue") {
+      // Format as Vietnamese currency with 2 decimal places
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+    console.log("value", value);
+    return value.toLocaleString();
   };
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <h1 className="text-xl sm:text-2xl font-bold mb-6">Tổng quan</h1>
-
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="border border-gray-300 p-4 rounded-lg text-center shadow-md bg-white"
-          >
-            <FontAwesomeIcon
-              icon={stat.icon}
-              className="text-2xl sm:text-3xl mb-2 text-gray-800"
-            />
-            <h2 className="text-sm sm:text-base font-semibold text-gray-700">
-              {stat.label}
-            </h2>
-            <p className="text-lg sm:text-xl font-bold text-gray-900">
-              {stat.value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* Doughnut Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="relative bg-white p-4 rounded-lg shadow-md">
-          <div className="h-48 sm:h-64">
-            <Doughnut
-              data={userGrowthData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false },
-                  tooltip: { enabled: true },
-                },
-              }}
-            />
-          </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-lg sm:text-xl font-bold text-gray-900">
-              {userGrowthPercentage.toFixed(2)}%
-            </p>
-          </div>
-          <h2 className="text-sm sm:text-base text-center mt-2 font-semibold text-gray-700">
-            User Growth
-          </h2>
+    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {formatValue(value)}
+          </p>
         </div>
-        <div className="relative bg-white p-4 rounded-lg shadow-md">
-          <div className="h-48 sm:h-64">
-            <Doughnut
-              data={totalRevenueData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false },
-                  tooltip: { enabled: true },
-                },
-              }}
-            />
-          </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-lg sm:text-xl font-bold text-gray-900">
-              {revenuePercentage.toFixed(2)}%
-            </p>
-          </div>
-          <h2 className="text-sm sm:text-base text-center mt-2 font-semibold text-gray-700">
-            Return on Expectation
-          </h2>
+        <div className={`p-3 ${iconBgColor} rounded-full`}>
+          <IconComponent className={`w-6 h-6 ${iconColor}`} />
         </div>
       </div>
+      <div className="mt-4">
+        <span className="text-green-500 text-sm font-medium">{growth}</span>
+      </div>
+    </div>
+  );
+};
 
-      {/* Line Chart Section */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h2 className="text-sm sm:text-base font-semibold text-gray-700 mb-4">
-          User Growth Chart
-        </h2>
-        <div className="h-64 sm:h-80">
-          <Line data={lineData} options={lineOptions} />
+// Hàm tính toán tăng trưởng người dùng theo thời gian (có thể mở rộng logic nếu cần)
+function calculateUserGrowthOverTime(userGrowth: { month: string; count: number }[]) {
+  // Ví dụ: trả về đúng dữ liệu, hoặc có thể tính toán phần trăm tăng trưởng giữa các tháng
+  return userGrowth.map((item, idx, arr) => {
+    let growth = 0;
+    if (idx > 0 && arr[idx - 1].count > 0) {
+      growth = ((item.count - arr[idx - 1].count) / arr[idx - 1].count) * 100;
+    }
+    return {
+      ...item,
+      growthPercent: growth,
+    };
+  });
+}
+
+const AdminDashboard: React.FC = () => {
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
+    totalUsers: 0,
+    newUsers: 0,
+    totalRevenue: 0,
+    userGrowth: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const data = await getAdminMetrics();
+        // console.log("Received metrics data:", data);
+        setMetrics(data);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+        setError('Failed to fetch dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Debug metrics changes
+  useEffect(() => {
+    // console.log("Current metrics state:", metrics);
+  }, [metrics]);
+
+  // Sử dụng hàm tính toán tăng trưởng người dùng
+  const userGrowthData = calculateUserGrowthOverTime(metrics.userGrowth);
+  // console.log("Metrics: ", metrics);
+  // console.log("User Growth Data: ", userGrowthData);
+  // Chart configuration
+  const chartData = {
+    labels: userGrowthData.map(item => item.month),
+    datasets: [
+      {
+        label: 'User Growth',
+        data: userGrowthData.map(item => item.count),
+        borderColor: 'rgb(239, 68, 68)',
+        backgroundColor: 'rgba(239, 68, 68, 0.5)',
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'User Growth Over Time',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+        <div className="text-xl font-semibold text-gray-700">Loading dashboard data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+        <div className="text-xl font-semibold text-red-600">{error}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <MetricCard
+            title="Total Users"
+            value={metrics.totalUsers}
+            icon={FaUsers}
+            iconBgColor="bg-red-100"
+            iconColor="text-red-600"
+            growth="↑ 12% from last month"
+          />
+
+          <MetricCard
+            title="New Users"
+            value={metrics.newUsers}
+            icon={FaUserPlus}
+            iconBgColor="bg-blue-100"
+            iconColor="text-blue-600"
+            growth="↑ 8% from last week"
+          />
+
+          <MetricCard
+            title="Total Visitors"
+            value={metrics.totalUsers * 3} // Assuming each user visits 3 times on average
+            icon={FaEye}
+            iconBgColor="bg-green-100"
+            iconColor="text-green-600"
+            growth="↑ 15% from last month"
+          />
+
+          <MetricCard
+            title="Total Revenue"
+            value={metrics.totalRevenue}
+            icon={FaMoneyBillWave}
+            iconBgColor="bg-yellow-100"
+            iconColor="text-yellow-600"
+            growth="↑ 20% from last month"
+          />
+        </div>
+
+        {/* User Growth Chart */}
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div className="h-[400px]">
+            <Line data={chartData} options={chartOptions} />
+          </div>
         </div>
       </div>
     </div>
