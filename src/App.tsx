@@ -5,6 +5,7 @@ import {
   useLocation,
   useNavigate,
   Navigate,
+  BrowserRouter,
 } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
@@ -21,7 +22,7 @@ import CreateFlashcards from "./pages/CreateFlashcards";
 import UpdateProfile from "./pages/UpdateProfile";
 import CourseList from "./pages/CourseList";
 import Profile from "./pages/Profile/Profile";
-import Courses from "./pages/Profile/Courses";
+
 import Videos from "./pages/Profile/Videos";
 import MainLayout from "./pages/Profile/MainLayout";
 import AdminLayout from "./admin/components/AdminLayout";
@@ -33,7 +34,7 @@ import AdminVideo from "./admin/pages/pagesOfVideo/AdminVideo";
 import EditVideo from "./admin/pages/pagesOfVideo/EditVideo";
 import EditFlashcard from "./admin/pages/pagesOfFlashcard/EditFlashcard";
 import ManageFlashcards from "./admin/pages/pagesOfFlashcard/ManagerFlashcards";
-import Purchase from "./pages/Purchase";
+// import Purchase from "./pages/Purchase";
 import Skills from "./pages/Skills";
 import SpeakingTopics from "./pages/SpeakingTopics";
 import SpeakingTest from "./pages/SpeakingTest";
@@ -41,7 +42,7 @@ import NotFound from "./pages/NotFound";
 import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
 import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
-
+// Component ProtectedRoute để kiểm tra đăng nhập và vai trò
 const ProtectedRoute: React.FC<{
   children: JSX.Element;
   requiredRole?: string;
@@ -88,6 +89,8 @@ function App() {
 
           {/* Protected Routes for authenticated users */}
           <Route>
+            <Route path="/course" element={<CourseList />} />
+
             <Route
               path="/flashcards"
               element={
@@ -113,7 +116,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/course/:courseId/lessons" element={<LessonsPage />} />
+            <Route
+              path="/course/:courseId/lessons"
+              element={<LessonsPage />}
+            />
+            <Route
+              path="/exercise/:exerciseId"
+              element={<ExercisePage />}
+            />
             <Route
               path="/skills"
               element={
@@ -142,7 +152,7 @@ function App() {
               path="/purchase"
               element={
                 <ProtectedRoute>
-                  <Purchase />
+                  <CourseList />
                 </ProtectedRoute>
               }
             />
@@ -157,14 +167,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/profileCourses"
-                element={
-                  <ProtectedRoute>
-                    <Courses />
-                  </ProtectedRoute>
-                }
-              />
+
               <Route
                 path="/profileVideos"
                 element={

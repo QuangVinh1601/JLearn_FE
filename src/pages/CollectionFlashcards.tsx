@@ -40,6 +40,7 @@ function CollectionFlashcards() {
     }
   };
 
+
   useEffect(() => {
     fetchCollections();
   }, []);

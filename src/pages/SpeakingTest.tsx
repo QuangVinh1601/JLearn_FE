@@ -47,54 +47,47 @@ const SpeakingTest: React.FC = () => {
   // --- Cleanup Function ---
   // Stops media tracks and recorder, resets refs. Crucial for resource management.
   const cleanupStream = useCallback(() => {
-    console.log("Cleanup Stream Called. Current Stream:", streamRef.current);
+    // Production: Không log
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => {
-        track.stop(); // Stop each track in the stream
-        console.log(`Track ${track.id} stopped.`);
+        track.stop();
       });
-      streamRef.current = null; // Clear the ref
+      streamRef.current = null;
     }
     if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
       try {
-        mediaRecorder.current.stop(); // Stop the recorder if it's running
-        console.log("MediaRecorder stopped.");
+        mediaRecorder.current.stop();
       } catch (error) {
-        console.warn("Error stopping media recorder:", error); // Might already be stopped
+        // ignore
       }
     }
-    mediaRecorder.current = null; // Clear the ref
-    audioChunks.current = []; // Clear recorded chunks
-    console.log("Cleanup Stream Finished.");
-  }, []); // No dependencies needed as it only interacts with refs
+    mediaRecorder.current = null;
+    audioChunks.current = [];
+  }, []);
 
   // --- Effect for Component Unmount Cleanup ---
   // Ensures resources are released when the component is removed from the DOM.
   useEffect(() => {
     return () => {
-      console.log("SpeakingTest Component Unmounting. Cleaning up...");
       cleanupStream();
       if (audioURL) {
         // Revoke the object URL to free memory
         URL.revokeObjectURL(audioURL);
-        console.log("Revoked Object URL on unmount:", audioURL);
       }
     };
-  }, [cleanupStream, audioURL]); // Depend on cleanupStream and audioURL
+  }, [cleanupStream, audioURL]);
 
   // --- Request Microphone Permission & Initialize Recorder ---
   const requestMicPermissionAndInitRecorder = useCallback(async () => {
     // Prevent multiple requests
     if (testState !== "IDLE" && testState !== "ERROR") return;
 
-    console.log("Requesting microphone permission...");
     setTestState("REQUESTING_PERMISSION");
-    setErrorMessage(null); // Clear previous errors
+    setErrorMessage(null);
 
     // --- Check for MediaDevices support ---
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error("getUserMedia not supported on this browser.");
-      setErrorMessage("Trình duyệt của bạn không hỗ trợ ghi âm."); // <-- TRANSLATED (Removed English)
+      setErrorMessage("Trình duyệt của bạn không hỗ trợ ghi âm.");
       setTestState("ERROR");
       return;
     }
@@ -105,8 +98,7 @@ const SpeakingTest: React.FC = () => {
         audio: true,
         video: false,
       });
-      streamRef.current = stream; // Store the stream
-      console.log("Microphone permission granted. Stream obtained.");
+      streamRef.current = stream;
 
       // --- Initialize MediaRecorder ---
       const options = { mimeType: "audio/webm" };
@@ -114,55 +106,50 @@ const SpeakingTest: React.FC = () => {
       try {
         recorder = new MediaRecorder(stream, options);
       } catch (e) {
-        console.warn("audio/webm not supported, trying default.", e);
         recorder = new MediaRecorder(stream);
       }
 
       mediaRecorder.current = recorder;
-      audioChunks.current = []; // Ensure chunks array is empty
+      audioChunks.current = [];
 
       // --- Event Handlers for MediaRecorder ---
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunks.current.push(event.data);
-          console.log("Audio chunk received, size:", event.data.size);
         }
       };
 
       recorder.onerror = (event: Event) => {
-        console.error("MediaRecorder Error:", event);
         setErrorMessage(
-          `Lỗi ghi âm: ${(event as any)?.error?.name || "Lỗi không xác định"}.`,
-        ); // <-- TRANSLATED (Removed English, translated 'Unknown error')
+          `Lỗi ghi âm: ${(event as any)?.error?.name || "Lỗi không xác định"}.`
+        );
         setTestState("ERROR");
-        cleanupStream(); // Clean up on recorder error
+        cleanupStream();
       };
 
       // --- Ready to Record ---
-      console.log("MediaRecorder initialized. Ready to record.");
       setTestState("READY");
     } catch (err: any) {
-      console.error("Error accessing microphone:", err);
-      let userMessage = "Không thể truy cập micro."; // <-- TRANSLATED (Removed English)
+      let userMessage = "Không thể truy cập micro.";
       if (
         err.name === "NotAllowedError" ||
         err.name === "PermissionDeniedError"
       ) {
         userMessage =
-          "Bạn đã từ chối quyền truy cập micro. Vui lòng cấp quyền trong cài đặt trình duyệt."; // <-- TRANSLATED (Removed English)
+          "Bạn đã từ chối quyền truy cập micro. Vui lòng cấp quyền trong cài đặt trình duyệt.";
       } else if (
         err.name === "NotFoundError" ||
         err.name === "DevicesNotFoundError"
       ) {
-        userMessage = "Không tìm thấy thiết bị micro nào."; // <-- TRANSLATED (Removed English)
+        userMessage = "Không tìm thấy thiết bị micro nào.";
       } else {
         userMessage = `Lỗi micro (${err.name}): ${err.message}`;
       }
       setErrorMessage(userMessage);
       setTestState("ERROR");
-      cleanupStream(); // Clean up if permission fails
+      cleanupStream();
     }
-  }, [testState, audioURL, questions, questionIndex, cleanupStream]); // Dependencies for the callback
+  }, [testState, audioURL, questions, questionIndex, cleanupStream]);
 
   // --- Format API Response ---
   const formatApiResponse = (response: string): string => {
@@ -173,31 +160,25 @@ const SpeakingTest: React.FC = () => {
   // --- Control Functions ---
   const startRecording = () => {
     if (mediaRecorder.current && testState === "READY") {
-      console.log("Starting recording...");
-      setApiResponse(null); // Clear previous results
+      setApiResponse(null);
       setErrorMessage(null);
       if (audioURL) {
         // Revoke previous audio URL if starting new recording
         URL.revokeObjectURL(audioURL);
         setAudioURL(null);
-        console.log("Revoked previous Object URL on start recording.");
       }
       mediaRecorder.current.start(); // Start recording
       setTestState("RECORDING");
     } else if (testState === "IDLE" || testState === "ERROR") {
       requestMicPermissionAndInitRecorder();
-    } else {
-      console.warn(`Cannot start recording in state: ${testState}`);
     }
   };
 
   const stopRecording = () => {
     if (mediaRecorder.current && testState === "RECORDING") {
-      console.log("Stopping recording (manual trigger)...");
       mediaRecorder.current.stop();
 
       mediaRecorder.current.onstop = async () => {
-        console.log("Recording stopped. Sending audio to /transcribe API...");
         setTestState("PROCESSING");
 
         try {
@@ -227,26 +208,21 @@ const SpeakingTest: React.FC = () => {
           setAudioURL(URL.createObjectURL(audioBlob)); // Set audio URL for playback
           setTestState("SHOWING_RESULT");
         } catch (error) {
-          console.error("Error during API call:", error);
           setErrorMessage("Đã xảy ra lỗi khi gửi dữ liệu đến API.");
           setTestState("ERROR");
         } finally {
           audioChunks.current = []; // Clear chunks for the next recording
         }
       };
-    } else {
-      console.warn(`Cannot stop recording in state: ${testState}`);
     }
   };
 
   // --- Navigation Between Questions ---
   const handleNextQuestion = () => {
-    console.log("Handling Next Question / Resetting...");
     cleanupStream();
 
     if (audioURL) {
       URL.revokeObjectURL(audioURL);
-      console.log("Revoked Object URL on next question:", audioURL);
     }
 
     setApiResponse(null);
@@ -256,9 +232,7 @@ const SpeakingTest: React.FC = () => {
     if (questions && questionIndex + 1 < questions.length) {
       setQuestionIndex((prev) => prev + 1);
       setTestState("IDLE");
-      console.log("Moving to next question, index:", questionIndex + 1);
     } else {
-      console.log("End of questions for this topic. Navigating back.");
       navigate("/speaking-topics");
     }
   };
@@ -281,7 +255,7 @@ const SpeakingTest: React.FC = () => {
       case "REQUESTING_PERMISSION":
         return {
           text: "Đang yêu cầu quyền...",
-          onClick: () => {},
+          onClick: () => { },
           disabled: true,
           loading: true,
         };
@@ -302,7 +276,7 @@ const SpeakingTest: React.FC = () => {
       case "PROCESSING":
         return {
           text: "処理中... (Đang xử lý...)",
-          onClick: () => {},
+          onClick: () => { },
           disabled: true,
           loading: true,
         }; // <-- TRANSLATED
@@ -341,7 +315,7 @@ const SpeakingTest: React.FC = () => {
       default:
         return {
           text: "状態不明 (Trạng thái Không xác định)",
-          onClick: () => {},
+          onClick: () => { },
           disabled: true,
           loading: false,
         }; // <-- TRANSLATED
@@ -462,13 +436,12 @@ const SpeakingTest: React.FC = () => {
               onClick={buttonProps.onClick}
               disabled={buttonProps.disabled || buttonProps.loading}
               className={`px-6 py-3 rounded-lg text-white font-semibold transition-all duration-200 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2 min-w-[200px]
-                                ${
-                                  buttonProps.disabled || buttonProps.loading
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : testState === "RECORDING"
-                                      ? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
-                                      : "bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50"
-                                }`}
+                                ${buttonProps.disabled || buttonProps.loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : testState === "RECORDING"
+                    ? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
+                    : "bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50"
+                }`}
             >
               {buttonProps.loading && <FontAwesomeIcon icon={faSpinner} spin />}
               <span>{buttonProps.text}</span>
