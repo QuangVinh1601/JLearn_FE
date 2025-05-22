@@ -71,21 +71,20 @@ const SpeakingTest: React.FC = () => {
     return () => {
       cleanupStream();
       if (audioURL) {
-        // Revoke the object URL to free memory
+
         URL.revokeObjectURL(audioURL);
       }
     };
   }, [cleanupStream, audioURL]);
 
-  // --- Request Microphone Permission & Initialize Recorder ---
+
   const requestMicPermissionAndInitRecorder = useCallback(async () => {
-    // Prevent multiple requests
+
     if (testState !== "IDLE" && testState !== "ERROR") return;
 
     setTestState("REQUESTING_PERMISSION");
     setErrorMessage(null);
 
-    // --- Check for MediaDevices support ---
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setErrorMessage("Trình duyệt của bạn không hỗ trợ ghi âm.");
       setTestState("ERROR");
@@ -93,14 +92,13 @@ const SpeakingTest: React.FC = () => {
     }
 
     try {
-      // --- Request Audio Stream ---
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: false,
       });
       streamRef.current = stream;
 
-      // --- Initialize MediaRecorder ---
       const options = { mimeType: "audio/webm" };
       let recorder: MediaRecorder;
       try {
@@ -112,7 +110,7 @@ const SpeakingTest: React.FC = () => {
       mediaRecorder.current = recorder;
       audioChunks.current = [];
 
-      // --- Event Handlers for MediaRecorder ---
+
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunks.current.push(event.data);
@@ -151,10 +149,45 @@ const SpeakingTest: React.FC = () => {
     }
   }, [testState, audioURL, questions, questionIndex, cleanupStream]);
 
-  // --- Format API Response ---
   const formatApiResponse = (response: string): string => {
-    // Replace line breaks with HTML <br> tags for better display
-    return response.replace(/\n/g, "<br>").replace(/• /g, "• ");
+
+    const sections = response.split('\n\n');
+
+    // Format each section with proper styling
+    return sections.map(section => {
+      if (section.startsWith('[TRANSCRIPTION]')) {
+        return `<div class="mb-4">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">Bản ghi âm:</h3>
+          <p class="text-gray-700">${section.replace('[TRANSCRIPTION]', '').trim().replace(/\n/g, '<br>')}</p>
+        </div>`;
+      }
+      if (section.startsWith('[PHÂN TÍCH LỖI DÙNG TỪ]')) {
+        return `<div class="mb-4">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">Phân tích lỗi dùng từ:</h3>
+          <div class="text-gray-700">${section.replace('[PHÂN TÍCH LỖI DÙNG TỪ]', '').trim().replace(/\n/g, '<br>')}</div>
+        </div>`;
+      }
+      if (section.startsWith('[PHÂN TÍCH NGỮ PHÁP]')) {
+        return `<div class="mb-4">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">Phân tích ngữ pháp:</h3>
+          <div class="text-gray-700">${section.replace('[PHÂN TÍCH NGỮ PHÁP]', '').trim().replace(/\n/g, '<br>')}</div>
+        </div>`;
+      }
+      if (section.startsWith('[ĐỀ XUẤT SỬA LỖI]')) {
+        return `<div class="mb-4">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">Đề xuất sửa lỗi:</h3>
+          <div class="text-gray-700">${section.replace('[ĐỀ XUẤT SỬA LỖI]', '').trim().replace(/\n/g, '<br>')}</div>
+        </div>`;
+      }
+      if (section.startsWith('[KẾT LUẬN]')) {
+        return `<div class="mb-4">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">Kết luận:</h3>
+          <div class="text-gray-700">${section.replace('[KẾT LUẬN]', '').trim().replace(/\n/g, '<br>')}</div>
+        </div>`;
+      }
+      // Các đoạn khác: thay \n bằng <br>
+      return `<p class="text-gray-700">${section.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
   };
 
   // --- Control Functions ---
@@ -176,14 +209,30 @@ const SpeakingTest: React.FC = () => {
 
   const stopRecording = () => {
     if (mediaRecorder.current && testState === "RECORDING") {
-      mediaRecorder.current.stop();
-
+      // Đặt onstop trước khi gọi stop()
       mediaRecorder.current.onstop = async () => {
         setTestState("PROCESSING");
 
+        // Check if any audio was recorded
+        if (!audioChunks.current.length) {
+          setErrorMessage("Không có âm thanh nào được ghi lại. Vui lòng thử lại.");
+          setTestState("ERROR");
+          return;
+        }
+
+        const mimeType = mediaRecorder.current?.mimeType || "audio/webm";
+        const audioBlob = new Blob(audioChunks.current, { type: mimeType });
+
+        // Debug: Log blob size
+        console.log("Audio blob size (bytes):", audioBlob.size);
+
+        if (audioBlob.size === 0) {
+          setErrorMessage("Không có âm thanh nào được ghi lại (file rỗng). Vui lòng thử lại.");
+          setTestState("ERROR");
+          return;
+        }
+
         try {
-          const mimeType = mediaRecorder.current?.mimeType || "audio/webm";
-          const audioBlob = new Blob(audioChunks.current, { type: mimeType });
           const audioFile = new File(
             [audioBlob],
             `recording_${Date.now()}.${mimeType.split("/")[1] || "webm"}`,
@@ -198,9 +247,9 @@ const SpeakingTest: React.FC = () => {
           const formattedAnalysis = formatApiResponse(
             data.analysis_result || "Không có phân tích nào được trả về.",
           );
-          setApiResponse(
-            `Đây là đoạn văn bản được ghi âm mà chúng tôi phân tích được: ${transcription}<br><br> ${formattedAnalysis}`,
-          );
+          // setApiResponse(
+          //   `Đây là đoạn văn bản được ghi âm mà chúng tôi phân tích được: ${transcription}<br><br> ${formattedAnalysis}`,
+          // );
           setAudioURL(URL.createObjectURL(audioBlob)); // Set audio URL for playback
           setTestState("SHOWING_RESULT");
         } catch (error) {
@@ -210,6 +259,7 @@ const SpeakingTest: React.FC = () => {
           audioChunks.current = []; // Clear chunks for the next recording
         }
       };
+      mediaRecorder.current.stop();
     }
   };
 
@@ -362,7 +412,7 @@ const SpeakingTest: React.FC = () => {
 
       {questions.length > 0 && testState !== "NO_QUESTIONS" && (
         <>
-          <div className="w-full max-w-2xl mb-6 p-4 bg-white rounded-lg shadow-md flex flex-col gap-4 min-h-[250px] border border-gray-200">
+          <div className="w-full max-w-[50%] mb-6 p-4 bg-white rounded-lg shadow-md flex flex-col gap-0 min-h-[200px] border border-gray-200">
             <div className="flex justify-start">
               <p className="bg-[#f04532]/10 text-[#f04532] p-3 rounded-lg rounded-bl-none max-w-[85%] shadow-sm text-base md:text-lg">
                 {questions[questionIndex]}

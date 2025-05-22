@@ -1,10 +1,9 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "http://34.44.254.240:8080",
-
-  // python: "http://34.44.254.240:5000", // Added Python backend URL
-python: "http://localhost:5000",
+  dotnet: "https://japstudy.id.vn",
+  python: "https://japstudy.id.vn", 
+  // python: "http://127.0.0.1:5000",
 };
 
 // Hàm refresh token
@@ -291,11 +290,12 @@ export const transcribeAudio = async (audioFile, additionalText) => {
   formData.append("audio", audioFile);
   formData.append("additional_text", additionalText);
 
-  return await request("python", "/transcribe", { // Updated to use Python backend
+  return await request("python", "/api/ml/transcribe", {
     method: "POST",
     data: formData,
     headers: {
-      "Content-Type": "multipart/form-data",
+      // "Content-Type": "multipart/form-data",
+      "Accept": "application/json",
     },
   });
 };
