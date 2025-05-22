@@ -2,8 +2,10 @@ import axios from "axios";
 
 const BASE_URLS = {
   dotnet: "https://japstudy.id.vn",
-  python: "https://japstudy.id.vn", 
-  // python: "http://127.0.0.1:5000",
+  // python: "https://japstudy.id.vn",
+  // dotnet: "http://34.44.254.240:8080",
+  python: "http://127.0.0.1:5000",
+  // python: "http://34.44.254.240:5000",
 };
 
 // Hàm refresh token
@@ -78,7 +80,7 @@ export const loginUser = async (email, password) => {
     response.accessToken ||
     response.data?.token ||
     response.data?.accessToken;
-   let role;
+  let role;
   if (email === "admin@gmail.com") {
     role = "admin";
   } else {
@@ -141,13 +143,13 @@ export const createPersonalFlashcardList = async (listName, description) => {
 export const getFlashcards = async (listId) => {
   try {
     console.log(`Fetching flashcards for list ID: ${listId}`);
-    
+
     const response = await request("dotnet", `/api/flashcards/all/${listId}`, {
       method: "GET",
     });
-    
+
     console.log("Raw response from getFlashcards:", response);
-    
+
     // Check if response has data property and it's an array
     if (response && response.data && Array.isArray(response.data)) {
       return response.data.map((item) => ({
@@ -174,7 +176,7 @@ export const getFlashcards = async (listId) => {
         personalListID: item.personalListID
       }));
     }
-    
+
     return [];
   } catch (error) {
     console.error("Error in getFlashcards:", error);
@@ -186,9 +188,9 @@ export const getPersonalFlashcardLists = async () => {
   const response = await request("dotnet", "/api/personal-flashcard/user", {
     method: "GET",
   });
-  
+
   console.log("Raw response from getPersonalFlashcardLists:", response);
-  
+
   // Check if response has data property and it's an array
   if (response && response.data && Array.isArray(response.data)) {
     return response.data.map((item) => ({
@@ -207,7 +209,7 @@ export const getPersonalFlashcardLists = async () => {
       flashcards: item.flashcards
     }));
   }
-  
+
   return [];
 };
 
@@ -265,7 +267,7 @@ export const deleteFlashcard = async (flashcardId) => {
 
 // Tạo ZaloPay order
 export const createZaloPayOrder = async (amount, description, userId, collectionId) => {
-  return await request("python", "/create_order", { // Updated to use Python backend
+  return await request("python", "/api/ml/create_order", { // Updated to use Python backend
     method: "POST",
     data: {
       amount,
@@ -278,7 +280,7 @@ export const createZaloPayOrder = async (amount, description, userId, collection
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/order_status", { // Updated to use Python backend
+  return await request("python", "/api/ml/order_status", { // Updated to use Python backend
     method: "GET",
     params: { apptransid },
   });
@@ -302,14 +304,14 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("python", "/get_collections", { // Using Python backend
+  return await request("python", "/api/ml/get_collections", { // Using Python backend
     method: "GET",
     params: { user_id: userId },
   });
 };
 
 export const getAdminMetrics = async () => {
-  return await request("python", "/admin/metrics", {
+  return await request("python", "/api/ml/admin/metrics", {
     method: "GET",
     withCredentials: true,
   });

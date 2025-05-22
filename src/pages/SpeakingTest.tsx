@@ -241,15 +241,13 @@ const SpeakingTest: React.FC = () => {
 
           // Call the transcribe API
           const data = await transcribeAudio(audioFile, questions[questionIndex] || "");
-
+          console.log("API response:", data);
           const transcription =
             data.transcription || "Không có bản ghi âm nào được trả về.";
           const formattedAnalysis = formatApiResponse(
             data.analysis_result || "Không có phân tích nào được trả về.",
           );
-          // setApiResponse(
-          //   `Đây là đoạn văn bản được ghi âm mà chúng tôi phân tích được: ${transcription}<br><br> ${formattedAnalysis}`,
-          // );
+          setApiResponse(formattedAnalysis); // <-- Hiển thị analysis_result đã format
           setAudioURL(URL.createObjectURL(audioBlob)); // Set audio URL for playback
           setTestState("SHOWING_RESULT");
         } catch (error) {
