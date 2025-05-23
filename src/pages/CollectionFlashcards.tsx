@@ -10,10 +10,18 @@ import {
   deletePersonalFlashcardList,
 } from "../api/apiClient";
 
+// Hàm giải mã cookie
+const getCookie = (name: string): string | null => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+};
+
 function CollectionFlashcards() {
   const navigate = useNavigate();
   interface Collection {
-    id: any;
+    id: string; // Changed from any to string for better type safety
     title: string;
     description: string;
   }
@@ -23,20 +31,54 @@ function CollectionFlashcards() {
   const [newDescription, setNewDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Hàm lấy danh sách từ cookie nếu là khách
+  const getCollectionsFromCookie = () => {
+    const cookieData = getCookie("FlashcardList");
+    if (cookieData) {
+      try {
+        const parsedData = JSON.parse(decodeURIComponent(cookieData));
+        if (Array.isArray(parsedData)) {
+          return parsedData.map((item: any) => ({
+            id: item.ListID || item.listId,
+            title: item.ListName || item.listName,
+            description:
+              item.Description || item.description || "Không có mô tả",
+          }));
+        }
+      } catch (e) {
+        console.error("Lỗi giải mã cookie:", e);
+      }
+    }
+    return [];
+  };
+
   const fetchCollections = async () => {
-    try {
-      const result = await getPersonalFlashcardLists();
-      console.log("API Response:", result);
-      setCollections(
-        result.map((item: any) => ({
-          id: item.listId,
-          title: item.listName,
-          description: item.description || "No description available",
-        })),
-      );
-    } catch (error) {
-      console.error("Error fetching flashcard collections:", error);
-      setCollections([]);
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (!isLoggedIn) {
+      // Nếu là khách, lấy danh sách từ cookie
+      const guestCollections = getCollectionsFromCookie();
+      setCollections(guestCollections);
+    } else {
+      // Nếu đã đăng nhập, gọi API
+      try {
+        const result = await getPersonalFlashcardLists();
+        console.log("API Response:", result);
+        setCollections(
+          result.map((item: any) => ({
+            id: item.listId,
+            title: item.listName,
+            description: item.description || "Không có mô tả",
+          })),
+        );
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách flashcard:", error);
+        setCollections([]);
+        toast.error("Không thể lấy danh sách. Vui lòng thử lại.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
     }
   };
 
@@ -55,17 +97,34 @@ function CollectionFlashcards() {
         newDescription,
       );
       console.log("New collection created:", result);
-      toast.success("Tạo bộ sưu tập thành công!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+
+      // Sau khi tạo, cập nhật danh sách (cho cả khách và người dùng)
+      if (result) {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        if (!isLoggedIn) {
+          // Nếu là khách, thêm vào danh sách từ cookie
+          const currentCollections = getCollectionsFromCookie();
+          const newCollection = {
+            id: result.listId,
+            title: result.listName,
+            description: result.description,
+          };
+          setCollections([...currentCollections, newCollection]);
+        } else {
+          // Nếu đã đăng nhập, gọi lại API để làm mới
+          fetchCollections();
+        }
+        toast.success("Tạo bộ sưu tập thành công!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
       setNewListName("");
       setNewDescription("");
       setShowModal(false);
-      fetchCollections();
     } catch (error) {
-      console.error("Error creating new collection:", error);
-      toast.error("Failed to create collection. Please try again.", {
+      console.error("Lỗi khi tạo bộ sưu tập:", error);
+      toast.error("Không thể tạo bộ sưu tập. Vui lòng thử lại.", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -74,7 +133,8 @@ function CollectionFlashcards() {
     }
   };
 
-  const handleDeleteCollection = async (listId: any) => {
+  const handleDeleteCollection = async (listId: string) => {
+    // Changed from any to string for better type safety
     if (!window.confirm("Bạn có chắc muốn xóa bộ sưu tập này?")) return;
 
     try {
@@ -85,7 +145,7 @@ function CollectionFlashcards() {
         position: "top-right",
         autoClose: 3000,
       });
-      fetchCollections();
+      fetchCollections(); // Làm mới danh sách
     } catch (error) {
       console.error("Lỗi khi xóa bộ sưu tập:", error);
       toast.error("Không thể xóa bộ sưu tập. Vui lòng thử lại.", {

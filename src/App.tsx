@@ -28,6 +28,8 @@ import AdminLayout from "./admin/components/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminAccount from "./admin/pages/pagesOfAdminUser/AdminAccount";
 import EditUser from "./admin/pages/pagesOfAdminUser/EditUser";
+import AdminAds from "./admin/pages/pagesOfAds/AdminAds";
+import EditAd from "./admin/pages/pagesOfAds/EditAd";
 import AdminFlashcardList from "./admin/pages/pagesOfFlashcard/AdminFlashcardList";
 import AdminVideo from "./admin/pages/pagesOfVideo/AdminVideo";
 import EditVideo from "./admin/pages/pagesOfVideo/EditVideo";
@@ -40,7 +42,6 @@ import SpeakingTest from "./pages/SpeakingTest";
 import NotFound from "./pages/NotFound";
 import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
 import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
-
 
 const ProtectedRoute: React.FC<{
   children: JSX.Element;
@@ -99,11 +100,7 @@ function App() {
             <Route path="/collection" element={<CollectionFlashcards />} />
             <Route
               path="/create-flash-card/:id"
-              element={
-                <ProtectedRoute>
-                  <CreateFlashcards />
-                </ProtectedRoute>
-              }
+              element={<CreateFlashcards />}
             />
             <Route
               path="/update-profile"
@@ -209,6 +206,30 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <EditUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="ads"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminAds />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="ads/add"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditAd />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="ads/edit/:id"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditAd />
                   </ProtectedRoute>
                 }
               />
