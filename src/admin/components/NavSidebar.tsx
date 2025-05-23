@@ -10,6 +10,7 @@ import {
   faVideo,
   faEnvelope,
   faBell,
+  faAd,
   faGear,
   faSignOut,
   faBars,
@@ -79,6 +80,17 @@ const NavSidebar = () => {
             >
               <FontAwesomeIcon icon={faClone} className="mr-2" /> Quản lý
               flashcard
+            </NavLink>
+            <NavLink
+              to="/admin/ads"
+              className={({ isActive }) =>
+                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
+                  isActive ? "bg-gray-300" : ""
+                }`
+              }
+              onClick={() => setIsOpen(false)}
+            >
+              <FontAwesomeIcon icon={faAd} className="mr-2" /> Quản lý quảng cáo
             </NavLink>
             <NavLink
               to="/admin/video"

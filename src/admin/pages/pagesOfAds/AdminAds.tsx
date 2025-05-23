@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  getLearningContents,
-  deleteLearningContent,
-} from "../../../api/apiClient";
+import { getAds, deleteAd } from "../../../api/apiClient";
 
-interface VideoContent {
-  id: string;
-  title: string;
-  urlVideo: string;
-  urlAd: string;
-  createdAt: string;
-  uploadedBy: string;
+interface Ad {
+  adID: string;
+  adTitle: string;
+  urlImage?: string;
+  PublicImageId?: string | null;
+  creator?: string | null;
+  createdBy?: string;
+  learningContentsAds?: string | null;
 }
 
-const AdminVideo: React.FC = () => {
-  const [videoContents, setVideoContents] = useState<VideoContent[]>([]);
+const AdminAd: React.FC = () => {
+  const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,76 +21,71 @@ const AdminVideo: React.FC = () => {
   const [itemsPerPage] = useState(5);
 
   useEffect(() => {
-    const fetchVideoContents = async () => {
+    const fetchAds = async () => {
       try {
-        const response = await getLearningContents();
-        console.log("Fetched Video Contents:", response.data); // Log the fetched data
-        const data = response.data;
-        setVideoContents(Array.isArray(data) ? data : []);
+        const response = await getAds();
+        console.log("Fetched Ads Response:", response); // Kiểm tra toàn bộ phản hồi
+        const data = response.data; // Truy cập mảng quảng cáo từ response.data
+        setAds(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách video:", error);
-        setVideoContents([]);
+        console.error("Lỗi khi lấy danh sách quảng cáo:", error);
+        setAds([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchVideoContents();
+    fetchAds();
 
-    const updatedContent = (location.state as { updatedContent: VideoContent })
-      ?.updatedContent;
-    if (updatedContent) {
-      setVideoContents((prevContents) => {
-        const exists = prevContents.some(
-          (content) => content.id === updatedContent.id,
-        );
+    const updatedAd = (location.state as { updatedAd: Ad })?.updatedAd;
+    if (updatedAd) {
+      setAds((prevAds) => {
+        const exists = prevAds.some((ad) => ad.adID === updatedAd.adID);
         if (exists) {
-          return prevContents.map((content) =>
-            content.id === updatedContent.id ? updatedContent : content,
+          return prevAds.map((ad) =>
+            ad.adID === updatedAd.adID ? updatedAd : ad,
           );
         } else {
-          return [...prevContents, updatedContent];
+          return [...prevAds, updatedAd];
         }
       });
     }
   }, [location.state]);
 
   const handleAdd = () => {
-    navigate("/admin/video/add");
+    navigate("/admin/ads/add");
   };
 
-  const handleEdit = (content: VideoContent) => {
-    navigate(`/admin/videos/edit/${content.id}`, { state: { content } });
+  const handleEdit = (ad: Ad) => {
+    navigate(`/admin/ad/edit/${ad.adID}`, { state: { ad } });
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa video này?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa quảng cáo này?")) {
       try {
-        await deleteLearningContent(id);
-        setVideoContents((prevContents) =>
-          prevContents.filter((content) => content.id !== id),
-        );
-        alert("Xóa video thành công!");
+        await deleteAd(id);
+        setAds((prevAds) => prevAds.filter((ad) => ad.adID !== id));
+        alert("Xóa quảng cáo thành công!");
       } catch (error) {
-        console.error("Lỗi khi xóa video:", error);
-        alert("Xóa video thất bại!");
+        console.error("Lỗi khi xóa quảng cáo:", error);
+        alert("Xóa quảng cáo thất bại!");
       }
     }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentVideos = videoContents.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(videoContents.length / itemsPerPage);
+  const currentAds = ads.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(ads.length / itemsPerPage);
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-xl sm:text-2xl font-bold">Quản lý Video Học Tập</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">Quản lý Quảng Cáo</h1>
         <button
           onClick={handleAdd}
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm sm:text-base"
         >
-          Thêm Video
+          Thêm Quảng Cáo
         </button>
       </div>
 
@@ -100,9 +93,9 @@ const AdminVideo: React.FC = () => {
 
       {!loading && (
         <>
-          {currentVideos.length === 0 ? (
+          {currentAds.length === 0 ? (
             <div className="text-center text-gray-500">
-              Không có video nào để hiển thị.
+              Không có quảng cáo nào để hiển thị.
             </div>
           ) : (
             <>
@@ -117,7 +110,7 @@ const AdminVideo: React.FC = () => {
                         Tiêu đề
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Video
+                        File
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Thao tác
@@ -125,23 +118,23 @@ const AdminVideo: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {currentVideos.map((content, index) => (
-                      <tr key={content.id} className="hover:bg-gray-50">
+                    {currentAds.map((ad, index) => (
+                      <tr key={ad.adID} className="hover:bg-gray-50">
                         <td className="px-4 py-3 whitespace-nowrap text-sm">
-                          {(currentPage - 1) * itemsPerPage + index + 1}
+                          {index + 1}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm">
-                          {content.title}
+                          {ad.adTitle}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm">
-                          {content.urlVideo ? (
+                          {ad.urlImage ? (
                             <a
-                              href={content.urlVideo}
+                              href={ad.urlImage}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-500 hover:underline"
                             >
-                              {content.urlVideo}
+                              {ad.urlImage}
                             </a>
                           ) : (
                             "Không có file"
@@ -150,13 +143,13 @@ const AdminVideo: React.FC = () => {
                         <td className="px-4 py-3 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
                             <button
-                              onClick={() => handleEdit(content)}
+                              onClick={() => handleEdit(ad)}
                               className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs sm:text-sm"
                             >
                               Sửa
                             </button>
                             <button
-                              onClick={() => handleDelete(content.id)}
+                              onClick={() => handleDelete(ad.adID)}
                               className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs sm:text-sm"
                             >
                               Xóa
@@ -210,4 +203,4 @@ const AdminVideo: React.FC = () => {
   );
 };
 
-export default AdminVideo;
+export default AdminAd;
