@@ -28,6 +28,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "date-fns": "^4.1.0",
     "fortawesome": "^0.0.1-security",
+    "framer-motion": "^12.12.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.453.0",
     "md5": "^2.3.0",
