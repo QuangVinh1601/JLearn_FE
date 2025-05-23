@@ -1,45 +1,26 @@
-// src/pages/CourseList.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import InfoModal from "../components/Purchase/InfoModal";
 import { Product, ProductType, CustomerInfo } from "../types/purchase";
-import { fetchProducts } from "../services/api/apiPurchase";
-
-// Retrieves an array of purchased PRODUCT IDs from localStorage
-export const getPurchasedProductIds = (): string[] => {
-  const purchased = localStorage.getItem("purchasedCourses");
-  return purchased ? JSON.parse(purchased) : [];
-};
-
-// Saves an array of purchased PRODUCT IDs to localStorage
-export const savePurchasedProductIds = (productIds: string[]) => {
-  localStorage.setItem("purchasedCourses", JSON.stringify(productIds));
-};
+import ImgCourse from "../assets/images/khoahoc.jpeg";
+import ImgFlahcard from "../assets/images/flashcard.png";
 
 const CourseList: React.FC = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  // This state will store the IDs of purchased products, synced with localStorage
-  const [purchasedProductIds, setPurchasedProductIds] = useState<string[]>(
-    getPurchasedProductIds(),
-  );
+  const [purchasedProductIds, setPurchasedProductIds] = useState<string[]>(getPurchasedProductIds());
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const [selectedProductForPurchase, setSelectedProductForPurchase] =
-    useState<Product | null>(null);
+  const [selectedProductForPurchase, setSelectedProductForPurchase] = useState<Product | null>(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState<boolean>(false);
-  console.log("Current purchasedProductIds state:", purchasedProductIds);
 
   useEffect(() => {
     const loadProducts = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const data = await fetchProducts();
         setAllProducts(data);
-        // purchasedProductIds is already initialized from localStorage via useState.
-        // The storage event listener will handle updates from other tabs/sources.
       } catch (error) {
         console.error("Lỗi tải sản phẩm:", error);
       } finally {
@@ -47,15 +28,13 @@ const CourseList: React.FC = () => {
       }
     };
     loadProducts();
-  }, []); // Empty dependency array, runs once on mount
+  }, []);
 
   const handlePurchaseOrEnter = (product: Product) => {
     if (product.type === ProductType.Course && product.level) {
       const isPurchased = purchasedProductIds.includes(product.id);
       const isFree = product.price === 0;
-
       if (isFree || isPurchased) {
-        // navigate(`/course/${courseLevel.toLowerCase()}/lessons`);
         navigate(`/course/${product.level.toLowerCase()}/lessons`);
       } else {
         if (!isLoggedIn) {
@@ -67,13 +46,10 @@ const CourseList: React.FC = () => {
         setIsInfoModalOpen(true);
       }
     } else if (product.type === ProductType.FlashcardCollection) {
-      // Flashcard purchases are tracked by their IDs
       if (purchasedProductIds.includes(product.id)) {
         alert(`Bạn đã sở hữu bộ flashcard: ${product.title}`);
-        // Example: navigate(`/flashcards/view/${product.id}`);
         return;
       }
-
       if (!isLoggedIn) {
         alert("Vui lòng đăng nhập để mua flashcard.");
         navigate("/login");
@@ -81,69 +57,50 @@ const CourseList: React.FC = () => {
       }
       setSelectedProductForPurchase(product);
       setIsInfoModalOpen(true);
-    } else {
-      console.warn(
-        "Unhandled product type or missing level for course:",
-        product,
-      );
     }
   };
 
-  const handlePurchaseFlowComplete = (
-    success: boolean,
-    customerInfo?: CustomerInfo,
-  ) => {
+  const handlePurchaseFlowComplete = (success: boolean) => {
     setIsInfoModalOpen(false);
     if (success && selectedProductForPurchase) {
       const newProductId = selectedProductForPurchase.id;
       if (!purchasedProductIds.includes(newProductId)) {
         const updatedIds = [...purchasedProductIds, newProductId];
-        savePurchasedProductIds(updatedIds); // Save to localStorage
-        setPurchasedProductIds(updatedIds); // Update local state
+        savePurchasedProductIds(updatedIds);
+        setPurchasedProductIds(updatedIds);
       }
-
-      if (
-        selectedProductForPurchase.type === ProductType.Course &&
-        selectedProductForPurchase.level
-      ) {
-        alert(
-          `Đã mua thành công khóa học ${selectedProductForPurchase.level}! Bạn có thể vào học ngay.`,
-        );
-      } else if (
-        selectedProductForPurchase.type === ProductType.FlashcardCollection
-      ) {
+      if (selectedProductForPurchase.type === ProductType.Course && selectedProductForPurchase.level) {
+        alert(`Đã mua thành công khóa học ${selectedProductForPurchase.level}! Bạn có thể vào học ngay.`);
+      } else if (selectedProductForPurchase.type === ProductType.FlashcardCollection) {
         alert(`Đã mua thành công ${selectedProductForPurchase.title}!`);
       }
-      window.dispatchEvent(new Event("storage"));
-    } else if (!success && selectedProductForPurchase) {
-      console.log(
-        "Purchase flow cancelled or failed for:",
-        selectedProductForPurchase.title,
-      );
+      window.dispatchEvent(new Event('storage'));
     }
     setSelectedProductForPurchase(null);
   };
 
-  // Listen for changes in localStorage (e.g., from other tabs)
   useEffect(() => {
     const syncPurchases = () => {
-      const idsFromStorage = getPurchasedProductIds();
-      setPurchasedProductIds(idsFromStorage);
-      console.log(
-        "Synced purchasedProductIds from storage event:",
-        idsFromStorage,
-      );
+      setPurchasedProductIds(getPurchasedProductIds());
     };
-    window.addEventListener("storage", syncPurchases);
-    return () => window.removeEventListener("storage", syncPurchases);
-  }, []); // Empty dependency array, sets up listener once
+    window.addEventListener('storage', syncPurchases);
+    return () => window.removeEventListener('storage', syncPurchases);
+  }, []);
 
-  const courseProducts = allProducts.filter(
-    (p) => p.type === ProductType.Course,
-  );
-  const flashcardProducts = allProducts.filter(
-    (p) => p.type === ProductType.FlashcardCollection,
-  );
+  const courseProducts = allProducts.filter(p => p.type === ProductType.Course);
+  const flashcardProducts = allProducts.filter(p => p.type === ProductType.FlashcardCollection);
+  const purchasedCourses = courseProducts.filter(course => purchasedProductIds.includes(course.id));
+  const notPurchasedCourses = courseProducts.filter(course => !purchasedProductIds.includes(course.id));
+  const purchasedFlashcards = flashcardProducts.filter(fc => purchasedProductIds.includes(fc.id));
+  const notPurchasedFlashcards = flashcardProducts.filter(fc => !purchasedProductIds.includes(fc.id));
+
+  // Thêm dữ liệu ví dụ cho nội dung khóa học
+  const courseContentExample: Record<string, { reading: number; listening: number; exercise: number; lessons: string[] }> = {
+    "N5": { reading: 10, listening: 8, exercise: 20, lessons: ["Giới thiệu bản thân", "Gia đình", "Thời gian", "Địa điểm", "Mua sắm"] },
+    "N4": { reading: 12, listening: 10, exercise: 25, lessons: ["Công việc", "Du lịch", "Sở thích", "Sức khỏe", "Giao tiếp cơ bản"] },
+    "N3": { reading: 15, listening: 12, exercise: 30, lessons: ["Tin tức", "Thư tín", "Thảo luận", "Phỏng vấn", "Báo cáo"] },
+    "N2": { reading: 18, listening: 15, exercise: 35, lessons: ["Bài báo chuyên sâu", "Hội nghị", "Phân tích", "Tranh luận", "Tổng hợp"] },
+  };
 
   if (loading) {
     return (
@@ -159,17 +116,15 @@ const CourseList: React.FC = () => {
         Nội dung học tập
       </h1>
 
-      {courseProducts.filter((course) =>
-        purchasedProductIds.includes(course.id),
-      ).length > 0 && (
+      {purchasedCourses.length > 0 && (
         <div className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-green-700">
             Khóa học đã mua
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courseProducts
-              .filter((course) => purchasedProductIds.includes(course.id))
-              .map((course) => (
+            {purchasedCourses.map((course) => {
+              const content = course.level ? courseContentExample[course.level] : undefined;
+              return (
                 <div
                   key={course.id}
                   className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
@@ -182,9 +137,24 @@ const CourseList: React.FC = () => {
                     />
                   )}
                   <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3 flex-grow">
-                    {course.description}
-                  </p>
+                  <p className="text-sm text-gray-600 mb-3 flex-grow">{course.description}</p>
+                  {content && (
+                    <>
+                      <ul className="text-xs text-gray-700 mb-2 list-disc list-inside">
+                        <li>Bài đọc: {content.reading}</li>
+                        <li>Bài nghe: {content.listening}</li>
+                        <li>Bài tập: {content.exercise}</li>
+                      </ul>
+                      <div className="mb-3">
+                        <span className="font-semibold text-xs text-gray-800">Nội dung bài học:</span>
+                        <ul className="text-xs text-gray-700 list-disc list-inside ml-3">
+                          {content.lessons.map((lesson, idx) => (
+                            <li key={idx}>{lesson}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  )}
                   <div className="text-center mt-auto">
                     <div className="text-lg font-bold mb-3 text-red-600">
                       {`${course.price.toLocaleString()} đ`}
@@ -197,7 +167,39 @@ const CourseList: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {purchasedFlashcards.length > 0 && (
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4 text-green-700">
+            Bộ Flashcard đã mua
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {purchasedFlashcards.map((fc) => (
+              <div
+                key={fc.id}
+                className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
+              >
+                {fc.imageUrl && <img src={fc.imageUrl} alt={fc.title} className="w-full h-40 object-contain mb-3 rounded" />}
+                <h3 className="font-semibold text-lg mb-1">{fc.title}</h3>
+                <p className="text-sm text-gray-600 mb-3 flex-grow">{fc.description}</p>
+                <div className="text-center mt-auto">
+                  <div className="text-lg font-bold mb-3 text-red-600">
+                    {`${fc.price.toLocaleString()} đ`}
+                  </div>
+                  <button
+                    className="w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out bg-green-500 hover:bg-green-600 text-white"
+                    disabled
+                  >
+                    Đã sở hữu
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -207,63 +209,60 @@ const CourseList: React.FC = () => {
           Khóa học Luyện Thi
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {courseProducts
-            .filter((course) => !purchasedProductIds.includes(course.id))
-            .map((course) => {
-              const isFree = course.price === 0;
-              const canAccess = isFree;
-
-              return (
-                <div
-                  key={course.id}
-                  className={`rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full`}
-                >
-                  {course.imageUrl && (
-                    <img
-                      src={course.imageUrl}
-                      alt={course.title}
-                      className="w-full h-40 object-contain mb-3 rounded"
-                    />
-                  )}
-                  <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3 flex-grow">
-                    {course.description}
-                  </p>
-                  <div className="text-center mt-auto">
-                    <div className="text-lg font-bold mb-3 text-red-600">
-                      {`${course.price.toLocaleString()} đ`}
+          {notPurchasedCourses.map((course) => {
+            const isFree = course.price === 0;
+            const content = course.level ? courseContentExample[course.level] : undefined;
+            return (
+              <div
+                key={course.id}
+                className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
+              >
+                {course.imageUrl && <img src={course.imageUrl} alt={course.title} className="w-full h-40 object-contain mb-3 rounded" />}
+                <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
+                <p className="text-sm text-gray-600 mb-3 flex-grow">{course.description}</p>
+                {content && (
+                  <>
+                    <ul className="text-xs text-gray-700 mb-2 list-disc list-inside">
+                      <li>Bài đọc: {content.reading}</li>
+                      <li>Bài nghe: {content.listening}</li>
+                      <li>Bài tập: {content.exercise}</li>
+                    </ul>
+                    <div className="mb-3">
+                      <span className="font-semibold text-xs text-gray-800">Nội dung bài học:</span>
+                      <ul className="text-xs text-gray-700 list-disc list-inside ml-3">
+                        {content.lessons.map((lesson, idx) => (
+                          <li key={idx}>{lesson}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <button
-                      onClick={() => handlePurchaseOrEnter(course)}
-                      className="w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out bg-red-500 hover:bg-red-600 text-white"
-                    >
-                      {canAccess ? "Vào học" : "Mua ngay"}
-                    </button>
+                  </>
+                )}
+                <div className="text-center mt-auto">
+                  <div className="text-lg font-bold mb-3 text-red-600">
+                    {`${course.price.toLocaleString()} đ`}
                   </div>
+                  <button
+                    onClick={() => handlePurchaseOrEnter(course)}
+                    className="w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out bg-red-500 hover:bg-red-600 text-white"
+                  >
+                    {isFree ? "Vào học" : "Mua ngay"}
+                  </button>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </div>
-        {courseProducts.filter(
-          (course) => !purchasedProductIds.includes(course.id),
-        ).length === 0 &&
-          !loading && (
-            <p className="text-gray-600">
-              Bạn đã mua tất cả các khóa học hiện có.
-            </p>
-          )}
+        {notPurchasedCourses.length === 0 && !loading && (
+          <p className="text-gray-600">Bạn đã mua tất cả các khóa học hiện có.</p>
+        )}
       </div>
 
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-blue-700">
-          Bộ Sưu Tập Flashcard
-        </h2>
-        {flashcardProducts.length > 0 ? (
+        <h2 className="text-2xl font-semibold mb-4 text-blue-700">Bộ Sưu Tập Flashcard</h2>
+        {notPurchasedFlashcards.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {flashcardProducts.map((product) => {
-              const isFlashcardPurchased = purchasedProductIds.includes(
-                product.id,
-              ); // Use the state variable
+            {notPurchasedFlashcards.map((product) => {
+              const isFlashcardPurchased = purchasedProductIds.includes(product.id);
               return (
                 <div
                   key={product.id}
@@ -288,11 +287,11 @@ const CourseList: React.FC = () => {
                     </div>
                     <button
                       onClick={() => handlePurchaseOrEnter(product)}
-                      className={`w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out text-white ${
-                        isFlashcardPurchased
-                          ? "bg-green-500 hover:bg-green-600"
-                          : "bg-red-500 hover:bg-red-600"
-                      }`}
+                      className={`w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out text-white ${isFlashcardPurchased
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-red-500 hover:bg-red-600"
+                        }`}
+                      disabled={isFlashcardPurchased}
                     >
                       {isFlashcardPurchased ? "Đã sở hữu" : "Mua ngay"}
                     </button>
@@ -302,9 +301,7 @@ const CourseList: React.FC = () => {
             })}
           </div>
         ) : (
-          !loading && (
-            <p className="text-gray-600">Không có bộ sưu tập flashcard nào.</p>
-          )
+          !loading && <p className="text-gray-600">Bạn đã mua tất cả các bộ flashcard hiện có.</p>
         )}
       </div>
 
@@ -312,13 +309,99 @@ const CourseList: React.FC = () => {
         <InfoModal
           product={selectedProductForPurchase}
           onCancel={() => setIsInfoModalOpen(false)}
-          onProceed={(success: boolean, customerInfo?: CustomerInfo) =>
-            handlePurchaseFlowComplete(success, customerInfo)
-          }
+          onProceed={handlePurchaseFlowComplete}
         />
       )}
     </div>
   );
+};
+
+// --- Tiện ích ---
+export const getPurchasedProductIds = (): string[] => {
+  const purchased = localStorage.getItem('purchasedCourses');
+  return purchased ? JSON.parse(purchased) : [];
+};
+
+export const savePurchasedProductIds = (productIds: string[]) => {
+  localStorage.setItem('purchasedCourses', JSON.stringify(productIds));
+};
+
+export const fetchProducts = async (): Promise<Product[]> => {
+  return [
+    // Courses
+    {
+      id: "D5F6E7A8-1234-5678-9ABC-DEF012345678",
+      type: ProductType.Course,
+      title: "Khóa Sơ cấp N5",
+      description: "Thời hạn 8 tháng",
+      price: 1290000,
+      duration: "8 tháng",
+      code: "99",
+      imageUrl: ImgCourse,
+      level: "N5", // Add level
+    },
+    {
+      id: "E7A8B9C0-2345-6789-ABCD-EF1234567890",
+      type: ProductType.Course,
+      title: "Khóa Sơ cấp N4",
+      description: "Thời hạn 8 tháng",
+      price: 1890000,
+      duration: "8 tháng",
+      code: "99", // Consider unique codes if needed later
+      imageUrl: ImgCourse,
+      level: "N4", // Add level
+    },
+    {
+      id: "F9C0D1E2-3456-7890-BCDE-F23456789012",
+      type: ProductType.Course,
+      title: "Khóa N3",
+      description: "Thời hạn 8 tháng",
+      price: 2650000,
+      duration: "8 tháng",
+      code: "03",
+      imageUrl: ImgCourse,
+      level: "N3", // Add level
+    },
+    {
+      id: "C3D4E5F6-7890-AB12-CD34-EF5678901234",
+      type: ProductType.Course,
+      title: "Khóa N2",
+      description: "Thời hạn 8 tháng",
+      price: 2940000,
+      duration: "8 tháng",
+      code: "07",
+      imageUrl: ImgCourse,
+      level: "N2", // Add level
+    },
+    // Flashcard Collections
+    {
+      id: "EED28469-EAA1-4AE8-933C-B8786A8E5C1D",
+      type: ProductType.FlashcardCollection,
+      title: "Bộ Flashcard N5",
+      description: "500 từ vựng cơ bản",
+      price: 250000,
+      code: "FC05",
+      imageUrl: ImgFlahcard,
+    },
+    {
+      id: "B2A1C3D4-E5F6-7890-AB12-CD34EF567890",
+      type: ProductType.FlashcardCollection,
+      title: "Bộ Flashcard N4",
+      description: "700 từ vựng cơ bản",
+      price: 300000,
+      code: "FC04",
+      imageUrl: ImgFlahcard,
+    },
+    {
+      id: "C3D4E5F6-7890-AB12-CD34-EF5678901234", // Changed from flashcard-4
+      type: ProductType.FlashcardCollection,
+      title: "Bộ Flashcard N3", // Changed from N4
+      description: "1000 từ vựng trung cấp",
+      price: 350000,
+      code: "FC03",
+      imageUrl: ImgFlahcard,
+    },
+  ];
 };
 
 export default CourseList;

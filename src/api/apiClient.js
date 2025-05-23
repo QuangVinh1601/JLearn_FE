@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "http://34.44.254.240:8080",
-  python: "http://34.44.254.240:5000", // Added Python backend URL
+  dotnet: "https://japstudy.id.vn",
+  python: "https://japstudy.id.vn", 
 };
 
 // Hàm refresh token
@@ -275,7 +275,7 @@ export const createZaloPayOrder = async (
   userId,
   collectionId,
 ) => {
-  return await request("python", "/create_order", {
+  return await request("python", "/api/ml/create_order", {
     // Updated to use Python backend
     method: "POST",
     data: {
@@ -289,7 +289,7 @@ export const createZaloPayOrder = async (
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/order_status", {
+  return await request("python", "/api/ml/order_status", {
     // Updated to use Python backend
     method: "GET",
     params: { apptransid },
@@ -302,7 +302,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
   formData.append("audio", audioFile);
   formData.append("additional_text", additionalText);
 
-  return await request("python", "/transcribe", {
+  return await request("python", "/api/ml/transcribe", {
     // Updated to use Python backend
     method: "POST",
     data: formData,
@@ -314,7 +314,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("python", "/get_collections", {
+  return await request("python", "/api/ml/get_collections", {
     // Using Python backend
     method: "GET",
     params: { user_id: userId },
@@ -380,3 +380,24 @@ export const deleteLearningContent = async (adId) => {
     method: "DELETE",
   });
 };
+export const getAdminMetrics = async () => {
+  return await request("python", "/admin/metrics", {
+    method: "GET",
+    withCredentials: true,
+  });
+};
+
+// export const getAdminUsers = async () => {
+//   return await request("python", "/admin/users", {
+//     method: "GET",
+//     withCredentials: true,
+//   });
+// };
+
+// export const getAdminTransactions = async () => {
+//   return await request("python", "/admin/transactions", {
+//     method: "GET",
+//     withCredentials: true,
+//   });
+// };
+
