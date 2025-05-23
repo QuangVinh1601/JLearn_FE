@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { loginUser, getCollections } from "../api/apiClient";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify
-import "react-toastify/dist/ReactToastify.css"; // Import CSS cho Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for Toastify
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");

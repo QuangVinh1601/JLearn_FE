@@ -310,6 +310,14 @@ export const getCollections = async (userId) => {
   });
 };
 
+// Lấy thông tin người dùng
+export const fetchUserInfo = async (userId) => {
+  return await request("python", "/api/ml/user_info", {
+    method: "GET",
+    params: { user_id: userId },
+  });
+};
+
 export const getAdminMetrics = async () => {
   return await request("python", "/api/ml/admin/metrics", {
     method: "GET",

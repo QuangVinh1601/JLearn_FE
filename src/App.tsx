@@ -44,7 +44,7 @@ import ExercisePage from "./pages/ExercisePage"; // nếu có
 
 // Component ProtectedRoute để kiểm tra đăng nhập và vai trò
 const ProtectedRoute: React.FC<{
-  children: JSX.Element;
+  children: React.ReactElement;
   requiredRole?: string;
 }> = ({ children, requiredRole }) => {
   const { isLoggedIn, role } = useAuth(); // Sửa isAuthenticated thành isLoggedIn

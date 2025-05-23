@@ -103,7 +103,7 @@ const CourseList: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-12 text-center">Đang tải danh sách sản phẩm...</div>;
+    return <div className="container mx-auto px-4  py-12 text-center">Đang tải danh sách sản phẩm...</div>;
   }
 
   return (
