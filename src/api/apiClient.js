@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BASE_URLS = {
-  dotnet: "http://localhost",
+  dotnet: "https://japstudy.id.vn",
   python: "https://japstudy.id.vn", 
 };
 
