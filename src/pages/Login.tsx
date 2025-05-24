@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import { loginUser } from "../api/apiClient";
+import { loginUser, getCollections } from "../api/apiClient";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+
 
 // Import icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -49,6 +50,12 @@ const Login: React.FC = () => {
 
       login(refreshToken, role);
       localStorage.setItem("userID", userID);
+
+       if (role !== "admin") {
+        const collectionsResponse = await getCollections(userID);
+        localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
+        console.log("Collections:", collectionsResponse.collections);
+      }
 
       toast.success("Đăng nhập thành công!", {
         position: "top-right",
