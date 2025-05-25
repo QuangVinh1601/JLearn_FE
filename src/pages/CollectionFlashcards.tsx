@@ -82,7 +82,6 @@ function CollectionFlashcards() {
     }
   };
 
-
   useEffect(() => {
     fetchCollections();
   }, []);

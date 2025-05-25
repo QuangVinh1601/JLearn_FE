@@ -107,6 +107,15 @@ const Header: React.FC = () => {
               </li>
               <li>
                 <NavLink
+                  to="/videos"
+                  className={linkClassName}
+                  onClick={handleNavClick}
+                >
+                  Video
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
                   to="/collection"
                   className={linkClassName}
                   onClick={handleNavClick}

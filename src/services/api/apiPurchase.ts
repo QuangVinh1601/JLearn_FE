@@ -12,7 +12,6 @@ import {
   getZaloPayOrderStatus as apiGetZaloPayOrderStatus,
 } from "../../api/apiClient";
 
-
 export const createOrder = async (
   productId: string,
   customerInfo: CustomerInfo,

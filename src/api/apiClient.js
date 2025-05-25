@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URLS = {
   dotnet: "https://japstudy.id.vn",
-  python: "https://japstudy.id.vn", 
+  python: "https://japstudy.id.vn",
 };
 
 // Hàm refresh token
@@ -400,4 +400,3 @@ export const getAdminMetrics = async () => {
 //     withCredentials: true,
 //   });
 // };
-
