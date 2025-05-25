@@ -311,6 +311,13 @@ export const getZaloPayOrderStatus = async (apptransid) => {
   });
 };
 
+export const fetchUserInfo = async (userId) => {
+  return await request("dotnet", "/api/user_info", {
+    method: "GET",
+    params: { user_Id: userId },
+  });
+};
+
 // Transcribe audio
 export const transcribeAudio = async (audioFile, additionalText) => {
   const formData = new FormData();
@@ -330,7 +337,6 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
   return await request("dotnet", "/api/get_collections", {
-    // Using Python backend
     method: "GET",
     params: { user_id: userId },
   });
@@ -343,6 +349,20 @@ export const getAdminMetrics = async () => {
   });
 };
 
+export const createTransaction = async ({ transaction_id, user_id, collection_id, amount_paid }) => {
+  return await request("dotnet", "/api/transaction", {
+    method: "POST",
+    data: {
+      transaction_id,
+      user_id,
+      collection_id,
+      amount_paid,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
 // export const getAdminUsers = async () => {
 //   return await request("python", "/admin/users", {
 //     method: "GET",

@@ -79,6 +79,7 @@ export const useUserInfo = () => {
             setLoading(true);
             setError(null);
             const data = await fetchUserInfo(userID);
+            console.log('Fetched user info:', data);
             setUserInfo(data);
             setCachedUserInfo(data, userID);
             return data;

@@ -7,6 +7,7 @@ import {
   getZaloPayOrderStatus,
 } from "../../services/api/apiPurchase";
 // Import QRCodeCanvas
+import { createTransaction } from "../../api/apiClient";
 import { QRCodeCanvas } from "qrcode.react";
 // Import ZaloPay logo
 import ZaloPayLogo from "../../assets/images/ZaloPay.png";
@@ -111,8 +112,14 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       const statusResult = await getZaloPayOrderStatus(zaloPayAppTransId);
       setZaloPayStatus(statusResult);
       if (statusResult.returncode === 1) {
-        // Payment successful - call onClose with true
-        onClose(true);
+        // Payment successful - call createTransaction
+        await createTransaction({
+          transaction_id: zaloPayAppTransId,
+          user_id: customerInfo.userId,
+          collection_id: customerInfo.collectionId,
+          amount_paid: product.price,
+        });
+        onClose(true); // Close modal
       } else if (statusResult.returncode === 3) {
         // Payment failed definitively
         console.log("ZaloPay payment failed.");
@@ -138,9 +145,15 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           setZaloPayStatus(statusResult);
 
           if (statusResult.returncode === 1) {
-            // Payment successful, stop polling and close modal
+            // Payment successful, stop polling and call createTransaction
             clearInterval(interval!);
             alert("Thanh toán thành công!");
+            await createTransaction({
+              transaction_id: zaloPayAppTransId,
+              user_id: customerInfo.userId,
+              collection_id: customerInfo.collectionId,
+              amount_paid: product.price,
+            });
             onClose(true);
           } else if (statusResult.returncode === 3) {
             // Payment failed, stop polling

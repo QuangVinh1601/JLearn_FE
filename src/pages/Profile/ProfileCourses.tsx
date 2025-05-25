@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Product, ProductType } from "../../types/purchase";
 import { getPurchasedProductIds, fetchProducts } from "../CourseList";
-import { FaBookOpen, FaHeadphones, FaPencilAlt, FaArrowRight, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaBookOpen, FaHeadphones, FaPencilAlt, FaArrowRight, FaFilter, FaSearch } from 'react-icons/fa';
 
 const ProfileCourses: React.FC = () => {
     const navigate = useNavigate();
@@ -97,7 +97,7 @@ const ProfileCourses: React.FC = () => {
                     <div className="flex flex-col sm:flex-row gap-4">
                         {/* Search */}
                         <div className="relative">
-                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            {FaSearch({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
                             <input
                                 type="text"
                                 placeholder="Tìm kiếm khóa học..."
@@ -110,7 +110,7 @@ const ProfileCourses: React.FC = () => {
 
                         {/* Filter */}
                         <div className="relative">
-                            <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            {FaFilter({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
                             <select
                                 value={filterLevel}
                                 onChange={(e) => setFilterLevel(e.target.value)}
@@ -195,9 +195,9 @@ const ProfileCourses: React.FC = () => {
                                         <>
                                             <div className="grid grid-cols-3 gap-3 mb-4">
                                                 {[
-                                                    { icon: <FaBookOpen className="text-red-500" />, label: "Bài đọc", value: content.reading, color: "red" },
-                                                    { icon: <FaHeadphones className="text-green-500" />, label: "Bài nghe", value: content.listening, color: "green" },
-                                                    { icon: <FaPencilAlt className="text-red-400" />, label: "Bài tập", value: content.exercise, color: "red" },
+                                                    { icon: FaBookOpen({ className: "text-red-500" }), label: "Bài đọc", value: content.reading, color: "red" },
+                                                    { icon: FaHeadphones({ className: "text-green-500" }), label: "Bài nghe", value: content.listening, color: "green" },
+                                                    { icon: FaPencilAlt({ className: "text-red-400" }), label: "Bài tập", value: content.exercise, color: "red" },
                                                 ].map(item => (
                                                     <div key={item.label} className="text-center rounded-lg p-3 shadow-sm border" style={{ backgroundColor: '#F5E6CA', borderColor: '#D4B896' }}>
                                                         <div className="flex justify-center text-xl mb-1">{item.icon}</div>
@@ -212,7 +212,7 @@ const ProfileCourses: React.FC = () => {
                                                 <div className="space-y-1.5">
                                                     {content.lessons.slice(0, 3).map((lesson, idx) => (
                                                         <div key={idx} className="text-sm text-gray-700 flex items-center group-hover:text-red-700 transition-colors">
-                                                            <FaArrowRight className="w-3 h-3 text-red-400 group-hover:text-red-600 rounded-full mr-2.5 transition-colors" />
+                                                            {FaArrowRight({ className: "w-3 h-3 text-red-400 group-hover:text-red-600 rounded-full mr-2.5 transition-colors" })}
                                                             {lesson}
                                                         </div>
                                                     ))}
@@ -234,7 +234,7 @@ const ProfileCourses: React.FC = () => {
                                             onClick={() => handleCourseAccess(course)}
                                             className="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-semibold transition duration-200 transform hover:scale-105 shadow hover:shadow-md flex items-center"
                                         >
-                                            Vào học <FaArrowRight className="ml-2 text-xs" />
+                                            Vào học {FaArrowRight({ className: "ml-2 text-xs" })}
                                         </button>
                                     </div>
                                 </div>
@@ -269,4 +269,4 @@ const ProfileCourses: React.FC = () => {
     );
 };
 
-export default ProfileCourses; 
+export default ProfileCourses;

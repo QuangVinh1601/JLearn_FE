@@ -116,7 +116,7 @@ const Videos: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              {FaSearch({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
               <input
                 type="text"
                 placeholder="Tìm kiếm video..."
@@ -129,7 +129,7 @@ const Videos: React.FC = () => {
 
             {/* Category Filter */}
             <div className="relative">
-              <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              {FaFilter({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
@@ -192,7 +192,7 @@ const Videos: React.FC = () => {
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 <button className="bg-white bg-opacity-90 hover:bg-opacity-100 text-red-600 rounded-full p-4 transition-all transform hover:scale-110 shadow-lg">
-                  <FaPlay className="text-2xl ml-1" />
+                  {FaPlay({ className: "text-2xl ml-1" })}
                 </button>
               </div>
             </div>
@@ -202,10 +202,10 @@ const Videos: React.FC = () => {
               <p className="text-red-100 text-lg mb-4">{videos[0].description}</p>
               <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start">
                 <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
-                  <FaClock className="inline mr-1" /> {videos[0].duration}
+                  {FaClock({ className: "inline mr-1" })} {videos[0].duration}
                 </span>
                 <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
-                  <FaEye className="inline mr-1" /> {videos[0].views.toLocaleString()} lượt xem
+                  {FaEye({ className: "inline mr-1" })} {videos[0].views.toLocaleString()} lượt xem
                 </span>
                 <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
                   {videos[0].level}
@@ -245,7 +245,7 @@ const Videos: React.FC = () => {
                       onClick={() => handleVideoClick(video.id)}
                       className="bg-white bg-opacity-90 hover:bg-opacity-100 text-red-600 rounded-full p-3 transition-all transform hover:scale-110 shadow-lg"
                     >
-                      <FaPlay className="text-lg ml-0.5" />
+                      {FaPlay({ className: "text-lg ml-0.5" })}
                     </button>
                   </div>
 
@@ -257,7 +257,7 @@ const Videos: React.FC = () => {
                         : 'bg-white bg-opacity-80 text-gray-600 hover:bg-opacity-100'
                         }`}
                     >
-                      {video.isBookmarked ? <FaHeart /> : <FaBookmark />}
+                      {video.isBookmarked ? FaHeart({}) : FaBookmark({})}
                     </button>
                   </div>
 
@@ -277,7 +277,7 @@ const Videos: React.FC = () => {
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center space-x-3">
                       <span className="flex items-center">
-                        <FaEye className="mr-1" /> {video.views.toLocaleString()}
+                        {FaEye({ className: "mr-1" })} {video.views.toLocaleString()}
                       </span>
                       <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
                         {video.level}

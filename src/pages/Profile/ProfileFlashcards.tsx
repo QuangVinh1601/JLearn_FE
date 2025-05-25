@@ -66,7 +66,7 @@ const ProfileFlashcards: React.FC = () => {
 
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="relative">
-                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            {FaSearch({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
                             <input
                                 type="text"
                                 placeholder="Tìm kiếm bộ flashcard..."
@@ -78,7 +78,7 @@ const ProfileFlashcards: React.FC = () => {
                         </div>
 
                         <div className="relative">
-                            <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            {FaFilter({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
                             <select
                                 value={filterLevel}
                                 onChange={(e) => setFilterLevel(e.target.value)}
@@ -153,4 +153,4 @@ const ProfileFlashcards: React.FC = () => {
     );
 };
 
-export default ProfileFlashcards; 
+export default ProfileFlashcards;

@@ -54,7 +54,7 @@ const ProfileProgress: React.FC = () => {
                             <p className="text-3xl font-bold">{progressData.studyStreak}</p>
                             <p className="text-red-100 text-sm">ngày liên tiếp</p>
                         </div>
-                        <FaFire className="text-4xl text-red-100" />
+                        {FaFire({ className: "text-4xl text-red-100" })}
                     </div>
                 </div>
 
@@ -65,7 +65,7 @@ const ProfileProgress: React.FC = () => {
                             <p className="text-3xl font-bold">{progressData.totalStudyTime}h</p>
                             <p className="text-green-100 text-sm">đã học</p>
                         </div>
-                        <FaChartLine className="text-4xl text-green-100" />
+                        {FaChartLine({ className: "text-4xl text-green-100" })}
                     </div>
                 </div>
 
@@ -76,7 +76,7 @@ const ProfileProgress: React.FC = () => {
                             <p className="text-3xl font-bold">{progressData.coursesCompleted}</p>
                             <p className="text-red-100 text-sm">hoàn thành</p>
                         </div>
-                        <FaGraduationCap className="text-4xl text-red-100" />
+                        {FaGraduationCap({ className: "text-4xl text-red-100" })}
                     </div>
                 </div>
 
@@ -87,7 +87,7 @@ const ProfileProgress: React.FC = () => {
                             <p className="text-3xl font-bold">{progressData.vocabularyLearned}</p>
                             <p className="text-red-100 text-sm">từ đã học</p>
                         </div>
-                        <FaStar className="text-4xl text-red-100" />
+                        {FaStar({ className: "text-4xl text-red-100" })}
                     </div>
                 </div>
             </div>
@@ -203,7 +203,7 @@ const ProfileProgress: React.FC = () => {
                                 </p>
                                 {achievement.unlocked && (
                                     <div className="mt-3">
-                                        <FaTrophy className="inline text-red-500" />
+                                        {FaTrophy({ className: "inline text-red-500" })}
                                         <span className="ml-1 text-xs font-medium text-red-700">Đã mở khóa</span>
                                     </div>
                                 )}
@@ -217,7 +217,7 @@ const ProfileProgress: React.FC = () => {
             <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Lịch học tập</h2>
                 <div className="text-center py-12">
-                    <FaCalendarAlt className="text-6xl text-gray-300 mx-auto mb-4" />
+                    {FaCalendarAlt({ className: "text-6xl text-gray-300 mx-auto mb-4" })}
                     <h3 className="text-xl font-semibold text-gray-600 mb-2">Lịch học tập chi tiết</h3>
                     <p className="text-gray-500">Tính năng này sẽ được cập nhật trong phiên bản tương lai</p>
                 </div>
@@ -226,4 +226,4 @@ const ProfileProgress: React.FC = () => {
     );
 };
 
-export default ProfileProgress; 
+export default ProfileProgress;

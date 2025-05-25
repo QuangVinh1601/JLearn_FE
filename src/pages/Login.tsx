@@ -53,8 +53,13 @@ const Login: React.FC = () => {
 
       if (role !== "admin") {
         const collectionsResponse = await getCollections(userID);
-        localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
-        console.log("Collections:", collectionsResponse.collections);
+        console.log("Collections API response:", collectionsResponse);
+        // Chuyển tất cả ID trong collectionsResponse thành chữ hoa
+        const collectionsResponseUpcase = Array.isArray(collectionsResponse)
+          ? collectionsResponse.map((id) => typeof id === "string" ? id.toUpperCase() : id)
+          : collectionsResponse;
+        localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponseUpcase));
+        console.log("Purchased courses:", collectionsResponseUpcase);
       }
 
       toast.success("Đăng nhập thành công!", {
@@ -276,8 +281,8 @@ const Login: React.FC = () => {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className={`group relative w-full flex justify-center py-4 px-5 rounded-lg text-white text-lg ${loading
-                      ? "bg-red-400"
-                      : "bg-red-600 hover:bg-red-700"
+                    ? "bg-red-400"
+                    : "bg-red-600 hover:bg-red-700"
                     } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 font-medium shadow-md`}
                 >
                   {loading ? (

@@ -7,37 +7,37 @@ const ProfileSidebar: React.FC = () => {
     {
       path: "/profile",
       label: "Tổng quan",
-      icon: <FaUser className="text-lg" />,
+      icon: FaUser({ className: "text-lg" }),
       end: true
     },
     {
       path: "/profile/courses",
       label: "Khóa học của tôi",
-      icon: <FaGraduationCap className="text-lg" />,
+      icon: FaGraduationCap({ className: "text-lg" }),
       end: false
     },
     {
       path: "/profile/flashcards",
       label: "Bộ flashcard",
-      icon: <FaLayerGroup className="text-lg" />,
+      icon: FaLayerGroup({ className: "text-lg" }),
       end: false
     },
     {
       path: "/profile/videos",
       label: "Video học tập",
-      icon: <FaPlay className="text-lg" />,
+      icon: FaPlay({ className: "text-lg" }),
       end: false
     },
     {
       path: "/profile/progress",
       label: "Tiến độ học tập",
-      icon: <FaChartLine className="text-lg" />,
+      icon: FaChartLine({ className: "text-lg" }),
       end: false
     },
     {
       path: "/profile/settings",
       label: "Cài đặt",
-      icon: <FaCog className="text-lg" />,
+      icon: FaCog({ className: "text-lg" }),
       end: false
     }
   ];

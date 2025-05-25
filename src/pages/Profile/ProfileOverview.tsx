@@ -81,7 +81,7 @@ const ProfileOverview: React.FC = () => {
                                 style={{ borderColor: '#D4B896' }}
                             />
                             <button className="absolute bottom-0 right-0 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
-                                <FaEdit className="text-sm" />
+                                {FaEdit({ className: "text-sm" })}
                             </button>
                         </div>
 
@@ -91,28 +91,28 @@ const ProfileOverview: React.FC = () => {
                                     {userInfo.Username}
                                 </h1>
                                 <span className="px-3 py-1 bg-gradient-to-r from-red-400 to-red-500 text-white rounded-full text-sm font-semibold flex items-center">
-                                    <FaCrown className="mr-1 text-xs" />
+                                    {FaCrown({ className: "mr-1 text-xs" })}
                                     Học viên
                                 </span>
                             </div>
 
                             <p className="text-gray-600 text-lg mb-5 flex items-center justify-center lg:justify-start">
-                                <FaEnvelope className="mr-2 text-gray-500" /> {userInfo.Email}
+                                {FaEnvelope({ className: "mr-2 text-gray-500" })} {userInfo.Email}
                             </p>
 
                             <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                                 <span className="flex items-center px-4 py-2 text-red-800 rounded-full text-sm font-medium shadow-sm hover:shadow-md transition-shadow" style={{ backgroundColor: 'white' }}>
-                                    <FaIdCard className="mr-2" /> ID: {userID}
+                                    {FaIdCard({ className: "mr-2" })} ID: {userID}
                                 </span>
                                 <span className="flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
-                                    <FaGraduationCap className="mr-2" /> {courseCount} khóa học
+                                    {FaGraduationCap({ className: "mr-2" })} {courseCount} khóa học
                                 </span>
                                 <span className="flex items-center px-4 py-2 text-red-800 rounded-full text-sm font-medium shadow-sm hover:shadow-md transition-shadow" style={{ backgroundColor: 'white' }}>
-                                    <FaLayerGroup className="mr-2" /> {flashcardCount} bộ flashcard
+                                    {FaLayerGroup({ className: "mr-2" })} {flashcardCount} bộ flashcard
                                 </span>
                                 {userInfo.CreatedAt && (
                                     <span className="flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
-                                        <FaCalendarAlt className="mr-2" /> Tham gia {formatCreatedDate(userInfo.CreatedAt)}
+                                        {FaCalendarAlt({ className: "mr-2" })} Tham gia {formatCreatedDate(userInfo.CreatedAt)}
                                     </span>
                                 )}
                             </div>
@@ -135,17 +135,17 @@ const ProfileOverview: React.FC = () => {
                             onClick={() => navigate('/profile/settings')}
                             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-200 flex items-center"
                         >
-                            <FaEdit className="mr-2" />
+                            {FaEdit({ className: "mr-2" })}
                             Chỉnh sửa
                         </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         {[
-                            { label: "Tên người dùng", value: userInfo?.Username, icon: <FaIdCard className="text-red-500 text-xl" /> },
-                            { label: "Địa chỉ email", value: userInfo?.Email, icon: <FaEnvelope className="text-red-500 text-xl" /> },
-                            { label: "ID người dùng", value: userID, icon: <FaIdCard className="text-red-500 text-xl" /> },
-                            { label: "Ngày tạo tài khoản", value: userInfo?.CreatedAt ? new Date(userInfo.CreatedAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : "Không có thông tin", icon: <FaCalendarAlt className="text-red-500 text-xl" /> },
+                            { label: "Tên người dùng", value: userInfo?.Username, icon: FaIdCard({ className: "text-red-500 text-xl" }) },
+                            { label: "Địa chỉ email", value: userInfo?.Email, icon: FaEnvelope({ className: "text-red-500 text-xl" }) },
+                            { label: "ID người dùng", value: userID, icon: FaIdCard({ className: "text-red-500 text-xl" }) },
+                            { label: "Ngày tạo tài khoản", value: userInfo?.CreatedAt ? new Date(userInfo.CreatedAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : "Không có thông tin", icon: FaCalendarAlt({ className: "text-red-500 text-xl" }) },
                         ].map(item => (
                             <div key={item.label} className="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 border" style={{ backgroundColor: 'white', borderColor: '#D4B896' }}>
                                 <div className="flex items-center mb-3">
@@ -187,4 +187,4 @@ const ProfileOverview: React.FC = () => {
     );
 };
 
-export default ProfileOverview; 
+export default ProfileOverview;

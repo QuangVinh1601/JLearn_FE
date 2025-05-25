@@ -104,7 +104,7 @@ const ProfileSettings: React.FC = () => {
             {/* Profile Information */}
             <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                 <div className="flex items-center mb-6">
-                    <FaUser className="text-red-500 text-xl mr-3" />
+                    {FaUser({ className: "text-red-500 text-xl mr-3" })}
                     <h2 className="text-2xl font-bold text-gray-800">Thông tin cá nhân</h2>
                 </div>
 
@@ -127,13 +127,13 @@ const ProfileSettings: React.FC = () => {
                                             onClick={() => handleSave('username')}
                                             className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
                                         >
-                                            <FaSave />
+                                            {FaSave({})}
                                         </button>
                                         <button
                                             onClick={handleCancel}
                                             className="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
                                         >
-                                            <FaTimes />
+                                            {FaTimes({})}
                                         </button>
                                     </div>
                                 ) : (
@@ -143,7 +143,7 @@ const ProfileSettings: React.FC = () => {
                                             onClick={() => handleEdit('username', userInfo.Username)}
                                             className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                                         >
-                                            <FaEdit />
+                                            {FaEdit({})}
                                         </button>
                                     </div>
                                 )}
@@ -179,7 +179,7 @@ const ProfileSettings: React.FC = () => {
             {/* Security Settings */}
             <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                 <div className="flex items-center mb-6">
-                    <FaLock className="text-green-500 text-xl mr-3" />
+                    {FaLock({ className: "text-green-500 text-xl mr-3" })}
                     <h2 className="text-2xl font-bold text-gray-800">Bảo mật</h2>
                 </div>
 
@@ -209,7 +209,7 @@ const ProfileSettings: React.FC = () => {
             {/* Notification Settings */}
             <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                 <div className="flex items-center mb-6">
-                    <FaBell className="text-yellow-500 text-xl mr-3" />
+                    {FaBell({ className: "text-yellow-500 text-xl mr-3" })}
                     <h2 className="text-2xl font-bold text-gray-800">Thông báo</h2>
                 </div>
 
@@ -249,7 +249,7 @@ const ProfileSettings: React.FC = () => {
             {/* Privacy Settings */}
             <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                 <div className="flex items-center mb-6">
-                    <FaEye className="text-purple-500 text-xl mr-3" />
+                    {FaEye({ className: "text-purple-500 text-xl mr-3" })}
                     <h2 className="text-2xl font-bold text-gray-800">Quyền riêng tư</h2>
                 </div>
 
@@ -305,7 +305,7 @@ const ProfileSettings: React.FC = () => {
             {/* Learning Preferences */}
             <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                 <div className="flex items-center mb-6">
-                    <FaGlobe className="text-indigo-500 text-xl mr-3" />
+                    {FaGlobe({ className: "text-indigo-500 text-xl mr-3" })}
                     <h2 className="text-2xl font-bold text-gray-800">Tùy chọn học tập</h2>
                 </div>
 
@@ -394,4 +394,4 @@ const ProfileSettings: React.FC = () => {
     );
 };
 
-export default ProfileSettings; 
+export default ProfileSettings;
