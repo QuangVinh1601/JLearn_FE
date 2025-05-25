@@ -44,7 +44,7 @@ const Home: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <div className="bg-[#F8F1E5] text-center py-2">
+      <div className="bg-white text-center py-2">
         <h1 className="text-xl sm:text-2xl font-bold mt-4 mb-4">
           Lập trình tinh anh, tiếng Nhật đồng hành
           <br />
@@ -75,7 +75,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Recommended Courses Section */}
-      <section className="bg-[#F8F1E5] py-12 px-4">
+      <section className="bg-White py-12 px-4">
         <h2 className="text-2xl font-bold text-center text-red-500 mb-8">
           Có thể bạn quan tâm
         </h2>
@@ -113,36 +113,6 @@ const Home: React.FC = () => {
             </button>
           </div>
         )}
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="bg-[#FFFFFF] py-8 sm:py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">
-            Bình luận
-          </h2>
-          <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-[0_10px_50px_10px_rgba(0,0,0,0.25)]">
-            <div className="flex items-center">
-              <img
-                src="/avatar.jpg"
-                alt="Customer"
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full"
-              />
-              <div className="ml-3 sm:ml-4">
-                <h3 className="font-bold text-base sm:text-lg">
-                  Samuel Namogles
-                </h3>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Front-end Developer
-                </p>
-              </div>
-            </div>
-            <p className="mt-4 text-gray-700 text-sm sm:text-base">
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            </p>
-          </div>
-        </div>
       </section>
     </div>
   );

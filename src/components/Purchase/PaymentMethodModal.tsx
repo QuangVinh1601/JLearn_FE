@@ -7,6 +7,7 @@ import {
   getZaloPayOrderStatus,
 } from "../../services/api/apiPurchase";
 // Import QRCodeCanvas
+import { createTransaction } from "../../api/apiClient";
 import { QRCodeCanvas } from "qrcode.react";
 // Import ZaloPay logo
 import ZaloPayLogo from "../../assets/images/ZaloPay.png";
@@ -111,8 +112,14 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
       const statusResult = await getZaloPayOrderStatus(zaloPayAppTransId);
       setZaloPayStatus(statusResult);
       if (statusResult.returncode === 1) {
-        // Payment successful - call onClose with true
-        onClose(true);
+        // Payment successful - call createTransaction
+        await createTransaction({
+          transaction_id: zaloPayAppTransId,
+          user_id: customerInfo.userId,
+          collection_id: customerInfo.collectionId,
+          amount_paid: product.price,
+        });
+        onClose(true); // Close modal
       } else if (statusResult.returncode === 3) {
         // Payment failed definitively
         console.log("ZaloPay payment failed.");
@@ -120,7 +127,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
     } catch (err: any) {
       setZaloPayError(
         "Lỗi kiểm tra trạng thái ZaloPay: " +
-          (err.response?.data?.error || err.message),
+        (err.response?.data?.error || err.message),
       );
     } finally {
       setCheckingStatus(false);
@@ -138,9 +145,15 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           setZaloPayStatus(statusResult);
 
           if (statusResult.returncode === 1) {
-            // Payment successful, stop polling and close modal
+            // Payment successful, stop polling and call createTransaction
             clearInterval(interval!);
             alert("Thanh toán thành công!");
+            await createTransaction({
+              transaction_id: zaloPayAppTransId,
+              user_id: customerInfo.userId,
+              collection_id: customerInfo.collectionId,
+              amount_paid: product.price,
+            });
             onClose(true);
           } else if (statusResult.returncode === 3) {
             // Payment failed, stop polling
@@ -151,7 +164,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           console.error("Error checking ZaloPay status:", err);
           setZaloPayError(
             "Lỗi kiểm tra trạng thái ZaloPay: " +
-              (err.response?.data?.error || err.message),
+            (err.response?.data?.error || err.message),
           );
         }
       }, 5000); // Check every 5 seconds
@@ -197,43 +210,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
 
           {/* Phương thức thanh toán */}
           <div className="mb-4">
-            {/* Office Payment */}
-            <label className="flex items-center mb-2 cursor-pointer">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="office"
-                checked={selectedMethod === "office"}
-                onChange={() => handleMethodChange("office")}
-                className="mr-2"
-                disabled={!!zaloPayOrderUrl} // Disable if ZaloPay QR is shown
-              />
-              <span className="text-gray-700">
-                Nộp tại văn phòng của Dũng Mori
-              </span>
-            </label>
-            <p className="text-red-500 text-sm ml-6 mb-2">
-              Các bạn chỉ việc ra ngân hàng báo nhân viên rằng “Tới muốn chuyển
-              khoản vào tài khoản ngân hàng này”. Nhân viên ngân hàng sẽ chỉ bảo
-              tận tình các bạn.
-            </p>
 
-            {/* Bank Transfer */}
-            <label className="flex items-center mb-2 cursor-pointer">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="bank"
-                checked={selectedMethod === "bank"}
-                onChange={() => handleMethodChange("bank")}
-                className="mr-2"
-                disabled={!!zaloPayOrderUrl} // Disable if ZaloPay QR is shown
-              />
-              <span className="text-gray-700">Chuyển khoản ngân hàng</span>
-            </label>
-            <p className="text-red-500 text-sm ml-6">
-              Hoặc bạn có thể chuyển khoản qua internet banking.
-            </p>
 
             {/* ZaloPay */}
             <label className="flex items-center mb-2 cursor-pointer">
@@ -336,39 +313,6 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             </div>
           )}
 
-          {/* ZaloPay Status Display */}
-          {zaloPayStatus && (
-            <div
-              className={`my-4 p-3 border rounded ${
-                zaloPayStatus.returncode === 1
-                  ? "border-green-400 bg-green-50"
-                  : zaloPayStatus.returncode === 3
-                    ? "border-red-400 bg-red-50"
-                    : "border-yellow-400 bg-yellow-50"
-              }`}
-            >
-              <h4 className="font-semibold">Kết quả kiểm tra:</h4>
-              <pre className="text-sm whitespace-pre-wrap">
-                {JSON.stringify(zaloPayStatus, null, 2)}
-              </pre>
-              {zaloPayStatus.returncode === 1 && (
-                <p className="text-green-700 font-bold mt-2">
-                  Thanh toán thành công!
-                </p>
-              )}
-              {zaloPayStatus.returncode === 3 && (
-                <p className="text-red-700 font-bold mt-2">
-                  Thanh toán thất bại.
-                </p>
-              )}
-              {zaloPayStatus.returncode === 2 && (
-                <p className="text-yellow-700 font-bold mt-2">
-                  Đơn hàng đang chờ thanh toán...
-                </p>
-              )}
-            </div>
-          )}
-
           {/* ZaloPay Error Display */}
           {zaloPayError && (
             <div className="my-4 p-3 border border-red-400 rounded bg-red-50 text-red-700">
@@ -383,14 +327,11 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             <div className="mb-4">
               <ul className="list-disc list-inside text-gray-700">
                 <li>
-                  Khi bạn nộp chuột vào xác nhận đơn hàng, bạn đã đồng ý với
-                  Điều khoản sử dụng và Chính sách bảo mật của website
-                  dungmori.com
+                  Khi bạn nhấn nút xác nhận đơn hàng, bạn đã đồng ý với Điều
+                  khoản sử dụng và Chính sách bảo mật của japstudy.id.vn
                 </li>
                 <li>
-                  Sau khi chuyển khoản thành công bạn vui lòng liên hệ lại theo
-                  số hotline của trung tâm: 0969-86-84-85 hoặc inbox trực tiếp
-                  fanpage Facebook Dũng Mori của trung tâm.
+                  Sau khi chuyển khoản thành công bạn vui lòng đợi từ 5 đến 10 giây để đợi kết quả thanh toán.
                 </li>
               </ul>
             </div>

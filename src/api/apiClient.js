@@ -287,14 +287,8 @@ export const deleteFlashcard = async (flashcardId) => {
 };
 
 // Tạo ZaloPay order
-export const createZaloPayOrder = async (
-  amount,
-  description,
-  userId,
-  collectionId,
-) => {
-  return await request("python", "/api/ml/create_order", {
-    // Updated to use Python backend
+export const createZaloPayOrder = async (amount, description, userId, collectionId) => {
+  return await request("python", "/api/ml/create_order", { // Updated to use Python backend
     method: "POST",
     data: {
       amount,
@@ -307,10 +301,17 @@ export const createZaloPayOrder = async (
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/api/ml/order_status", {
-    // Updated to use Python backend
+  return await request("python", "/api/ml/api/ml/order_status", {
+    
     method: "GET",
     params: { apptransid },
+  });
+};
+
+export const fetchUserInfo = async (userId) => {
+  return await request("dotnet", "/api/user_info", {
+    method: "GET",
+    params: { user_Id: userId },
   });
 };
 
@@ -321,11 +322,11 @@ export const transcribeAudio = async (audioFile, additionalText) => {
   formData.append("additional_text", additionalText);
 
   return await request("python", "/api/ml/transcribe", {
-    // Updated to use Python backend
     method: "POST",
     data: formData,
     headers: {
-      "Content-Type": "multipart/form-data",
+      // "Content-Type": "multipart/form-data",
+      "Accept": "application/json",
     },
   });
 };
@@ -333,7 +334,6 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
   return await request("dotnet", "/api/get_collections", {
-    // Using Python backend
     method: "GET",
     params: { user_id: userId },
   });
@@ -405,6 +405,20 @@ export const getAdminMetrics = async () => {
   });
 };
 
+export const createTransaction = async ({ transaction_id, user_id, collection_id, amount_paid }) => {
+  return await request("dotnet", "/api/transaction", {
+    method: "POST",
+    data: {
+      transaction_id,
+      user_id,
+      collection_id,
+      amount_paid,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
 // export const getAdminUsers = async () => {
 //   return await request("python", "/admin/users", {
 //     method: "GET",

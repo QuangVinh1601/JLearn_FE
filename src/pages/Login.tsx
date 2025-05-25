@@ -51,10 +51,15 @@ const Login: React.FC = () => {
       login(refreshToken, role);
       localStorage.setItem("userID", userID);
 
-       if (role !== "admin") {
+      if (role !== "admin") {
         const collectionsResponse = await getCollections(userID);
-        localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
-        console.log("Collections:", collectionsResponse.collections);
+        console.log("Collections API response:", collectionsResponse);
+        // Chuyển tất cả ID trong collectionsResponse thành chữ hoa
+        const collectionsResponseUpcase = Array.isArray(collectionsResponse)
+          ? collectionsResponse.map((id) => typeof id === "string" ? id.toUpperCase() : id)
+          : collectionsResponse;
+        localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponseUpcase));
+        console.log("Purchased courses:", collectionsResponseUpcase);
       }
 
       toast.success("Đăng nhập thành công!", {
@@ -101,7 +106,7 @@ const Login: React.FC = () => {
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-red-100 to-transparent"></div>
         <div className="absolute bottom-0 right-0 w-full h-64 bg-gradient-to-t from-red-100 to-transparent"></div>
-        
+
         {/* Pattern elements */}
         {[...Array(10)].map((_, i) => (
           <motion.div
@@ -173,7 +178,7 @@ const Login: React.FC = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" 
+                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative"
                 >
                   <span className="block sm:inline text-base">{error}</span> {/* Increased text size */}
                 </motion.div>
@@ -183,7 +188,7 @@ const Login: React.FC = () => {
               <div className="relative">
                 <label
                   htmlFor="email"
-                  className="block text-base font-medium text-gray-700 mb-2" 
+                  className="block text-base font-medium text-gray-700 mb-2"
                 >
                   Email
                 </label>
@@ -198,7 +203,7 @@ const Login: React.FC = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200" 
+                    className="block w-full pl-12 pr-4 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
                     placeholder="example@gmail.com"
                   />
                 </div>
@@ -223,7 +228,7 @@ const Login: React.FC = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-12 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200" 
+                    className="block w-full pl-12 pr-12 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
                     placeholder="••••••••"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
@@ -234,7 +239,7 @@ const Login: React.FC = () => {
                     >
                       <FontAwesomeIcon
                         icon={showPassword ? faEyeSlash : faEye}
-                        className="text-lg" 
+                        className="text-lg"
                       />
                     </button>
                   </div>
@@ -248,11 +253,11 @@ const Login: React.FC = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded" 
+                    className="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                   />
                   <label
                     htmlFor="remember-me"
-                    className="ml-2 block text-base text-gray-700" 
+                    className="ml-2 block text-base text-gray-700"
                   >
                     Ghi nhớ đăng nhập
                   </label>
@@ -275,11 +280,10 @@ const Login: React.FC = () => {
                   disabled={loading}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className={`group relative w-full flex justify-center py-4 px-5 rounded-lg text-white text-lg ${
-                    loading
-                      ? "bg-red-400"
-                      : "bg-red-600 hover:bg-red-700"
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 font-medium shadow-md`} 
+                  className={`group relative w-full flex justify-center py-4 px-5 rounded-lg text-white text-lg ${loading
+                    ? "bg-red-400"
+                    : "bg-red-600 hover:bg-red-700"
+                    } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 font-medium shadow-md`}
                 >
                   {loading ? (
                     <span className="flex items-center">
@@ -320,7 +324,7 @@ const Login: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="text-center pt-6" 
+          className="text-center pt-6"
         >
           <p className="text-gray-700 text-base"> {/* Increased text size */}
             Bạn chưa có tài khoản?{" "}

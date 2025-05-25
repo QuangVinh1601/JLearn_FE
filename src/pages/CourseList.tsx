@@ -20,6 +20,7 @@ const CourseList: React.FC = () => {
 
   useEffect(() => {
     const loadProducts = async () => {
+      console.log("purchasedProductIds:", purchasedProductIds);
       setLoading(true);
       try {
         const data = await fetchProducts();

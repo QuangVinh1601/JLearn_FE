@@ -34,12 +34,12 @@ const handleLogout = async () => {
     `hover:text-red-500 text-lg ${isActive ? "text-red-500 font-semibold" : "text-gray-700"}`;
 
   return (
-    <header className="flex items-center justify-between px-4 sm:px-6 py-2 bg-[#F5E6CA] border-b border-gray-200 h-16 shadow-sm relative">
+    <header className="flex items-center justify-between px-4 sm:px-6 py-2 bg-[#F8F7F0] border-b border-gray-200 h-16 shadow-sm relative">
       <div className="flex-shrink-0">
         <img
           src={logo}
           alt="JLearn Logo"
-          className="h-12 sm:h-14 w-auto cursor-pointer"
+          className="h-10 sm:h-12 w-auto cursor-pointer"
           onClick={() => {
             navigate("/");
             handleNavClick();
@@ -87,7 +87,7 @@ const handleLogout = async () => {
             <>
               <li>
                 <NavLink
-                  to="/purchase"
+                  to="/course"
                   className={linkClassName}
                   onClick={handleNavClick}
                 >
