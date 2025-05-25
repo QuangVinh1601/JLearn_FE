@@ -332,7 +332,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("dotnet", "/api/ml/get_collections", {
+  return await request("dotnet", "/api/get_collections", {
     // Using Python backend
     method: "GET",
     params: { user_id: userId },
@@ -340,7 +340,7 @@ export const getCollections = async (userId) => {
 };
 
 export const getAdminMetrics = async () => {
-  return await request("dotnet", "/api/ml/admin/metrics", {
+  return await request("dotnet", "/api/admin/metrics", {
     method: "GET",
     withCredentials: true,
   });
