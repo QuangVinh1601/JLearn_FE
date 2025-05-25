@@ -81,7 +81,13 @@ const AdminFlashcardList: React.FC = () => {
     if (newName !== list.listName || newDescription !== list.description) {
       setFlashcardLists((prevLists) =>
         prevLists.map((l) =>
-          l.listID === list.listID ? { ...l, listName: newName || l.listName, description: newDescription || l.description } : l,
+          l.listID === list.listID
+            ? {
+                ...l,
+                listName: newName || l.listName,
+                description: newDescription || l.description,
+              }
+            : l,
         ),
       );
       alert("Cập nhật danh sách thành công!");

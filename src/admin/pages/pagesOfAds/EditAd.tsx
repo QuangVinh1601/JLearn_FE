@@ -1,76 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { createLearningContent, getAds } from "../../../api/apiClient";
+import { createAd, updateAd } from "../../../api/apiClient";
 
 const getCurrentAdminId = (): string => {
   return "F8795D3E-2CF8-4EED-7D53-08DD94841365";
 };
 
-interface LearningContent {
-  adId: string;
+interface Ad {
+  id: string;
   title: string;
   formFile: string | File;
+  createdBy: string;
   publicImageId: string;
-  uploadedBy: string;
 }
 
-interface Ad {
-  adId: string;
-  adTitle: string;
-}
-
-const EditVideo: React.FC = () => {
-  const { adId } = useParams<{ adId: string }>();
+const EditAd: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const MAX_LENGTH = 255;
-  const [details, setDetails] = useState<LearningContent | null>(null);
-  const [ads, setAds] = useState<Ad[]>([]);
+  const [details, setDetails] = useState<Ad | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState({
-    adId: "",
     title: "",
     formFile: "",
     publicImageId: "",
   });
 
   useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        const response = await getAds();
-        const data = response.data;
-        setAds(
-          Array.isArray(data)
-            ? data.map((ad) => ({ adId: ad.adID, adTitle: ad.adTitle }))
-            : [],
-        );
-      } catch (error) {
-        console.error("Lỗi khi lấy danh sách quảng cáo:", error);
-      }
-    };
-
-    const contentData = (location.state as { content: LearningContent })
-      ?.content;
-    if (contentData && (!adId || contentData.adId === adId)) {
-      setDetails(contentData);
+    const adData = (location.state as { ad: Ad })?.ad;
+    if (adData && (!id || adData.id === id)) {
+      setDetails(adData);
       setLoading(false);
-    } else if (!adId) {
+    } else if (!id) {
       setDetails({
-        adId: "",
+        id: `${Date.now()}`,
         title: "",
         formFile: "",
+        createdBy: getCurrentAdminId(),
         publicImageId: "",
-        uploadedBy: getCurrentAdminId(),
       });
       setLoading(false);
     } else {
-      setError("Không tìm thấy thông tin video");
+      setError("Không tìm thấy thông tin quảng cáo");
       setLoading(false);
     }
-    fetchAds();
-  }, [adId, location.state]);
+  }, [id, location.state]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -86,34 +63,19 @@ const EditVideo: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (details && e.target.files) {
-      const file = e.target.files[0];
       setDetails({
         ...details,
-        formFile: file || "",
-      });
-    }
-  };
-
-  const handleAdIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (details) {
-      setDetails({
-        ...details,
-        adId: e.target.value,
+        formFile: e.target.files[0],
       });
     }
   };
 
   const validateForm = (): boolean => {
     const errors = {
-      adId: "",
       title: "",
       formFile: "",
       publicImageId: "",
     };
-
-    if (!details?.adId.trim()) {
-      errors.adId = "Yêu cầu chọn Ad ID";
-    }
 
     if (!details?.title.trim()) {
       errors.title = "Yêu cầu nhập tiêu đề";
@@ -122,14 +84,14 @@ const EditVideo: React.FC = () => {
     }
 
     if (
-      !adId &&
+      !id &&
       (!details?.formFile ||
         (typeof details.formFile === "string" && !details.formFile))
     ) {
       errors.formFile = "Yêu cầu tải lên file khi thêm mới";
     }
 
-    if (adId && !details?.publicImageId.trim()) {
+    if (id && !details?.publicImageId.trim()) {
       errors.publicImageId = "Yêu cầu nhập Public Image ID khi chỉnh sửa";
     }
 
@@ -144,47 +106,41 @@ const EditVideo: React.FC = () => {
     if (!validateForm()) return;
 
     setSaving(true);
-    const formData = new FormData();
-    formData.append("adId", details.adId);
-    formData.append("title", details.title);
-    if (details.formFile instanceof File) {
-      formData.append("formFile", details.formFile);
-    } else if (
-      !adId &&
-      typeof details.formFile === "string" &&
-      details.formFile
-    ) {
-      formData.append("formFile", details.formFile);
-    }
-    formData.append("uploadedBy", details.uploadedBy);
-    if (details.publicImageId) {
-      formData.append("publicImageId", details.publicImageId);
-    }
-
-    // Log FormData thủ công thay vì dùng entries()
-    console.log("FormData - adId:", formData.get("adId"));
-    console.log("FormData - title:", formData.get("title"));
-    console.log("FormData - formFile:", formData.get("formFile"));
-    console.log("FormData - uploadedBy:", formData.get("uploadedBy"));
-    console.log("FormData - publicImageId:", formData.get("publicImageId"));
-
     try {
-      const response = await createLearningContent(formData);
-      console.log("POST Response:", response);
-      if (response && !response.error) {
-        setDetails((prev) =>
-          prev ? { ...prev, adId: response.data?.adId || prev.adId } : null,
-        );
-        alert("Thêm video thành công!");
-        navigate("/admin/video", { state: { updatedContent: details } });
-      } else {
-        throw new Error(
-          "POST failed with response: " + JSON.stringify(response),
-        );
+      const formData = new FormData();
+      formData.append("id", details.id);
+      formData.append("AdTitle", details.title);
+      if (details.formFile instanceof File) {
+        formData.append("FormFile", details.formFile);
+      } else if (
+        !id &&
+        typeof details.formFile === "string" &&
+        details.formFile
+      ) {
+        formData.append("FormFile", details.formFile);
       }
+      formData.append("CreatedBy", details.createdBy);
+      if (details.publicImageId) {
+        formData.append("PublicImageId", details.publicImageId);
+      }
+
+      // Kiểm tra FormData mà không dùng entries()
+      console.log("FormData - AdTitle:", formData.get("AdTitle"));
+      console.log("FormData - FormFile:", formData.get("FormFile"));
+      console.log("FormData - CreatedBy:", formData.get("CreatedBy"));
+      console.log("FormData - PublicImageId:", formData.get("PublicImageId"));
+
+      if (id) {
+        await updateAd(id, formData);
+        alert("Cập nhật quảng cáo thành công!");
+      } else {
+        await createAd(formData);
+        alert("Thêm quảng cáo thành công!");
+      }
+      navigate("/admin/ads", { state: { updatedAd: details } });
     } catch (error) {
-      console.error("Lỗi khi thêm video:", error);
-      setError("Thêm video thất bại! Kiểm tra console log để biết chi tiết.");
+      console.error("Lỗi khi lưu quảng cáo:", error);
+      alert("Lưu quảng cáo thất bại!");
     } finally {
       setSaving(false);
     }
@@ -199,36 +155,8 @@ const EditVideo: React.FC = () => {
         {!loading && !error && details && (
           <form onSubmit={handleSave}>
             <h1 className="text-xl sm:text-2xl font-bold mb-6">
-              {adId ? "Chỉnh sửa Video" : "Thêm Video Mới"}
+              {id ? "Chỉnh sửa Quảng Cáo" : "Thêm Quảng Cáo Mới"}
             </h1>
-
-            <div className="mb-4">
-              <label className="block mb-2 text-sm sm:text-base font-semibold">
-                Ad ID
-              </label>
-              <select
-                name="adId"
-                value={details.adId}
-                onChange={handleAdIdChange}
-                className={`w-full p-2 border rounded text-sm sm:text-base ${
-                  validationErrors.adId ? "border-red-500" : "border-gray-300"
-                }`}
-                disabled={!!adId}
-                required
-              >
-                <option value="">Chọn Ad ID</option>
-                {ads.map((ad) => (
-                  <option key={ad.adId} value={ad.adId}>
-                    {ad.adTitle} ({ad.adId})
-                  </option>
-                ))}
-              </select>
-              {validationErrors.adId && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">
-                  {validationErrors.adId}
-                </p>
-              )}
-            </div>
 
             <div className="mb-4">
               <label className="block mb-2 text-sm sm:text-base font-semibold">
@@ -252,9 +180,9 @@ const EditVideo: React.FC = () => {
 
             <div className="mb-4">
               <label className="block mb-2 text-sm sm:text-base font-semibold">
-                File Video
+                File
               </label>
-              {adId &&
+              {id &&
                 typeof details.formFile === "string" &&
                 details.formFile && (
                   <p className="text-sm text-gray-600 mb-1">
@@ -270,7 +198,6 @@ const EditVideo: React.FC = () => {
                     ? "border-red-500"
                     : "border-gray-300"
                 }`}
-                accept="video/*"
               />
               {validationErrors.formFile && (
                 <p className="text-red-500 text-xs sm:text-sm mt-1">
@@ -311,11 +238,15 @@ const EditVideo: React.FC = () => {
                     : "bg-blue-500 text-white hover:bg-blue-600"
                 }`}
               >
-                {saving ? (adId ? "Đang lưu..." : "Đang thêm...") : "Lưu Video"}
+                {saving
+                  ? id
+                    ? "Đang lưu..."
+                    : "Đang thêm..."
+                  : "Lưu Thay Đổi"}
               </button>
               <button
                 type="button"
-                onClick={() => navigate("/admin/video")}
+                onClick={() => navigate("/admin/ads")}
                 className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm sm:text-base"
               >
                 Quay lại
@@ -328,4 +259,4 @@ const EditVideo: React.FC = () => {
   );
 };
 
-export default EditVideo;
+export default EditAd;

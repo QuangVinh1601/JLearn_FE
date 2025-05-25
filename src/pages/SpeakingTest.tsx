@@ -119,7 +119,7 @@ const SpeakingTest: React.FC = () => {
 
       recorder.onerror = (event: Event) => {
         setErrorMessage(
-          `Lỗi ghi âm: ${(event as any)?.error?.name || "Lỗi không xác định"}.`
+          `Lỗi ghi âm: ${(event as any)?.error?.name || "Lỗi không xác định"}.`,
         );
         setTestState("ERROR");
         cleanupStream();
@@ -299,7 +299,7 @@ const SpeakingTest: React.FC = () => {
       case "REQUESTING_PERMISSION":
         return {
           text: "Đang yêu cầu quyền...",
-          onClick: () => { },
+          onClick: () => {},
           disabled: true,
           loading: true,
         };
@@ -320,7 +320,7 @@ const SpeakingTest: React.FC = () => {
       case "PROCESSING":
         return {
           text: "処理中... (Đang xử lý...)",
-          onClick: () => { },
+          onClick: () => {},
           disabled: true,
           loading: true,
         }; // <-- TRANSLATED
@@ -359,7 +359,7 @@ const SpeakingTest: React.FC = () => {
       default:
         return {
           text: "状態不明 (Trạng thái Không xác định)",
-          onClick: () => { },
+          onClick: () => {},
           disabled: true,
           loading: false,
         }; // <-- TRANSLATED
@@ -480,12 +480,13 @@ const SpeakingTest: React.FC = () => {
               onClick={buttonProps.onClick}
               disabled={buttonProps.disabled || buttonProps.loading}
               className={`px-6 py-3 rounded-lg text-white font-semibold transition-all duration-200 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2 min-w-[200px]
-                                ${buttonProps.disabled || buttonProps.loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : testState === "RECORDING"
-                    ? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
-                    : "bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50"
-                }`}
+                                ${
+                                  buttonProps.disabled || buttonProps.loading
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : testState === "RECORDING"
+                                      ? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
+                                      : "bg-[#f04532] hover:bg-[#d03e2c] focus:ring-[#f04532]/50"
+                                }`}
             >
               {buttonProps.loading && <FontAwesomeIcon icon={faSpinner} spin />}
               <span>{buttonProps.text}</span>
