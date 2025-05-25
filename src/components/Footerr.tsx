@@ -46,9 +46,8 @@ const Footer: React.FC = () => {
     "text-stone-600 hover:text-red-500 hover:scale-110 transform transition-all duration-300 ease-in-out text-xl";
 
   return (
-    // Sử dụng nền sáng: bg-amber-100 (#FEF3C7)
-    // Màu chữ chính: text-stone-800
-    <footer className="bg-[#F5E6CA] text-stone-800 pt-16 pb-8 relative">
+
+    <footer className="bg-[F8F7F0] text-stone-800 pt-16 pb-8 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Logo và thông tin công ty */}

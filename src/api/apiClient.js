@@ -2,9 +2,9 @@ import axios from "axios";
 
 const BASE_URLS = {
   dotnet: "https://japstudy.id.vn",
-  // python: "https://japstudy.id.vn",
+  python: "https://japstudy.id.vn",
   // dotnet: "http://34.44.254.240:8080",
-  python: "http://127.0.0.1:5000",
+  // python: "http://127.0.0.1:5000",
   // python: "http://34.44.254.240:5000",
 };
 
@@ -280,7 +280,7 @@ export const createZaloPayOrder = async (amount, description, userId, collection
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/api/ml/order_status", { // Updated to use Python backend
+  return await request("python", "/api/ml/order_status", { 
     method: "GET",
     params: { apptransid },
   });
@@ -304,7 +304,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("python", "/api/ml/get_collections", { // Using Python backend
+  return await request("dotnet", "/api/get_collections", { 
     method: "GET",
     params: { user_id: userId },
   });
@@ -312,14 +312,14 @@ export const getCollections = async (userId) => {
 
 // Lấy thông tin người dùng
 export const fetchUserInfo = async (userId) => {
-  return await request("python", "/api/ml/user_info", {
+  return await request("dotnet", "/api/user_info", {
     method: "GET",
     params: { user_id: userId },
   });
 };
 
 export const getAdminMetrics = async () => {
-  return await request("python", "/api/ml/admin/metrics", {
+  return await request("dotnet", "/api/ml/admin/metrics", {
     method: "GET",
     withCredentials: true,
   });

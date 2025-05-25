@@ -44,7 +44,7 @@ const Home: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <div className="bg-[#F8F1E5] text-center py-2">
+      <div className="bg-white text-center py-2">
         <h1 className="text-xl sm:text-2xl font-bold mt-4 mb-4">
           Lập trình tinh anh, tiếng Nhật đồng hành
           <br />
@@ -75,7 +75,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Recommended Courses Section */}
-      <section className="bg-[#F8F1E5] py-12 px-4">
+      <section className="bg-White py-12 px-4">
         <h2 className="text-2xl font-bold text-center text-red-500 mb-8">
           Có thể bạn quan tâm
         </h2>
