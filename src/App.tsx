@@ -27,7 +27,6 @@ import MainLayout from "./pages/Profile/MainLayout";
 import ProfileOverview from "./pages/Profile/ProfileOverview";
 import ProfileCourses from "./pages/Profile/ProfileCourses";
 import ProfileFlashcards from "./pages/Profile/ProfileFlashcards";
-import Videos from "./pages/Profile/Videos";
 import ProfileProgress from "./pages/Profile/ProfileProgress";
 import ProfileSettings from "./pages/Profile/ProfileSettings";
 
