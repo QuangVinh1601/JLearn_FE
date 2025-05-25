@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,10 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { FaUsers, FaUserPlus, FaEye, FaMoneyBillWave } from 'react-icons/fa';
-import type { IconType } from 'react-icons';
-import { getAdminMetrics } from '../../api/apiClient';
+} from "chart.js";
+import { FaUsers, FaUserPlus, FaEye, FaMoneyBillWave } from "react-icons/fa";
+import type { IconType } from "react-icons";
+import { getAdminMetrics } from "../../api/apiClient";
 
 // Register ChartJS components
 ChartJS.register(
@@ -22,7 +22,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 interface DashboardMetrics {
@@ -57,11 +57,11 @@ const MetricCard: React.FC<MetricCardProps> = ({
   const formatValue = (value: number) => {
     if (title === "Total Revenue") {
       // Format as Vietnamese currency with 2 decimal places
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
+      return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0
+        maximumFractionDigits: 0,
       }).format(value);
     }
     console.log("value", value);
@@ -89,7 +89,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
 };
 
 // Hàm tính toán tăng trưởng người dùng theo thời gian (có thể mở rộng logic nếu cần)
-function calculateUserGrowthOverTime(userGrowth: { month: string; count: number }[]) {
+function calculateUserGrowthOverTime(
+  userGrowth: { month: string; count: number }[],
+) {
   // Ví dụ: trả về đúng dữ liệu, hoặc có thể tính toán phần trăm tăng trưởng giữa các tháng
   return userGrowth.map((item, idx, arr) => {
     let growth = 0;
@@ -124,7 +126,7 @@ const AdminDashboard: React.FC = () => {
         setMetrics(data);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
-        setError('Failed to fetch dashboard data');
+        setError("Failed to fetch dashboard data");
       } finally {
         setLoading(false);
       }
@@ -144,13 +146,13 @@ const AdminDashboard: React.FC = () => {
   // console.log("User Growth Data: ", userGrowthData);
   // Chart configuration
   const chartData = {
-    labels: userGrowthData.map(item => item.month),
+    labels: userGrowthData.map((item) => item.month),
     datasets: [
       {
-        label: 'User Growth',
-        data: userGrowthData.map(item => item.count),
-        borderColor: 'rgb(239, 68, 68)',
-        backgroundColor: 'rgba(239, 68, 68, 0.5)',
+        label: "User Growth",
+        data: userGrowthData.map((item) => item.count),
+        borderColor: "rgb(239, 68, 68)",
+        backgroundColor: "rgba(239, 68, 68, 0.5)",
         tension: 0.4,
       },
     ],
@@ -160,11 +162,11 @@ const AdminDashboard: React.FC = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: 'User Growth Over Time',
+        text: "User Growth Over Time",
       },
     },
     scales: {
@@ -177,7 +179,9 @@ const AdminDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-        <div className="text-xl font-semibold text-gray-700">Loading dashboard data...</div>
+        <div className="text-xl font-semibold text-gray-700">
+          Loading dashboard data...
+        </div>
       </div>
     );
   }
@@ -193,7 +197,9 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          Admin Dashboard
+        </h1>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
