@@ -24,30 +24,30 @@ function CollectionFlashcards() {
     id: string; // Changed from any to string for better type safety
     title: string;
     description: string;
+    createdAt: Date | null;
   }
   const [collections, setCollections] = useState<Collection[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  
+  const fetchCollections = async () => {
+    try {
+      const result = await getPersonalFlashcardLists();
+      console.log("API Response:", result);
+      setCollections(
+        result.map((item: any) => ({
+          id: item.listId,
+          title: item.listName,
+          description: item.description || "No description available",
+          createdAt: item.createdAt ? new Date(item.createdAt) : null,
+        })),
+      );
+    } catch (error) {
+      console.error("Error fetching flashcard collections:", error);
+      setCollections([]);
 
-  // Hàm lấy danh sách từ cookie nếu là khách
-  const getCollectionsFromCookie = () => {
-    const cookieData = getCookie("FlashcardList");
-    if (cookieData) {
-      try {
-        const parsedData = JSON.parse(decodeURIComponent(cookieData));
-        if (Array.isArray(parsedData)) {
-          return parsedData.map((item: any) => ({
-            id: item.ListID || item.listId,
-            title: item.ListName || item.listName,
-            description:
-              item.Description || item.description || "Không có mô tả",
-          }));
-        }
-      } catch (e) {
-        console.error("Lỗi giải mã cookie:", e);
-      }
     }
     return [];
   };
@@ -156,6 +156,17 @@ function CollectionFlashcards() {
       setSubmitting(false);
     }
   };
+  const formatDate = (date: Date): string => {
+    if (!date) return "";
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
 
   return (
     <div className="flex flex-col items-center bg-[#F8F1E5] p-6 min-h-screen">
@@ -190,6 +201,11 @@ function CollectionFlashcards() {
                     <p className="text-gray-600 text-sm line-clamp-2">
                       {item.description}
                     </p>
+                     {item.createdAt && (
+                      <p className="text-gray-500 text-xs mt-2">
+                        Tạo lúc: {formatDate(item.createdAt)}
+                      </p>
+                    )}
                   </div>
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition duration-200"

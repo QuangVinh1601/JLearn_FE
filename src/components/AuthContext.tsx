@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setToken(newToken);
     setRole(normalizedRole);
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("token", newToken);
+    localStorage.setItem("refreshToken", newToken);
     localStorage.setItem("role", normalizedRole);
     console.log("Login successful, stored:", {
       token: newToken,
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setToken(null);
     setRole(null);
     localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("role");
     localStorage.removeItem("userID");
   };

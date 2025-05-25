@@ -71,13 +71,18 @@ export const loginUser = async (email, password) => {
     data: { email, password },
   });
   console.log("Raw API response from loginUser:", response);
-
-  const token =
-    response.token ||
-    response.accessToken ||
-    response.data?.token ||
-    response.data?.accessToken;
-
+  const refreshToken = 
+    response.refreshToken || 
+    response.refreshtoken || 
+    response.refresh_token ||
+    response.RefreshToken ||
+    response.Refreshtoken ||
+    response.data?.refreshToken || 
+    response.data?.refreshtoken ||
+    response.data?.refresh_token ||
+    null;
+  
+  console.log(refreshToken);
   // Ưu tiên kiểm tra email trước khi gán role từ API
   let role;
   if (email === "admin@gmail.com") {
@@ -107,11 +112,22 @@ export const loginUser = async (email, password) => {
     response.data?.user_id ||
     null;
 
-  if (!token) {
+  if (!refreshToken) {
     throw new Error("No token received from API");
   }
+  console.log("12344");
+  return { refreshToken, role, userID };
+};
 
-  return { token, role, userID };
+export const logoutUser = async () => {
+  try {
+    return await request("dotnet", "/api/authen/logout", {
+      method: "POST",
+    });
+  } catch (error) {
+    console.error("Logout API error:", error);
+    throw error;
+  }
 };
 
 export const registerUser = async (userData) => {
@@ -201,6 +217,7 @@ export const getPersonalFlashcardLists = async () => {
       listName: item.listName,
       description: item.description || "",
       flashcards: item.flashcards,
+      createdAt: item.createdAt
     }));
   }
   // If response itself is an array (fallback)
@@ -210,6 +227,7 @@ export const getPersonalFlashcardLists = async () => {
       listName: item.listName || item.ListName,
       description: item.description || item.Description || "",
       flashcards: item.flashcards,
+      createdAt: item.createdAt
     }));
   }
 
@@ -314,7 +332,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("python", "/api/ml/get_collections", {
+  return await request("dotnet", "/api/get_collections", {
     // Using Python backend
     method: "GET",
     params: { user_id: userId },
@@ -381,7 +399,7 @@ export const deleteLearningContent = async (adId) => {
   });
 };
 export const getAdminMetrics = async () => {
-  return await request("python", "/admin/metrics", {
+  return await request("dotnet", "/api/admin/metrics", {
     method: "GET",
     withCredentials: true,
   });
