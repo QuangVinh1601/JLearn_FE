@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Skills: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-white p-8">
       <h1 className="text-3xl font-bold text-center mb-12 text-gray-800">
         Phát triển Kỹ năng Tiếng Nhật
       </h1>

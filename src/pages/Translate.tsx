@@ -60,7 +60,7 @@ export default function Translator() {
   }, [fromLang, toLang]);
 
   return (
-    <div className="flex flex-col items-center bg-[#F8F1E5] p-4 min-h-screen">
+    <div className="flex flex-col items-center bg-White p-4 min-h-screen">
       <div className="bg-white shadow-lg rounded-xl p-4 w-full max-w-6xl">
         <div className="flex flex-col md:grid md:grid-cols-2 gap-4 relative">
           {/* Input Section */}

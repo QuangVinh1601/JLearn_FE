@@ -6,7 +6,7 @@ const ProtectedRoute = ({
   children,
   requiredRole,
 }: {
-  children: JSX.Element;
+  children: React.ReactElement;
   requiredRole?: string;
 }) => {
   const { isLoggedIn, role } = useAuth();

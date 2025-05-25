@@ -24,6 +24,13 @@ import CourseList from "./pages/CourseList";
 import Profile from "./pages/Profile/Profile";
 import Videos from "./pages/Video";
 import MainLayout from "./pages/Profile/MainLayout";
+import ProfileOverview from "./pages/Profile/ProfileOverview";
+import ProfileCourses from "./pages/Profile/ProfileCourses";
+import ProfileFlashcards from "./pages/Profile/ProfileFlashcards";
+import Videos from "./pages/Profile/Videos";
+import ProfileProgress from "./pages/Profile/ProfileProgress";
+import ProfileSettings from "./pages/Profile/ProfileSettings";
+
 import AdminLayout from "./admin/components/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminAccount from "./admin/pages/pagesOfAdminUser/AdminAccount";
@@ -44,7 +51,7 @@ import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage compone
 import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
 const ProtectedRoute: React.FC<{
-  children: JSX.Element;
+  children: React.ReactElement;
   requiredRole?: string;
 }> = ({ children, requiredRole }) => {
   const { isLoggedIn, role } = useAuth(); // Sửa isAuthenticated thành isLoggedIn
@@ -147,26 +154,32 @@ function App() {
               }
             />
 
-            {/* Profile Routes */}
-            <Route element={<MainLayout />}>
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/profileVideos"
-                element={
-                  <ProtectedRoute>
-                    <Videos />
-                  </ProtectedRoute>
-                }
-              />
+            {/* Profile Routes with Layout */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<ProfileOverview />} />
+              <Route path="courses" element={<ProfileCourses />} />
+              <Route path="flashcards" element={<ProfileFlashcards />} />
+              <Route path="videos" element={<Videos />} />
+              <Route path="progress" element={<ProfileProgress />} />
+              <Route path="settings" element={<ProfileSettings />} />
             </Route>
+
+            {/* Backward compatibility route */}
+            <Route
+              path="/profileVideos"
+              element={
+                <ProtectedRoute>
+                  <Navigate to="/profile/videos" replace />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Protected Routes for admin */}
