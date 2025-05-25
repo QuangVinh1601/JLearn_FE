@@ -73,13 +73,20 @@ export const loginUser = async (email, password) => {
     method: "POST",
     data: { email, password },
   });
-  console.log("Raw API response from loginUser:", response); // Thêm log để debug
-  // Chuẩn hóa phản hồi
-  const token =
-    response.token ||
-    response.accessToken ||
-    response.data?.token ||
-    response.data?.accessToken;
+  console.log("Raw API response from loginUser:", response);
+  const refreshToken = 
+    response.refreshToken || 
+    response.refreshtoken || 
+    response.refresh_token ||
+    response.RefreshToken ||
+    response.Refreshtoken ||
+    response.data?.refreshToken || 
+    response.data?.refreshtoken ||
+    response.data?.refresh_token ||
+    null;
+  
+  console.log(refreshToken);
+  // Ưu tiên kiểm tra email trước khi gán role từ API
   let role;
   if (email === "admin@gmail.com") {
     role = "admin";
@@ -99,19 +106,33 @@ export const loginUser = async (email, password) => {
     role = role.toLowerCase();
   }
 
-  const userID =
-    response.userID ||
-    response.data?.userID ||
-    response.data?.userId ||
-    response.data?.id;
+  const userID = 
+    response.userID || 
+    response.userId || 
+    response.user_id || 
+    response.data?.userID || 
+    response.data?.userId || 
+    response.data?.user_id || 
+    null;
 
-  if (!token) {
+  if (!refreshToken) {
     throw new Error("No token received from API");
   }
-  return { token, role, userID };
+  console.log("12344");
+  return { refreshToken, role, userID };
 };
 
-// Các hàm khác không thay đổi
+export const logoutUser = async () => {
+  try {
+    return await request("dotnet", "/api/authen/logout", {
+      method: "POST",
+    });
+  } catch (error) {
+    console.error("Logout API error:", error);
+    throw error;
+  }
+};
+
 export const registerUser = async (userData) => {
   return await request("dotnet", "/api/authen/register", {
     method: "POST",
@@ -134,6 +155,7 @@ export const createPersonalFlashcardList = async (listName, description) => {
     return {
       listId: newList.ListID,
       listName: newList.ListName,
+      description: newList.description || newList.Description || "",
       flashcardItemGuests: newList.FlashcardItemGuests,
     };
   }
@@ -160,7 +182,7 @@ export const getFlashcards = async (listId) => {
         exampleSentence: item.exampleSentence || "",
         imageUrl: item.urlImageExample || "",
         publicImageId: item.publicImageId || "",
-        personalListID: item.personalListID
+        personalListID: item.personalListID,
       }));
     }
     // If response itself is an array
@@ -173,7 +195,7 @@ export const getFlashcards = async (listId) => {
         exampleSentence: item.exampleSentence || "",
         imageUrl: item.urlImageExample || "",
         publicImageId: item.publicImageId || "",
-        personalListID: item.personalListID
+        personalListID: item.personalListID,
       }));
     }
 
@@ -197,7 +219,8 @@ export const getPersonalFlashcardLists = async () => {
       listId: item.listID,
       listName: item.listName,
       description: item.description || "",
-      flashcards: item.flashcards
+      flashcards: item.flashcards,
+      createdAt: item.createdAt
     }));
   }
   // If response itself is an array (fallback)
@@ -206,7 +229,8 @@ export const getPersonalFlashcardLists = async () => {
       listId: item.listID,
       listName: item.listName || item.ListName,
       description: item.description || item.Description || "",
-      flashcards: item.flashcards
+      flashcards: item.flashcards,
+      createdAt: item.createdAt
     }));
   }
 
@@ -280,7 +304,8 @@ export const createZaloPayOrder = async (amount, description, userId, collection
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/api/ml/order_status", { 
+  return await request("python", "/api/ml/api/ml/order_status", {
+    
     method: "GET",
     params: { apptransid },
   });
@@ -304,22 +329,15 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 
 // Lấy danh sách collection ID
 export const getCollections = async (userId) => {
-  return await request("dotnet", "/api/get_collections", { 
-    method: "GET",
-    params: { user_id: userId },
-  });
-};
-
-// Lấy thông tin người dùng
-export const fetchUserInfo = async (userId) => {
-  return await request("dotnet", "/api/user_info", {
+  return await request("dotnet", "/api/get_collections", {
+    // Using Python backend
     method: "GET",
     params: { user_id: userId },
   });
 };
 
 export const getAdminMetrics = async () => {
-  return await request("dotnet", "/api/ml/admin/metrics", {
+  return await request("dotnet", "/api/admin/metrics", {
     method: "GET",
     withCredentials: true,
   });

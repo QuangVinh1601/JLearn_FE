@@ -103,7 +103,11 @@ const CourseList: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="container mx-auto px-4  py-12 text-center">Đang tải danh sách sản phẩm...</div>;
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        Đang tải danh sách sản phẩm...
+      </div>
+    );
   }
 
   return (
@@ -125,7 +129,13 @@ const CourseList: React.FC = () => {
                   key={course.id}
                   className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
                 >
-                  {course.imageUrl && <img src={course.imageUrl} alt={course.title} className="w-full h-40 object-contain mb-3 rounded" />}
+                  {course.imageUrl && (
+                    <img
+                      src={course.imageUrl}
+                      alt={course.title}
+                      className="w-full h-40 object-contain mb-3 rounded"
+                    />
+                  )}
                   <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
                   <p className="text-sm text-gray-600 mb-3 flex-grow">{course.description}</p>
                   {content && (
@@ -195,7 +205,9 @@ const CourseList: React.FC = () => {
       )}
 
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-red-700">Khóa học Luyện Thi</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-red-700">
+          Khóa học Luyện Thi
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {notPurchasedCourses.map((course) => {
             const isFree = course.price === 0;
@@ -256,9 +268,19 @@ const CourseList: React.FC = () => {
                   key={product.id}
                   className="rounded-lg p-4 border shadow-md bg-white flex flex-col justify-between transition-all duration-300 hover:shadow-lg h-full"
                 >
-                  {product.imageUrl && <img src={product.imageUrl} alt={product.title} className="w-full h-40 object-contain mb-3 rounded" />}
-                  <h3 className="font-semibold text-lg mb-1">{product.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3 flex-grow">{product.description}</p>
+                  {product.imageUrl && (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.title}
+                      className="w-full h-40 object-contain mb-3 rounded"
+                    />
+                  )}
+                  <h3 className="font-semibold text-lg mb-1">
+                    {product.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3 flex-grow">
+                    {product.description}
+                  </p>
                   <div className="text-center mt-auto">
                     <div className="text-lg font-bold mb-3 text-red-600">
                       {`${product.price.toLocaleString()} đ`}

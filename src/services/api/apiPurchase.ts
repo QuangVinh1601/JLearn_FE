@@ -7,7 +7,10 @@ import {
 } from "../../types/purchase";
 import ImgCourse from "../../assets/images/khoahoc.jpeg";
 import ImgFlahcard from "../../assets/images/flashcard.png";
-import { createZaloPayOrder as apiCreateZaloPayOrder, getZaloPayOrderStatus as apiGetZaloPayOrderStatus } from "../../api/apiClient";
+import {
+  createZaloPayOrder as apiCreateZaloPayOrder,
+  getZaloPayOrderStatus as apiGetZaloPayOrderStatus,
+} from "../../api/apiClient";
 
 
 export const createOrder = async (

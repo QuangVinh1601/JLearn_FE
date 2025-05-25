@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: quangvinh1601/jlearn_fe_app:latest
+    container_name: jlearn_fe_app-frontend-1
+    restart: unless-stopped
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    external: true

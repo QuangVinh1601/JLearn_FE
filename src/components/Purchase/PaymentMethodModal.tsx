@@ -77,7 +77,10 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           customerInfo.collectionId, // Pass the collectionId
         );
 
-        if (response.zalopay_response.returncode === 1 && response.zalopay_response.orderurl) {
+        if (
+          response.zalopay_response.returncode === 1 &&
+          response.zalopay_response.orderurl
+        ) {
           setZaloPayOrderUrl(response.zalopay_response.orderurl);
           setZaloPayAppTransId(response.order_payload.apptransid);
           setZaloPayQRCode((response.zalopay_response as any).qrcode); // Set qrcode state
@@ -221,12 +224,27 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
             <div className="my-4 p-4 border border-blue-300 rounded bg-blue-50 text-center">
               <h3 className="text-lg font-semibold mb-3 text-black-800">
                 Thanh toán với
-                <img src={ZaloPayLogo} alt="ZaloPay Logo" style={{ width: '60px', height: '20px', display: 'inline-block', marginLeft: '5px', marginTop: '-5px', marginRight: '5px' }} />
+                <img
+                  src={ZaloPayLogo}
+                  alt="ZaloPay Logo"
+                  style={{
+                    width: "60px",
+                    height: "20px",
+                    display: "inline-block",
+                    marginLeft: "5px",
+                    marginTop: "-5px",
+                    marginRight: "5px",
+                  }}
+                />
                 bằng mã QR
               </h3>
               {/* Use qrcode state variable with QRCodeCanvas */}
               {zaloPayQRCode && (
-                <div style={{ margin: "0 auto", width: "250px", height: "250px" }}> {/* Slightly smaller QR area */}
+                <div
+                  style={{ margin: "0 auto", width: "250px", height: "250px" }}
+                >
+                  {" "}
+                  {/* Slightly smaller QR area */}
                   <QRCodeCanvas
                     value={zaloPayQRCode}
                     size={250}
@@ -239,13 +257,25 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
               )}
               {/* Countdown Timer */}
               <p className="text-black-600 font-bold mt-3">
-                Thời gian quét mã QR để thanh toán còn: <span className="text-blue-600">{formatTime(countdown)}</span>
+                Thời gian quét mã QR để thanh toán còn:{" "}
+                <span className="text-blue-600">{formatTime(countdown)}</span>
               </p>
 
               {/* Payment Instructions */}
               <div className="mt-4 text-left">
-                <p className="font-semibold mb-2">Hướng dẫn thanh toán:
-                  <img src={ZaloPayLogo} alt="ZaloPay Logo" style={{ width: '60px', height: '20px', display: 'inline-block', marginLeft: '5px', marginTop: '-5px' }} />
+                <p className="font-semibold mb-2">
+                  Hướng dẫn thanh toán:
+                  <img
+                    src={ZaloPayLogo}
+                    alt="ZaloPay Logo"
+                    style={{
+                      width: "60px",
+                      height: "20px",
+                      display: "inline-block",
+                      marginLeft: "5px",
+                      marginTop: "-5px",
+                    }}
+                  />
                 </p>
                 <ol className="list-decimal list-inside text-gray-700">
                   <li>Bước 1: Mở ứng dụng ZaloPay</li>

@@ -45,8 +45,8 @@ import Skills from "./pages/Skills";
 import SpeakingTopics from "./pages/SpeakingTopics";
 import SpeakingTest from "./pages/SpeakingTest";
 import NotFound from "./pages/NotFound";
-import LessonsPage from "./pages/LessonsPage";
-import ExercisePage from "./pages/ExercisePage"; // nếu có
+import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
+import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
 // Component ProtectedRoute để kiểm tra đăng nhập và vai trò
 const ProtectedRoute: React.FC<{
@@ -105,20 +105,11 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/collection"
-              element={
-                <ProtectedRoute>
-                  <CollectionFlashcards />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/collection" element={<CollectionFlashcards />} />
             <Route
               path="/create-flash-card/:id"
               element={
-                <ProtectedRoute>
-                  <CreateFlashcards />
-                </ProtectedRoute>
+                <CreateFlashcards />
               }
             />
             <Route
@@ -128,7 +119,6 @@ function App() {
                   <UpdateProfile />
                 </ProtectedRoute>
               }
-
             />
             <Route
               path="/course/:courseId/lessons"
@@ -290,7 +280,7 @@ function App() {
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
-      </main >
+      </main>
 
       {!isAuthPage && !isAdminPage && (
         <button

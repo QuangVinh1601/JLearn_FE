@@ -7,8 +7,9 @@ import {
 } from "../../../api/apiClient";
 
 interface FlashcardList {
-  listId: string;
+  listID: string;
   listName: string;
+  description: string; // Added description field
 }
 
 const AdminFlashcardList: React.FC = () => {
@@ -21,15 +22,19 @@ const AdminFlashcardList: React.FC = () => {
   useEffect(() => {
     const fetchFlashcardLists = async () => {
       try {
-        const response = await fetch("http://34.44.254.240:8080/api/personal-flashcard", {
-          credentials: "include"
-        });
+        const response = await fetch(
+          "http://34.44.254.240:8080/api/personal-flashcard",
+          {
+            credentials: "include",
+          },
+        );
         const result = await response.json();
         setFlashcardLists(
-          result.data.map((item: any) => ({
-            listId: item.listId,
+          result.data.map((item: FlashcardList) => ({
+            listID: item.listID,
             listName: item.listName,
-          }))
+            description: item.description, // Added description mapping
+          })),
         );
       } catch (error) {
         console.error("Error fetching flashcard lists:", error);
@@ -44,15 +49,19 @@ const AdminFlashcardList: React.FC = () => {
   const handleCreateList = async () => {
     try {
       const listName = prompt("Nhập tên danh sách mới:");
-      if (listName) {
-        const response = await fetch("http://34.44.254.240:8080/api/personal-flashcard", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      const description = prompt("Nhập mô tả cho danh sách mới:"); // Added description prompt
+      if (listName && description) {
+        const response = await fetch(
+          "http://34.44.254.240:8080/api/personal-flashcard",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ listName, description }), // Added description to the request body
           },
-          credentials: "include",
-          body: JSON.stringify({ listName }),
-        });
+        );
         const newList = await response.json();
         setFlashcardLists((prevLists) => [...prevLists, newList]);
         alert("Tạo danh sách thành công!");
@@ -65,25 +74,29 @@ const AdminFlashcardList: React.FC = () => {
 
   const handleEditList = (list: FlashcardList) => {
     const newName = prompt("Nhập tên mới cho danh sách:", list.listName);
-    if (newName && newName !== list.listName) {
+    const newDescription = prompt(
+      "Nhập mô tả mới cho danh sách:",
+      list.description,
+    ); // Added description prompt for edit
+    if (newName !== list.listName || newDescription !== list.description) {
       setFlashcardLists((prevLists) =>
         prevLists.map((l) =>
-          l.listId === list.listId ? { ...l, listName: newName } : l,
+          l.listID === list.listID ? { ...l, listName: newName || l.listName, description: newDescription || l.description } : l,
         ),
       );
       alert("Cập nhật danh sách thành công!");
     }
   };
 
-  const handleDeleteList = async (listId: string) => {
+  const handleDeleteList = async (listID: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa danh sách này?")) {
       try {
-        await fetch(`http://34.44.254.240:8080/api/flashcards/${listId}`, {
+        await fetch(`http://34.44.254.240:8080/api/flashcards/${listID}`, {
           method: "DELETE",
           credentials: "include",
         });
         setFlashcardLists((prevLists) =>
-          prevLists.filter((list) => list.listId !== listId)
+          prevLists.filter((list) => list.listID !== listID),
         );
         alert("Xóa danh sách thành công!");
       } catch (error) {
@@ -93,12 +106,12 @@ const AdminFlashcardList: React.FC = () => {
     }
   };
 
-  const handleViewFlashcards = (listId: string) => {
-    if (!listId) {
+  const handleViewFlashcards = (listID: string) => {
+    if (!listID) {
       alert("List ID không hợp lệ. Vui lòng thử lại!");
       return;
     }
-    navigate(`/admin/flashcard/list/${listId}`);
+    navigate(`/admin/flashcard/list/${listID}`);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -141,23 +154,30 @@ const AdminFlashcardList: React.FC = () => {
                     Tên danh sách
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Mô tả
+                  </th>{" "}
+                  {/* Added description column */}
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Thao tác
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {currentLists.map((list, index) => (
-                  <tr key={list.listId} className="hover:bg-gray-50">
+                  <tr key={list.listID} className="hover:bg-gray-50">
                     <td className="px-4 py-3 whitespace-nowrap text-sm">
                       {indexOfFirstItem + index + 1}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm">
                       {list.listName}
                     </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      {list.description} {/* Display description */}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => handleViewFlashcards(list.listId)}
+                          onClick={() => handleViewFlashcards(list.listID)}
                           className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs sm:text-sm"
                         >
                           Xem Flashcards
@@ -169,7 +189,7 @@ const AdminFlashcardList: React.FC = () => {
                           Sửa
                         </button>
                         <button
-                          onClick={() => handleDeleteList(list.listId)}
+                          onClick={() => handleDeleteList(list.listID)}
                           className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs sm:text-sm"
                         >
                           Xóa
