@@ -331,10 +331,11 @@ export const transcribeAudio = async (audioFile, additionalText) => {
 };
 
 // Lấy danh sách collection ID
-export const getCollections = async () => {
+export const getCollections = async (userId) => {
   return await request("dotnet", "/api/ml/get_collections", {
     // Using Python backend
     method: "GET",
+    params: { user_id: userId },
   });
 };
 
