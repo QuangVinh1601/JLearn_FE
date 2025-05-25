@@ -52,7 +52,7 @@ const Login: React.FC = () => {
       localStorage.setItem("userID", userID);
 
        if (role !== "admin") {
-        const collectionsResponse = await getCollections(userID);
+        const collectionsResponse = await getCollections();
         localStorage.setItem("purchasedCourses", JSON.stringify(collectionsResponse.collections));
         console.log("Collections:", collectionsResponse.collections);
       }
