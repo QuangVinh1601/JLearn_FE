@@ -22,7 +22,7 @@ import CreateFlashcards from "./pages/CreateFlashcards";
 import UpdateProfile from "./pages/UpdateProfile";
 import CourseList from "./pages/CourseList";
 import Profile from "./pages/Profile/Profile";
-
+import Videos from "./pages/Video";
 import MainLayout from "./pages/Profile/MainLayout";
 import ProfileOverview from "./pages/Profile/ProfileOverview";
 import ProfileCourses from "./pages/Profile/ProfileCourses";
@@ -35,6 +35,8 @@ import AdminLayout from "./admin/components/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminAccount from "./admin/pages/pagesOfAdminUser/AdminAccount";
 import EditUser from "./admin/pages/pagesOfAdminUser/EditUser";
+import AdminAds from "./admin/pages/pagesOfAds/AdminAds";
+import EditAd from "./admin/pages/pagesOfAds/EditAd";
 import AdminFlashcardList from "./admin/pages/pagesOfFlashcard/AdminFlashcardList";
 import AdminVideo from "./admin/pages/pagesOfVideo/AdminVideo";
 import EditVideo from "./admin/pages/pagesOfVideo/EditVideo";
@@ -48,7 +50,6 @@ import NotFound from "./pages/NotFound";
 import LessonsPage from "./pages/LessonsPage"; // Import the LessonsPage component
 import ExercisePage from "./pages/ExercisePage"; // Import the ExercisePage component
 
-// Component ProtectedRoute để kiểm tra đăng nhập và vai trò
 const ProtectedRoute: React.FC<{
   children: React.ReactElement;
   requiredRole?: string;
@@ -96,7 +97,7 @@ function App() {
           {/* Protected Routes for authenticated users */}
           <Route>
             <Route path="/course" element={<CourseList />} />
-
+            <Route path="/videos" element={<Videos />} />
             <Route
               path="/flashcards"
               element={
@@ -108,9 +109,7 @@ function App() {
             <Route path="/collection" element={<CollectionFlashcards />} />
             <Route
               path="/create-flash-card/:id"
-              element={
-                <CreateFlashcards />
-              }
+              element={<CreateFlashcards />}
             />
             <Route
               path="/update-profile"
@@ -120,14 +119,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/course/:courseId/lessons"
-              element={<LessonsPage />}
-            />
-            <Route
-              path="/exercise/:exerciseId"
-              element={<ExercisePage />}
-            />
+            <Route path="/course/:courseId/lessons" element={<LessonsPage />} />
+            <Route path="/exercise/:exerciseId" element={<ExercisePage />} />
             <Route
               path="/skills"
               element={
@@ -222,6 +215,30 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <EditUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="ads"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminAds />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="ads/add"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditAd />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="ads/edit/:id"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditAd />
                   </ProtectedRoute>
                 }
               />

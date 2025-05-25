@@ -3,9 +3,6 @@ import axios from "axios";
 const BASE_URLS = {
   dotnet: "https://japstudy.id.vn",
   python: "https://japstudy.id.vn",
-  // dotnet: "http://34.44.254.240:8080",
-  // python: "http://127.0.0.1:5000",
-  // python: "http://34.44.254.240:5000",
 };
 
 // Hàm refresh token
@@ -106,13 +103,13 @@ export const loginUser = async (email, password) => {
     role = role.toLowerCase();
   }
 
-  const userID = 
-    response.userID || 
-    response.userId || 
-    response.user_id || 
-    response.data?.userID || 
-    response.data?.userId || 
-    response.data?.user_id || 
+  const userID =
+    response.userID ||
+    response.userId ||
+    response.user_id ||
+    response.data?.userID ||
+    response.data?.userId ||
+    response.data?.user_id ||
     null;
 
   if (!refreshToken) {
@@ -342,6 +339,65 @@ export const getCollections = async (userId) => {
   });
 };
 
+// Thêm hàm GET cho quảng cáo
+export const getAds = async () => {
+  return await request("dotnet", "/api/ads", {
+    method: "GET",
+  });
+};
+
+export const createAd = async (formData) => {
+  return await request("dotnet", "/api/ads", {
+    method: "POST",
+    data: formData,
+  });
+};
+
+export const updateAd = async (adId, formData) => {
+  return await request("dotnet", `/api/ads/${adId}`, {
+    method: "PUT",
+    data: formData,
+  });
+};
+
+export const deleteAd = async (adId) => {
+  return await request("dotnet", `/api/ads/${adId}`, {
+    method: "DELETE",
+  });
+};
+
+// Hàm mới cho LearningContent
+export const getLearningContents = async () => {
+  return await request("dotnet", "/api/learning-contents", {
+    method: "GET",
+  });
+};
+
+export const createLearningContent = async (formData) => {
+  return await request("dotnet", "/api/learning-contents", {
+    method: "POST",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const updateLearningContent = async (adId, formData) => {
+  return await request("dotnet", `/api/learning-contents/${adId}`, {
+    method: "PUT",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const deleteLearningContent = async (adId) => {
+  return await request("dotnet", `/api/learning-contents/${adId}`, {
+    method: "DELETE",
+  });
+};
 export const getAdminMetrics = async () => {
   return await request("dotnet", "/api/admin/metrics", {
     method: "GET",
@@ -376,4 +432,3 @@ export const createTransaction = async ({ transaction_id, user_id, collection_id
 //     withCredentials: true,
 //   });
 // };
-
