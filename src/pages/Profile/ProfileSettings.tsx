@@ -138,9 +138,9 @@ const ProfileSettings: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="flex items-center justify-between">
-                                        <span className="text-gray-800 font-medium">{userInfo.Username}</span>
+                                        <span className="text-gray-800 font-medium">{userInfo.username}</span>
                                         <button
-                                            onClick={() => handleEdit('username', userInfo.Username)}
+                                            onClick={() => handleEdit('username', userInfo.username)}
                                             className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                                         >
                                             {FaEdit({})}
@@ -155,7 +155,7 @@ const ProfileSettings: React.FC = () => {
                             <div className="flex-1">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-gray-800 font-medium">{userInfo.Email}</span>
+                                    <span className="text-gray-800 font-medium">{userInfo.email}</span>
                                     <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Đã xác thực</span>
                                 </div>
                             </div>
