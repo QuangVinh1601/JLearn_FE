@@ -301,7 +301,7 @@ export const createZaloPayOrder = async (amount, description, userId, collection
 
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
-  return await request("python", "/api/ml/api/ml/order_status", {
+  return await request("python", "/api/ml/order_status", {
     
     method: "GET",
     params: { apptransid },
