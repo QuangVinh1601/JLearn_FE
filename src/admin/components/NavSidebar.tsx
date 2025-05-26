@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../components/AuthContext";
-import logo from "../../assets/logo/logo.png";
+import { useAuth } from "../../components/AuthContext"; // Giả sử đường dẫn này đúng
+import logo from "../../assets/logo/logo.png"; // Giả sử đường dẫn này đúng
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDashboard,
@@ -23,118 +23,91 @@ const NavSidebar = () => {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
+  const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
+    `block py-2.5 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-md mx-2 my-1 transition-colors duration-150 ${isActive ? "bg-red-100 text-red-700 font-semibold" : "font-medium"
+    }`;
+
   return (
     <>
       {/* Hamburger Menu for Mobile */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 text-gray-700"
+        className="md:hidden fixed top-4 left-4 z-50 text-red-600 p-2 rounded-md hover:bg-red-100 transition-colors"
         onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
       >
         <FontAwesomeIcon icon={faBars} size="lg" />
       </button>
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-64 bg-[#e5e7eb] shadow-xl transform ${
+        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${ // Nền sidebar đổi thành trắng để nổi bật hơn
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out z-40`}
+          } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 border-r border-gray-200`}
       >
-        <nav className="flex flex-col h-full">
-          <img
-            src={logo}
-            alt="JLearn Logo"
-            className="w-28 h-28 mx-auto mt-4"
-          />
-          <div className="flex-1">
+        <nav className="flex flex-col h-full p-2">
+          <div className="flex justify-center items-center my-6">
+            <img
+              src={logo}
+              alt="JLearn Logo"
+              className="w-24 h-24 object-contain" // Kích thước có thể điều chỉnh
+            />
+          </div>
+          <div className="flex-1 space-y-1">
             <NavLink
               to="/admin/dashboard"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
-              onClick={() => setIsOpen(false)} // Close sidebar on link click
+              className={navLinkClasses}
+              onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faDashboard} className="mr-2" /> Dashboard
+              <FontAwesomeIcon icon={faDashboard} className="mr-3 w-5" /> Dashboard
             </NavLink>
             <NavLink
               to="/admin/account"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faUser} className="mr-2" /> Quản lý tài
-              khoản
+              <FontAwesomeIcon icon={faUser} className="mr-3 w-5" /> Quản lý tài khoản
             </NavLink>
             <NavLink
               to="/admin/flashcard"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faClone} className="mr-2" /> Quản lý
-              flashcard
+              <FontAwesomeIcon icon={faClone} className="mr-3 w-5" /> Quản lý flashcard
             </NavLink>
             <NavLink
               to="/admin/ads"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faAd} className="mr-2" /> Quản lý quảng cáo
+              <FontAwesomeIcon icon={faAd} className="mr-3 w-5" /> Quản lý quảng cáo
             </NavLink>
             <NavLink
               to="/admin/video"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faVideo} className="mr-2" /> Quản lý video
+              <FontAwesomeIcon icon={faVideo} className="mr-3 w-5" /> Quản lý video
             </NavLink>
             <NavLink
               to="/admin/messages"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faEnvelope} className="mr-2" /> Tin nhắn
+              <FontAwesomeIcon icon={faEnvelope} className="mr-3 w-5" /> Tin nhắn
             </NavLink>
             <NavLink
               to="/admin/notifications"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faBell} className="mr-2" /> Thông báo
+              <FontAwesomeIcon icon={faBell} className="mr-3 w-5" /> Thông báo
             </NavLink>
             <NavLink
               to="/admin/settings"
-              className={({ isActive }) =>
-                `block py-2 px-4 text-gray-700 hover:bg-gray-100 ${
-                  isActive ? "bg-gray-300" : ""
-                }`
-              }
+              className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faGear} className="mr-2" /> Cài đặt
+              <FontAwesomeIcon icon={faGear} className="mr-3 w-5" /> Cài đặt
             </NavLink>
           </div>
           <button
@@ -143,9 +116,9 @@ const NavSidebar = () => {
               navigate("/home");
               setIsOpen(false);
             }}
-            className="block w-full text-left py-2 px-4 text-gray-700 hover:bg-gray-100"
+            className="block w-full text-left py-2.5 px-4 text-gray-700 hover:bg-red-100 hover:text-red-700 rounded-md mx-2 my-1 font-medium transition-colors duration-150"
           >
-            <FontAwesomeIcon icon={faSignOut} className="mr-2" /> Đăng xuất
+            <FontAwesomeIcon icon={faSignOut} className="mr-3 w-5" /> Đăng xuất
           </button>
         </nav>
       </aside>
