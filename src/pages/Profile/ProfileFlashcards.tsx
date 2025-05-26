@@ -42,8 +42,33 @@ const ProfileFlashcards: React.FC = () => {
     const flashcardProducts = allProducts.filter(p => p.type === ProductType.FlashcardCollection);
     const purchasedFlashcards = flashcardProducts.filter(flashcard => purchasedProductIds.includes(flashcard.id));
 
+    // Lấy flashcard cá nhân từ localStorage
+    const personalFlashcards: Product[] = (() => {
+        try {
+            const data = localStorage.getItem("flashcardCollections");
+            if (!data) return [];
+            const collections = JSON.parse(data);
+            // Đảm bảo mỗi collection có đủ trường như Product
+            return Array.isArray(collections)
+                ? collections.map((c: any) => ({
+                    ...c,
+                    id: c.id || c._id || Math.random().toString(36).slice(2), // fallback id
+                    type: ProductType.FlashcardCollection,
+                    title: c.title || "Bộ flashcard cá nhân",
+                    description: c.description || "",
+                    level: c.level || "N5",
+                }))
+                : [];
+        } catch {
+            return [];
+        }
+    })();
+
+    // Gộp purchasedFlashcards và personalFlashcards
+    const allUserFlashcards = [...purchasedFlashcards, ...personalFlashcards];
+
     // Filter flashcards
-    const filteredFlashcards = purchasedFlashcards.filter(flashcard => {
+    const filteredFlashcards = allUserFlashcards.filter(flashcard => {
         const matchesSearch = flashcard.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             flashcard.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesLevel = filterLevel === "all" || flashcard.level === filterLevel;
@@ -51,7 +76,8 @@ const ProfileFlashcards: React.FC = () => {
     });
 
     const handleFlashcardAccess = (flashcard: Product) => {
-        navigate(`/collection`);
+        // Nếu là flashcard cá nhân, có thể chuyển hướng khác nếu cần
+        navigate(`/create-flash-card/${flashcard.id}`);
     };
 
     return (
@@ -101,7 +127,7 @@ const ProfileFlashcards: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-6 text-white">
                     <h3 className="text-lg font-semibold mb-2">Tổng bộ flashcard</h3>
-                    <p className="text-3xl font-bold">{purchasedFlashcards.length}</p>
+                    <p className="text-3xl font-bold">{purchasedFlashcards.length + personalFlashcards.length}</p>
                 </div>
                 <div className="bg-gradient-to-br from-red-400 to-red-500 rounded-2xl p-6 text-white">
                     <h3 className="text-lg font-semibold mb-2">Từ đã học</h3>
@@ -144,8 +170,29 @@ const ProfileFlashcards: React.FC = () => {
             ) : (
                 <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Tất cả bộ flashcard</h2>
-                    <div className="text-center py-8">
-                        <p className="text-gray-600">Nội dung flashcard sẽ được hiển thị ở đây khi có dữ liệu.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredFlashcards.map((flashcard) => (
+                            <div
+                                key={flashcard.id}
+                                className="bg-white rounded-2xl shadow-md p-6 flex flex-col justify-between hover:shadow-xl transition-shadow duration-200"
+                            >
+                                <div>
+                                    <p className="text-xl font-semibold mb-2 text-gray-800">{flashcard.description}</p>
+                                    <h3 className="text-gray-600 mb-4">{flashcard.title}</h3>
+                                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+                                        {/* Sửa lỗi icon */}
+                                        {FaLayerGroup({})}
+                                        <span>{flashcard.level || "N5"}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleFlashcardAccess(flashcard)}
+                                    className="mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300"
+                                >
+                                    Học ngay {FaArrowRight({})}
+                                </button>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
