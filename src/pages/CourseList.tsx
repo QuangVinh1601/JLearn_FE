@@ -270,10 +270,10 @@ const CourseList: React.FC = () => {
                     {`${fc.price.toLocaleString()} đ`}
                   </div>
                   <button
+                    onClick={() => navigate(`/create-flash-card/${fc.id}`)}
                     className="w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out bg-green-500 hover:bg-green-600 text-white"
-                    disabled
                   >
-                    Đã sở hữu
+                    Học Luôn Bấy Bì
                   </button>
                 </div>
               </div>
@@ -383,11 +383,10 @@ const CourseList: React.FC = () => {
                     </div>
                     <button
                       onClick={() => handlePurchaseOrEnter(product)}
-                      className={`w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out text-white ${
-                        isFlashcardPurchased
-                          ? "bg-green-500 hover:bg-green-600"
-                          : "bg-red-500 hover:bg-red-600"
-                      }`}
+                      className={`w-full py-2 px-4 rounded-md font-semibold transition duration-200 ease-in-out text-white ${isFlashcardPurchased
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-red-500 hover:bg-red-600"
+                        }`}
                       disabled={isFlashcardPurchased}
                     >
                       {isFlashcardPurchased ? "Đã sở hữu" : "Mua ngay"}
