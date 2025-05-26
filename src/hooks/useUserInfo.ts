@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchUserInfo } from '../api/apiClient';
 
 interface UserInfo {
-    CreatedAt: string;
-    Email: string;
-    Username: string;
+    createdAt: string;
+    email: string;
+    username: string;
 }
 
 interface CachedUserInfo {

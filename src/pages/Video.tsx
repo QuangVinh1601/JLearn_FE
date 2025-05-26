@@ -135,7 +135,7 @@ const Videos: React.FC = () => {
           }}
           navigation
           pagination={{ clickable: true }}
-          autoplay={{ delay: 5000, disableOnInteraction: true }}
+          autoplay={{ delay: 25000, disableOnInteraction: true }}
           className="mySwiper"
         >
           {videos.map((video) => (
