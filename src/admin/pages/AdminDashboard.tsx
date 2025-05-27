@@ -12,7 +12,7 @@ import {
 } from "chart.js";
 import { FaUsers, FaUserPlus, FaEye, FaMoneyBillWave } from "react-icons/fa";
 import type { IconType } from "react-icons";
-import { getAdminMetrics } from "../../api/apiClient";
+import { getAdminMetrics } from "../../api/apiClient"; // Giả sử đường dẫn đúng
 
 // Register ChartJS components
 ChartJS.register(
@@ -37,11 +37,12 @@ interface DashboardMetrics {
 
 interface MetricCardProps {
   title: string;
-  value: number;
+  value: number | string; // Cho phép value là string để hiển thị tiền tệ đã format
   icon: IconType;
   iconBgColor: string;
   iconColor: string;
-  growth: string;
+  growth?: string; // growth có thể không có
+  growthColor?: string; // Màu cho growth text
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -51,56 +52,46 @@ const MetricCard: React.FC<MetricCardProps> = ({
   iconBgColor,
   iconColor,
   growth,
+  growthColor = "text-green-500", // Mặc định là xanh
 }) => {
   const IconComponent = Icon as React.ComponentType<{ className?: string }>;
 
-  const formatValue = (value: number) => {
-    if (title === "Total Revenue") {
-      // Format as Vietnamese currency with 2 decimal places
-      return new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(value);
-    }
-    console.log("value", value);
-    return value.toLocaleString();
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">
-            {formatValue(value)}
+          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <p className="text-3xl font-bold text-gray-800 mt-1">
+            {value}
           </p>
         </div>
         <div className={`p-3 ${iconBgColor} rounded-full`}>
-          <IconComponent className={`w-6 h-6 ${iconColor}`} />
+          <IconComponent className={`w-7 h-7 ${iconColor}`} />
         </div>
       </div>
-      <div className="mt-4">
-        <span className="text-green-500 text-sm font-medium">{growth}</span>
-      </div>
+      {growth && (
+        <div className="mt-4">
+          <span className={`${growthColor} text-sm font-medium`}>{growth}</span>
+        </div>
+      )}
     </div>
   );
 };
 
-// Hàm tính toán tăng trưởng người dùng theo thời gian (có thể mở rộng logic nếu cần)
 function calculateUserGrowthOverTime(
   userGrowth: { month: string; count: number }[],
 ) {
-  // Ví dụ: trả về đúng dữ liệu, hoặc có thể tính toán phần trăm tăng trưởng giữa các tháng
   return userGrowth.map((item, idx, arr) => {
-    let growth = 0;
+    let growthPercentText = "-";
     if (idx > 0 && arr[idx - 1].count > 0) {
-      growth = ((item.count - arr[idx - 1].count) / arr[idx - 1].count) * 100;
+      const growth = ((item.count - arr[idx - 1].count) / arr[idx - 1].count) * 100;
+      growthPercentText = `${growth > 0 ? '↑' : '↓'} ${Math.abs(growth).toFixed(0)}%`;
+    } else if (idx === 0 && item.count > 0) {
+      growthPercentText = ``; // No growth for the first month
     }
     return {
       ...item,
-      growthPercent: growth,
+      growthPercentText: growthPercentText,
     };
   });
 }
@@ -120,67 +111,118 @@ const AdminDashboard: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-
         const data = await getAdminMetrics();
-        // console.log("Received metrics data:", data);
         setMetrics(data);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
-        setError("Failed to fetch dashboard data");
+        setError("Không thể tải dữ liệu dashboard.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchDashboardData();
   }, []);
 
-  // Debug metrics changes
-  useEffect(() => {
-    // console.log("Current metrics state:", metrics);
-  }, [metrics]);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
-  // Sử dụng hàm tính toán tăng trưởng người dùng
   const userGrowthData = calculateUserGrowthOverTime(metrics.userGrowth);
-  // console.log("Metrics: ", metrics);
-  // console.log("User Growth Data: ", userGrowthData);
-  // Chart configuration
+
   const chartData = {
     labels: userGrowthData.map((item) => item.month),
     datasets: [
       {
-        label: "User Growth",
+        label: "Tăng trưởng người dùng",
         data: userGrowthData.map((item) => item.count),
-        borderColor: "rgb(239, 68, 68)",
-        backgroundColor: "rgba(239, 68, 68, 0.5)",
+        borderColor: "rgb(220, 38, 38)", // Tailwind red-600
+        backgroundColor: "rgba(220, 38, 38, 0.2)",
         tension: 0.4,
+        fill: true,
+        pointBackgroundColor: "rgb(220, 38, 38)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgb(220, 38, 38)",
       },
     ],
   };
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: "top",
+        labels: {
+          font: {
+            size: 14,
+            family: "Inter, sans-serif",
+          },
+          color: '#4A5568',
+        },
       },
       title: {
         display: true,
-        text: "User Growth Over Time",
+        text: "Biểu đồ tăng trưởng người dùng theo tháng",
+        font: {
+          size: 18,
+          weight: "bold" as const, // Sửa lỗi weight
+          family: "Inter, sans-serif",
+        },
+        color: '#1F2937',
+      },
+      tooltip: {
+        backgroundColor: '#fff',
+        titleColor: '#1F2937',
+        bodyColor: '#4A5568',
+        borderColor: '#E5E7EB',
+        borderWidth: 1,
+        padding: 10,
+        callbacks: {
+          label: function (context: any) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + ' người dùng';
+            }
+            return label;
+          },
+        },
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: '#E5E7EB',
+        },
+        ticks: {
+          color: '#6B7280',
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: '#6B7280',
+        },
       },
     },
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8F7F0] p-6 flex items-center justify-center">
         <div className="text-xl font-semibold text-gray-700">
-          Loading dashboard data...
+          Đang tải dữ liệu...
         </div>
       </div>
     );
@@ -188,62 +230,63 @@ const AdminDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-        <div className="text-xl font-semibold text-red-600">{error}</div>
+      <div className="min-h-screen bg-[#F8F7F0] p-6 flex items-center justify-center">
+        <div className="text-xl font-semibold text-red-600 bg-red-50 p-6 rounded-lg shadow-md">
+          {error}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-[#F8F7F0] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          Admin Dashboard
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">
+          Trang quản trị
         </h1>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <MetricCard
-            title="Total Users"
-            value={metrics.totalUsers}
-            icon={FaUsers}
-            iconBgColor="bg-red-100"
+            title="Tổng người dùng"
+            value={metrics.totalUsers.toLocaleString()}
+            icon={() => FaUsers({ className: "w-7 h-7 text-red-600" })}
+            iconBgColor="bg-red-50"
             iconColor="text-red-600"
-            growth="↑ 12% from last month"
+            growth="↑ 12% so với tháng trước"
+            growthColor="text-green-600"
           />
-
           <MetricCard
-            title="New Users"
-            value={metrics.newUsers}
-            icon={FaUserPlus}
-            iconBgColor="bg-blue-100"
-            iconColor="text-blue-600"
-            growth="↑ 8% from last week"
+            title="Người dùng mới"
+            value={metrics.newUsers.toLocaleString()}
+            icon={() => FaUserPlus({ className: "w-7 h-7 text-sky-600" })}
+            iconBgColor="bg-sky-50"
+            iconColor="text-sky-600"
+            growth="↑ 8% so với tuần trước"
+            growthColor="text-green-600"
           />
-
           <MetricCard
-            title="Total Visitors"
-            value={metrics.totalUsers * 3} // Assuming each user visits 3 times on average
-            icon={FaEye}
-            iconBgColor="bg-green-100"
-            iconColor="text-green-600"
-            growth="↑ 15% from last month"
+            title="Tổng lượt truy cập"
+            value={(metrics.totalUsers * 3).toLocaleString()}
+            icon={() => FaEye({ className: "w-7 h-7 text-emerald-600" })}
+            iconBgColor="bg-emerald-50"
+            iconColor="text-emerald-600"
+            growth="↑ 15% so với tháng trước"
+            growthColor="text-green-600"
           />
-
           <MetricCard
-            title="Total Revenue"
-            value={metrics.totalRevenue}
-            icon={FaMoneyBillWave}
-            iconBgColor="bg-yellow-100"
-            iconColor="text-yellow-600"
-            growth="↑ 20% from last month"
+            title="Tổng doanh thu"
+            value={formatCurrency(metrics.totalRevenue)}
+            icon={() => FaMoneyBillWave({ className: "w-7 h-7 text-amber-600" })}
+            iconBgColor="bg-amber-50"
+            iconColor="text-amber-600"
+            growth="↑ 20% so với tháng trước"
+            growthColor="text-green-600"
           />
         </div>
 
-        {/* User Growth Chart */}
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-          <div className="h-[400px]">
-            <Line data={chartData} options={chartOptions} />
+        <div className="bg-white rounded-xl shadow-lg p-4 md:p-6 border border-gray-200">
+          <div className="h-[350px] md:h-[450px]"> {/* Điều chỉnh chiều cao cho phù hợp */}
+            <Line data={chartData} />
           </div>
         </div>
       </div>
