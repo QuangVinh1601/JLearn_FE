@@ -118,6 +118,7 @@ const AdminAds: React.FC = () => {
             Quản lý Quảng Cáo
           </h1>
           <button
+            onClick={handleAdd}
             className="flex items-center px-5 py-2.5 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400"
           >
             {AddIcon({ className: "mr-2" })} Thêm Quảng Cáo
@@ -176,7 +177,7 @@ const AdminAds: React.FC = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">
-                      {ad.PublicImageId || <span className="text-gray-400 italic">Không có</span>}
+                      {ad.adID || <span className="text-gray-400 italic">Không có</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
