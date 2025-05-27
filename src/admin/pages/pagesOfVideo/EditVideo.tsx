@@ -134,8 +134,7 @@ const EditVideo: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        // const adsResponse = await getAds(); // API thật
-        const adsResponse = await mockGetAds(); // Mock
+        const adsResponse = await getAds(); // API thật
         if (adsResponse && Array.isArray(adsResponse.data)) {
           setAds(adsResponse.data);
         } else {
