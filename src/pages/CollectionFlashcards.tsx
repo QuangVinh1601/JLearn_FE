@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +13,7 @@ import {
 
 function CollectionFlashcards() {
   const navigate = useNavigate();
+  const { role, isLoggedIn } = useAuth(); // Add this line
   interface Collection {
     id: any;
     title: string;
@@ -53,6 +55,13 @@ function CollectionFlashcards() {
 
   const handleCreateCollection = async (e: React.FormEvent) => {
     e.preventDefault();
+    if ((!isLoggedIn || role === "guest") && collections.length >= 3) {
+      toast.error("Khách chỉ được tạo tối đa 3 bộ sưu tập thẻ ghi nhớ.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
     if (!newListName.trim()) return;
 
     try {

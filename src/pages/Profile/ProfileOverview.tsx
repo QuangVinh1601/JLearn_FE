@@ -88,7 +88,7 @@ const ProfileOverview: React.FC = () => {
                         <div className="flex-1 text-center lg:text-left">
                             <div className="flex items-center justify-center lg:justify-start mb-3">
                                 <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-700 mr-3">
-                                    {userInfo.Username}
+                                    {userInfo.username}
                                 </h1>
                                 <span className="px-3 py-1 bg-gradient-to-r from-red-400 to-red-500 text-white rounded-full text-sm font-semibold flex items-center">
                                     {FaCrown({ className: "mr-1 text-xs" })}
@@ -97,7 +97,7 @@ const ProfileOverview: React.FC = () => {
                             </div>
 
                             <p className="text-gray-600 text-lg mb-5 flex items-center justify-center lg:justify-start">
-                                {FaEnvelope({ className: "mr-2 text-gray-500" })} {userInfo.Email}
+                                {FaEnvelope({ className: "mr-2 text-gray-500" })} {userInfo.email}
                             </p>
 
                             <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
@@ -110,9 +110,9 @@ const ProfileOverview: React.FC = () => {
                                 <span className="flex items-center px-4 py-2 text-red-800 rounded-full text-sm font-medium shadow-sm hover:shadow-md transition-shadow" style={{ backgroundColor: 'white' }}>
                                     {FaLayerGroup({ className: "mr-2" })} {flashcardCount} bộ flashcard
                                 </span>
-                                {userInfo.CreatedAt && (
+                                {userInfo.createdAt && (
                                     <span className="flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
-                                        {FaCalendarAlt({ className: "mr-2" })} Tham gia {formatCreatedDate(userInfo.CreatedAt)}
+                                        {FaCalendarAlt({ className: "mr-2" })} Tham gia {formatCreatedDate(userInfo.createdAt)}
                                     </span>
                                 )}
                             </div>
@@ -142,10 +142,10 @@ const ProfileOverview: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         {[
-                            { label: "Tên người dùng", value: userInfo?.Username, icon: FaIdCard({ className: "text-red-500 text-xl" }) },
-                            { label: "Địa chỉ email", value: userInfo?.Email, icon: FaEnvelope({ className: "text-red-500 text-xl" }) },
+                            { label: "Tên người dùng", value: userInfo?.username, icon: FaIdCard({ className: "text-red-500 text-xl" }) },
+                            { label: "Địa chỉ email", value: userInfo?.email, icon: FaEnvelope({ className: "text-red-500 text-xl" }) },
                             { label: "ID người dùng", value: userID, icon: FaIdCard({ className: "text-red-500 text-xl" }) },
-                            { label: "Ngày tạo tài khoản", value: userInfo?.CreatedAt ? new Date(userInfo.CreatedAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : "Không có thông tin", icon: FaCalendarAlt({ className: "text-red-500 text-xl" }) },
+                            { label: "Ngày tạo tài khoản", value: userInfo?.createdAt ? new Date(userInfo.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : "Không có thông tin", icon: FaCalendarAlt({ className: "text-red-500 text-xl" }) },
                         ].map(item => (
                             <div key={item.label} className="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 border" style={{ backgroundColor: 'white', borderColor: '#D4B896' }}>
                                 <div className="flex items-center mb-3">

@@ -311,7 +311,7 @@ export const getZaloPayOrderStatus = async (apptransid) => {
 export const fetchUserInfo = async (userId) => {
   return await request("dotnet", "/api/user_info", {
     method: "GET",
-    // params: { user_Id: userId },
+
   });
 };
 
