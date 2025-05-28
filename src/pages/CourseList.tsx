@@ -43,7 +43,6 @@ const CourseList: React.FC = () => {
       } else {
         if (!isLoggedIn) {
           alert("Vui lòng đăng nhập để mua khóa học.");
-          navigate("/login");
           return;
         }
         setSelectedProductForPurchase(product);
@@ -56,7 +55,6 @@ const CourseList: React.FC = () => {
       }
       if (!isLoggedIn) {
         alert("Vui lòng đăng nhập để mua flashcard.");
-        navigate("/login");
         return;
       }
       setSelectedProductForPurchase(product);

@@ -208,6 +208,34 @@ export const getPersonalFlashcardLists = async () => {
   return [];
 };
 
+export const getPersonalFlashcardListForAdmin = async () => {
+  const response = await request("dotnet", "/api/personal-flashcard", {
+    method: "GET",
+  });
+
+  console.log("Raw response from getPersonalFlashcardLists:", response);
+
+  if (response && response.data && Array.isArray(response.data)) {
+    return response.data.map((item) => ({
+      listID: item.listID || item.ListID, // Hỗ trợ cả hai định dạng
+      listName: item.listName || item.ListName,
+      description: item.description || item.Description || "",
+      flashcards: item.flashcards,
+      createdAt: item.createdAt,
+    }));
+  } else if (Array.isArray(response)) {
+    return response.map((item) => ({
+      listID: item.listID || item.ListID,
+      listName: item.listName || item.ListName,
+      description: item.description || item.Description || "",
+      flashcards: item.flashcards,
+      createdAt: item.createdAt,
+    }));
+  }
+
+  return [];
+};
+
 export const deletePersonalFlashcardList = async (listId) => {
   console.log("Starting deletePersonalFlashcardList...");
   const response = await request("dotnet", `/api/personal-flashcard/${listId}`, {
