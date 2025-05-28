@@ -27,6 +27,7 @@ const Videos: React.FC = () => {
     {},
   );
   const [showSkipAd, setShowSkipAd] = useState<{ [key: string]: boolean }>({});
+  const [adPlayedSeconds, setAdPlayedSeconds] = useState<{ [key: string]: number }>({});
   const timersRef = useRef<{ [key: string]: NodeJS.Timeout }>({});
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
@@ -34,12 +35,17 @@ const Videos: React.FC = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await getLearningContents();
-        console.log("Fetched Video Contents:", response);
-        const data = Array.isArray(response.data) ? response.data : response;
-        const difficulties = ["beginner", "intermediate", "advanced"] as const;
-        setVideoContents(
-          data.map((item: any, index: number) => ({
+         const response = await getLearningContents();
+      console.log("Fetched Video Contents:", response);
+      const data = Array.isArray(response.data) ? response.data : response;
+       
+      setVideoContents(
+        data.map((item: any) => {
+          let difficulty: "beginner" | "intermediate" | "advanced" = "beginner";
+          if (/sơ cấp/i.test(item.title)) difficulty = "beginner";
+          else if (/trung cấp/i.test(item.title)) difficulty = "intermediate";
+          else if (/cao cấp/i.test(item.title)) difficulty = "advanced";
+          return {
             id: item.id,
             title: item.title,
             urlVideo: item.urlVideo,
@@ -48,9 +54,10 @@ const Videos: React.FC = () => {
             thumbnailUrl:
               item.thumbnailUrl ||
               "https://via.placeholder.com/1280x720?text=Video+Thumbnail",
-            difficulty: difficulties[index % 3],
-          })),
-        );
+            difficulty,
+          };
+        }),
+      );
         const initialPlayingAd = data.reduce((acc: any, video: any) => {
           acc[video.id] = !isLoggedIn && video.urlAd ? true : false;
           return acc;
@@ -80,7 +87,7 @@ const Videos: React.FC = () => {
       }
       timersRef.current[videoId] = setTimeout(() => {
         setShowSkipAd((prev) => ({ ...prev, [videoId]: true }));
-      }, 5000);
+      }, 25000);
     }
   };
 
@@ -160,11 +167,34 @@ const Videos: React.FC = () => {
                     }
                     onStart={() => handleVideoStart(video.id)}
                     onEnded={() => handleVideoEnd(video.id)}
+                    onPause={() => {
+                      // Clear the skip ad timer when paused
+                      if (timersRef.current[video.id]) {
+                        clearTimeout(timersRef.current[video.id]);
+                        delete timersRef.current[video.id];
+                      }
+                      setShowSkipAd((prev) => ({ ...prev, [video.id]: false }));
+                    }}
+                    onProgress={({ playedSeconds }) => {
+                      if (!isLoggedIn && playingAd[video.id] && video.urlAd) {
+                        setAdPlayedSeconds(prev => {
+                          const seconds = Math.floor(playedSeconds);
+                          // Only update if less than 25 to avoid unnecessary updates
+                          if ((prev[video.id] || 0) < 25 && seconds >= 0) {
+                            return { ...prev, [video.id]: seconds };
+                          }
+                          return prev;
+                        });
+                        // Show skip ad if playedSeconds >= 25
+                        if (playedSeconds >= 25 && !showSkipAd[video.id]) {
+                          setShowSkipAd(prev => ({ ...prev, [video.id]: true }));
+                        }
+                      }
+                    }}
                     config={{
                       file: {
                         attributes: {
-                          muted:
-                            !isLoggedIn && playingAd[video.id] && video.urlAd,
+                          muted: !isLoggedIn && playingAd[video.id] && video.urlAd,
                         },
                       },
                     }}

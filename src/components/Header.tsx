@@ -4,27 +4,27 @@ import logo from "../assets/logo/logo.png";
 import profile from "../assets/images/profile-icon.png";
 import { useAuth } from "./AuthContext";
 import { UserContext } from "../contexts/UserContext";
-import { logoutUser } from "../api/apiClient"; 
+import { logoutUser } from "../api/apiClient";
 const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const { isLoggedIn, logout, role } = useAuth(); // Thêm role từ useAuth
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-// In Header.tsx
-const handleLogout = async () => {
-  try {
-    // Call API to invalidate tokens and clear cookies on the server
-    await logoutUser();
-  } catch (err) {
-    console.error("Error during logout:", err);
-  } finally {
-    // Always perform local logout, even if API call fails
-    logout();
-    navigate("/home");
-    setIsMenuOpen(false);
-  }
-};
+  // In Header.tsx
+  const handleLogout = async () => {
+    try {
+      // Call API to invalidate tokens and clear cookies on the server
+      await logoutUser();
+    } catch (err) {
+      console.error("Error during logout:", err);
+    } finally {
+      // Always perform local logout, even if API call fails
+      logout();
+      navigate("/home");
+      setIsMenuOpen(false);
+    }
+  };
 
   const handleNavClick = () => {
     setIsMenuOpen(false);

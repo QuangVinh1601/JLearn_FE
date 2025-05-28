@@ -15,6 +15,7 @@ import {
   faSignOut,
   faBars,
 } from "@fortawesome/free-solid-svg-icons";
+import { logoutUser } from "../../api/apiClient";
 
 const NavSidebar = () => {
   const navigate = useNavigate();
@@ -24,9 +25,23 @@ const NavSidebar = () => {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
-    `block py-2.5 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-md mx-2 my-1 transition-colors duration-150 ${isActive ? "bg-red-100 text-red-700 font-semibold" : "font-medium"
+    `block py-2.5 px-4 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-md mx-2 my-1 transition-colors duration-150 ${
+      isActive ? "bg-red-100 text-red-700 font-semibold" : "font-medium"
     }`;
 
+    const handleLogout = async () => {
+        try {
+          // Call API to invalidate tokens and clear cookies on the server
+          await logoutUser();
+        } catch (err) {
+          console.error("Error during logout:", err);
+        } finally {
+          // Always perform local logout, even if API call fails
+          logout();
+          navigate("/login");
+        }
+      };
+      
   return (
     <>
       {/* Hamburger Menu for Mobile */}
@@ -40,9 +55,10 @@ const NavSidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${ // Nền sidebar đổi thành trắng để nổi bật hơn
+        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${
+          // Nền sidebar đổi thành trắng để nổi bật hơn
           isOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 border-r border-gray-200`}
+        } md:translate-x-0 transition-transform duration-300 ease-in-out z-40 border-r border-gray-200`}
       >
         <nav className="flex flex-col h-full p-2">
           <div className="flex justify-center items-center my-6">
@@ -58,42 +74,48 @@ const NavSidebar = () => {
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faDashboard} className="mr-3 w-5" /> Dashboard
+              <FontAwesomeIcon icon={faDashboard} className="mr-3 w-5" />{" "}
+              Dashboard
             </NavLink>
             <NavLink
               to="/admin/account"
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faUser} className="mr-3 w-5" /> Quản lý tài khoản
+              <FontAwesomeIcon icon={faUser} className="mr-3 w-5" /> Quản lý tài
+              khoản
             </NavLink>
             <NavLink
               to="/admin/flashcard"
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faClone} className="mr-3 w-5" /> Quản lý flashcard
+              <FontAwesomeIcon icon={faClone} className="mr-3 w-5" /> Quản lý
+              flashcard
             </NavLink>
             <NavLink
               to="/admin/ads"
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faAd} className="mr-3 w-5" /> Quản lý quảng cáo
+              <FontAwesomeIcon icon={faAd} className="mr-3 w-5" /> Quản lý quảng
+              cáo
             </NavLink>
             <NavLink
               to="/admin/video"
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faVideo} className="mr-3 w-5" /> Quản lý video
+              <FontAwesomeIcon icon={faVideo} className="mr-3 w-5" /> Quản lý
+              video
             </NavLink>
             <NavLink
               to="/admin/messages"
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}
             >
-              <FontAwesomeIcon icon={faEnvelope} className="mr-3 w-5" /> Tin nhắn
+              <FontAwesomeIcon icon={faEnvelope} className="mr-3 w-5" /> Tin
+              nhắn
             </NavLink>
             <NavLink
               to="/admin/notifications"
@@ -112,8 +134,7 @@ const NavSidebar = () => {
           </div>
           <button
             onClick={() => {
-              logout();
-              navigate("/home");
+             handleLogout();
               setIsOpen(false);
             }}
             className="block w-full text-left py-2.5 px-4 text-gray-700 hover:bg-red-100 hover:text-red-700 rounded-md mx-2 my-1 font-medium transition-colors duration-150"

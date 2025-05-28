@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaPlus, FaEdit, FaTrash, FaAngleLeft, FaAngleRight } from "react-icons/fa";
-
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaAngleLeft,
+  FaAngleRight,
+} from "react-icons/fa";
 
 interface User {
   id: string;
@@ -12,18 +17,84 @@ interface User {
 }
 
 const mockUsers: User[] = [
-  { id: "1", userName: "admin01", email: "admin01@example.com", fullName: "Nguyễn Văn Admin", roleUser: "Admin" },
-  { id: "2", userName: "user02", email: "user02@example.com", fullName: "Trần Thị User", roleUser: "User" },
-  { id: "3", userName: "mod03", email: "mod03@example.com", fullName: "Lê Văn Moderator", roleUser: "Moderator" },
+  {
+    id: "1",
+    userName: "admin01",
+    email: "admin01@example.com",
+    fullName: "Nguyễn Văn Admin",
+    roleUser: "Admin",
+  },
+  {
+    id: "2",
+    userName: "user02",
+    email: "user02@example.com",
+    fullName: "Trần Thị User",
+    roleUser: "User",
+  },
+  {
+    id: "3",
+    userName: "mod03",
+    email: "mod03@example.com",
+    fullName: "Lê Văn Moderator",
+    roleUser: "Moderator",
+  },
   // Thêm dữ liệu mẫu để test phân trang
-  { id: "4", userName: "user04", email: "user04@example.com", fullName: "Phạm Hữu User", roleUser: "User" },
-  { id: "5", userName: "user05", email: "user05@example.com", fullName: "Võ Thị User", roleUser: "User" },
-  { id: "6", userName: "user06", email: "user06@example.com", fullName: "Đặng Văn User", roleUser: "User" },
-  { id: "7", userName: "admin07", email: "admin07@example.com", fullName: "Hoàng Nguyễn Admin", roleUser: "Admin" },
-  { id: "8", userName: "user08", email: "user08@example.com", fullName: "Bùi Thị User", roleUser: "User" },
-  { id: "9", userName: "mod09", email: "mod09@example.com", fullName: "Đỗ Văn Moderator", roleUser: "Moderator" },
-  { id: "10", userName: "user10", email: "user10@example.com", fullName: "Ngô Thị User", roleUser: "User" },
-  { id: "11", userName: "user11", email: "user11@example.com", fullName: "Lý Văn User", roleUser: "User" },
+  {
+    id: "4",
+    userName: "user04",
+    email: "user04@example.com",
+    fullName: "Phạm Hữu User",
+    roleUser: "User",
+  },
+  {
+    id: "5",
+    userName: "user05",
+    email: "user05@example.com",
+    fullName: "Võ Thị User",
+    roleUser: "User",
+  },
+  {
+    id: "6",
+    userName: "user06",
+    email: "user06@example.com",
+    fullName: "Đặng Văn User",
+    roleUser: "User",
+  },
+  {
+    id: "7",
+    userName: "admin07",
+    email: "admin07@example.com",
+    fullName: "Hoàng Nguyễn Admin",
+    roleUser: "Admin",
+  },
+  {
+    id: "8",
+    userName: "user08",
+    email: "user08@example.com",
+    fullName: "Bùi Thị User",
+    roleUser: "User",
+  },
+  {
+    id: "9",
+    userName: "mod09",
+    email: "mod09@example.com",
+    fullName: "Đỗ Văn Moderator",
+    roleUser: "Moderator",
+  },
+  {
+    id: "10",
+    userName: "user10",
+    email: "user10@example.com",
+    fullName: "Ngô Thị User",
+    roleUser: "User",
+  },
+  {
+    id: "11",
+    userName: "user11",
+    email: "user11@example.com",
+    fullName: "Lý Văn User",
+    roleUser: "User",
+  },
 ];
 
 const ITEMS_PER_PAGE = 5; // Số lượng item mỗi trang
@@ -63,7 +134,6 @@ const AdminAccount: React.FC = () => {
     }
   }, [location.state, navigate, location.pathname]);
 
-
   const handleAdd = () => {
     navigate("/admin/account/add");
   };
@@ -88,11 +158,19 @@ const AdminAccount: React.FC = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-700">Đang tải dữ liệu người dùng...</div>;
+    return (
+      <div className="p-8 text-center text-gray-700">
+        Đang tải dữ liệu người dùng...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-8 text-center text-red-600 bg-red-50 rounded-lg">{error}</div>;
+    return (
+      <div className="p-8 text-center text-red-600 bg-red-50 rounded-lg">
+        {error}
+      </div>
+    );
   }
 
   return (
@@ -137,7 +215,10 @@ const AdminAccount: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {currentUsers.map((user, index) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors duration-150">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-gray-50 transition-colors duration-150"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                       {indexOfFirstItem + index + 1}
                     </td>
@@ -151,10 +232,16 @@ const AdminAccount: React.FC = () => {
                       {user.fullName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full
-                        ${user.roleUser === "Admin" ? "bg-red-100 text-red-800" :
-                          user.roleUser === "Moderator" ? "bg-yellow-100 text-yellow-800" :
-                            "bg-green-100 text-green-800"}`}>
+                      <span
+                        className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full
+                        ${
+                          user.roleUser === "Admin"
+                            ? "bg-red-100 text-red-800"
+                            : user.roleUser === "Moderator"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                        }`}
+                      >
                         {user.roleUser}
                       </span>
                     </td>
@@ -197,9 +284,10 @@ const AdminAccount: React.FC = () => {
                 key={index + 1}
                 onClick={() => paginate(index + 1)}
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-                  ${currentPage === index + 1
-                    ? "bg-red-600 text-white shadow-sm"
-                    : "bg-white text-gray-700 hover:bg-red-50 border border-gray-300"
+                  ${
+                    currentPage === index + 1
+                      ? "bg-red-600 text-white shadow-sm"
+                      : "bg-white text-gray-700 hover:bg-red-50 border border-gray-300"
                   }`}
               >
                 {index + 1}

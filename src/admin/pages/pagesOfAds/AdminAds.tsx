@@ -7,6 +7,7 @@ import {
   FaTrashAlt as DeleteIcon, // Sử dụng FaTrashAlt cho biểu tượng rác rõ ràng hơn
   FaAngleLeft as PrevIcon,
   FaAngleRight as NextIcon,
+  FaVideo as VideoIconSolid,
   FaExclamationCircle as EmptyIcon,
 } from "react-icons/fa";
 
@@ -14,7 +15,7 @@ interface Ad {
   adID: string;
   adTitle: string;
   urlImage?: string;
-  PublicImageId?: string | null;
+  publicImageId?: string | null;
   creator?: string | null; // Giữ lại nếu API trả về
   createdBy?: string; // Giữ lại nếu API trả về
   learningContentsAds?: string | null; // Giữ lại nếu API trả về
@@ -41,7 +42,10 @@ const AdminAds: React.FC = () => {
         if (response && Array.isArray(response.data)) {
           setAds(response.data);
         } else {
-          console.warn("Fetched ads data is not in the expected format:", response);
+          console.warn(
+            "Fetched ads data is not in the expected format:",
+            response,
+          );
           setAds([]); // Đặt thành mảng rỗng nếu dữ liệu không đúng định dạng
         }
       } catch (err) {
@@ -55,7 +59,6 @@ const AdminAds: React.FC = () => {
     fetchAdsData();
   }, []);
 
-
   useEffect(() => {
     // Xử lý khi có ad được cập nhật từ trang EditAd
     const updatedAdState = (location.state as { updatedAd?: Ad })?.updatedAd;
@@ -64,17 +67,19 @@ const AdminAds: React.FC = () => {
         const exists = prevAds.some((ad) => ad.adID === updatedAdState.adID);
         if (exists) {
           return prevAds.map((ad) =>
-            ad.adID === updatedAdState.adID ? updatedAdState : ad
+            ad.adID === updatedAdState.adID ? updatedAdState : ad,
           );
         }
         // Nếu là ad mới (không có id trong danh sách cũ), thêm vào đầu danh sách
-        return [updatedAdState, ...prevAds.filter(ad => ad.adID !== updatedAdState.adID)];
+        return [
+          updatedAdState,
+          ...prevAds.filter((ad) => ad.adID !== updatedAdState.adID),
+        ];
       });
       // Xóa state sau khi sử dụng
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate, location.pathname]);
-
 
   const handleAdd = () => {
     navigate("/admin/ads/add");
@@ -82,7 +87,7 @@ const AdminAds: React.FC = () => {
 
   const handleEdit = (ad: Ad) => {
     // API của bạn có vẻ sử dụng adID, nên truyền adID
-    navigate(`/admin/ad/edit/${ad.adID}`, { state: { adDetails: ad } });
+    navigate(`/admin/ads/edit/${ad.adID}`, { state: { adDetails: ad } });
   };
 
   const handleDelete = async (id: string) => {
@@ -90,10 +95,12 @@ const AdminAds: React.FC = () => {
       try {
         await deleteAd(id);
         setAds((prevAds) => prevAds.filter((ad) => ad.adID !== id));
-        // alert("Xóa quảng cáo thành công!"); // Có thể thay bằng toast notification
+        alert("Xóa quảng cáo thành công!"); // Thông báo thành công
       } catch (err) {
         console.error("Lỗi khi xóa quảng cáo:", err);
-        setError("Xóa quảng cáo thất bại. Có thể quảng cáo đang được sử dụng hoặc có lỗi máy chủ.");
+        setError(
+          "Xóa quảng cáo thất bại. Có thể quảng cáo đang được sử dụng hoặc có lỗi máy chủ.",
+        );
         // alert("Xóa quảng cáo thất bại!");
       }
     }
@@ -107,7 +114,11 @@ const AdminAds: React.FC = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">Đang tải danh sách quảng cáo...</div>;
+    return (
+      <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">
+        Đang tải danh sách quảng cáo...
+      </div>
+    );
   }
 
   return (
@@ -120,6 +131,7 @@ const AdminAds: React.FC = () => {
           <button
             onClick={handleAdd}
             className="flex items-center px-5 py-2.5 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400"
+            onClick={handleAdd}
           >
             {AddIcon({ className: "mr-2" })} Thêm Quảng Cáo
           </button>
@@ -143,7 +155,7 @@ const AdminAds: React.FC = () => {
                     Tiêu đề
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Hình ảnh/File
+                    Quảng cáo URL
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Public ID
@@ -155,7 +167,10 @@ const AdminAds: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {currentAds.map((ad, index) => (
-                  <tr key={ad.adID} className="hover:bg-red-50 transition-colors duration-150">
+                  <tr
+                    key={ad.adID}
+                    className="hover:bg-red-50 transition-colors duration-150"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                       {indexOfFirstItem + index + 1}
                     </td>
@@ -168,16 +183,19 @@ const AdminAds: React.FC = () => {
                           href={ad.urlImage}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sky-600 hover:underline hover:text-sky-800"
+                          className="text-sky-600 hover:underline hover:text-sky-800 flex items-center"
                         >
-                          Xem file
+                          {VideoIconSolid({ className: "mr-1.5 text-sky-500" })}{" "}
+                          Xem Quảng cáo
                         </a>
                       ) : (
                         <span className="text-gray-400 italic">Không có</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">
-                      {ad.adID || <span className="text-gray-400 italic">Không có</span>}
+                      {ad.publicImageId || (
+                        <span className="text-gray-400 italic">Không có</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
@@ -219,9 +237,10 @@ const AdminAds: React.FC = () => {
                 key={index + 1}
                 onClick={() => paginate(index + 1)}
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-                  ${currentPage === index + 1
-                    ? "bg-red-600 text-white shadow-sm"
-                    : "bg-white text-gray-700 hover:bg-red-50 border border-gray-300"
+                  ${
+                    currentPage === index + 1
+                      ? "bg-red-600 text-white shadow-sm"
+                      : "bg-white text-gray-700 hover:bg-red-50 border border-gray-300"
                   }`}
               >
                 {index + 1}
@@ -242,7 +261,16 @@ const AdminAds: React.FC = () => {
           <div className="text-center py-16 text-gray-500">
             {EmptyIcon({ className: "mx-auto text-5xl text-gray-400 mb-4" })}
             <p className="text-lg">Không có quảng cáo nào để hiển thị.</p>
-            <p className="text-sm">Bạn có thể bắt đầu bằng cách <button onClick={handleAdd} className="text-red-600 hover:underline">thêm quảng cáo mới</button>.</p>
+            <p className="text-sm">
+              Bạn có thể bắt đầu bằng cách{" "}
+              <button
+                onClick={handleAdd}
+                className="text-red-600 hover:underline"
+              >
+                thêm quảng cáo mới
+              </button>
+              .
+            </p>
           </div>
         )}
       </div>
