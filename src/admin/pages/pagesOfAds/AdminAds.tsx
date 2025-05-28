@@ -131,7 +131,6 @@ const AdminAds: React.FC = () => {
           <button
             onClick={handleAdd}
             className="flex items-center px-5 py-2.5 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400"
-            onClick={handleAdd}
           >
             {AddIcon({ className: "mr-2" })} Thêm Quảng Cáo
           </button>
