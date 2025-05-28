@@ -110,21 +110,6 @@ const NavSidebar = () => {
               video
             </NavLink>
             <NavLink
-              to="/admin/messages"
-              className={navLinkClasses}
-              onClick={() => setIsOpen(false)}
-            >
-              <FontAwesomeIcon icon={faEnvelope} className="mr-3 w-5" /> Tin
-              nhắn
-            </NavLink>
-            <NavLink
-              to="/admin/notifications"
-              className={navLinkClasses}
-              onClick={() => setIsOpen(false)}
-            >
-              <FontAwesomeIcon icon={faBell} className="mr-3 w-5" /> Thông báo
-            </NavLink>
-            <NavLink
               to="/admin/settings"
               className={navLinkClasses}
               onClick={() => setIsOpen(false)}

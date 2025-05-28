@@ -14,6 +14,7 @@ import {
   updatePersonalFlashcardList,
   deletePersonalFlashcardList,
   getPersonalFlashcardLists,
+  getPersonalFlashcardListForAdmin,
 } from "../../../api/apiClient"; // Import API functions
 
 const AddIcon = FaPlus;
@@ -44,7 +45,7 @@ const AdminFlashcardList: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const lists = await getPersonalFlashcardLists();
+        const lists = await getPersonalFlashcardListForAdmin();
         setFlashcardLists(
           lists.map((list: any) => ({
             listID: list.listID,
