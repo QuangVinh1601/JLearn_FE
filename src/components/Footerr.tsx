@@ -46,7 +46,6 @@ const Footer: React.FC = () => {
     "text-stone-600 hover:text-red-500 hover:scale-110 transform transition-all duration-300 ease-in-out text-xl";
 
   return (
-
     <footer className="bg-[F8F7F0] text-stone-800 pt-16 pb-8 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -82,10 +81,26 @@ const Footer: React.FC = () => {
               Khóa học
             </h3>
             <ul className="space-y-3">
-              <li><Link to="/" className={linkClasses}>Tiếng Nhật N5</Link></li>
-              <li><Link to="/" className={linkClasses}>Tiếng Nhật N4</Link></li>
-              <li><Link to="/" className={linkClasses}>Lập trình Java</Link></li>
-              <li><Link to="/" className={linkClasses}>Lập trình Web</Link></li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Tiếng Nhật N5
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Tiếng Nhật N4
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Lập trình Java
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Lập trình Web
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -95,10 +110,26 @@ const Footer: React.FC = () => {
               Hỗ trợ
             </h3>
             <ul className="space-y-3">
-              <li><Link to="/" className={linkClasses}>Trung tâm hỗ trợ</Link></li>
-              <li><Link to="/" className={linkClasses}>Điều khoản sử dụng</Link></li>
-              <li><Link to="/" className={linkClasses}>Chính sách bảo mật</Link></li>
-              <li><Link to="/" className={linkClasses}>FAQ</Link></li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Trung tâm hỗ trợ
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Điều khoản sử dụng
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  Chính sách bảo mật
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className={linkClasses}>
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -114,13 +145,12 @@ const Footer: React.FC = () => {
                   icon={faMapMarkerAlt}
                   className="mr-3 mt-1 text-red-500 flex-shrink-0" // Icon vẫn màu nhấn
                 />
-                <span>120 Hoàng Minh Thảo, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng</span>
+                <span>
+                  120 Hoàng Minh Thảo, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
+                </span>
               </li>
               <li className="flex items-center">
-                <FontAwesomeIcon
-                  icon={faPhone}
-                  className="mr-3 text-red-500"
-                />
+                <FontAwesomeIcon icon={faPhone} className="mr-3 text-red-500" />
                 <span>0762 550 811</span>
               </li>
               <li className="flex items-center">
@@ -142,9 +172,15 @@ const Footer: React.FC = () => {
               © {new Date().getFullYear()} JLearn. Đã đăng ký bản quyền.
             </p>
             <div className="flex space-x-6">
-              <Link to="/" className={`${linkClasses} text-sm`}>Điều khoản</Link>
-              <Link to="/" className={`${linkClasses} text-sm`}>Bảo mật</Link>
-              <Link to="/" className={`${linkClasses} text-sm`}>Cookie</Link>
+              <Link to="/" className={`${linkClasses} text-sm`}>
+                Điều khoản
+              </Link>
+              <Link to="/" className={`${linkClasses} text-sm`}>
+                Bảo mật
+              </Link>
+              <Link to="/" className={`${linkClasses} text-sm`}>
+                Cookie
+              </Link>
             </div>
           </div>
         </div>

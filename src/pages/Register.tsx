@@ -27,7 +27,7 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [animateForm, setAnimateForm] = useState(false);
-  
+
   const navigate = useNavigate();
 
   // Trigger animation after component mounts
@@ -44,19 +44,19 @@ const Register: React.FC = () => {
       toast.error("Vui lòng điền đầy đủ các trường!");
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError("Mật khẩu không khớp!");
       toast.error("Mật khẩu không khớp!");
       return;
     }
-    
+
     if (!/^[a-zA-Z0-9]+$/.test(userName)) {
       setError("Tên người dùng chỉ được chứa chữ cái và số!");
       toast.error("Tên người dùng chỉ được chứa chữ cái và số!");
       return;
     }
-    
+
     if (password.length < 6) {
       setError("Mật khẩu phải có ít nhất 6 ký tự!");
       toast.error("Mật khẩu phải có ít nhất 6 ký tự!");
@@ -65,7 +65,7 @@ const Register: React.FC = () => {
 
     setLoading(true);
     setError(null);
-    
+
     try {
       const userData = {
         userName,
@@ -73,15 +73,15 @@ const Register: React.FC = () => {
         password,
         confirmPassword,
       };
-      
+
       console.log("userData:", userData);
       await registerUser(userData);
-      
+
       toast.success("Đăng ký thành công! Vui lòng đăng nhập.", {
         position: "top-right",
         autoClose: 3000,
       });
-      
+
       setTimeout(() => {
         navigate("/login");
       }, 1500);
@@ -90,7 +90,7 @@ const Register: React.FC = () => {
         err.response?.data?.message ||
         err.response?.data?.error ||
         "Đăng ký thất bại. Vui lòng thử lại.";
-      
+
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Lỗi đăng ký:", err.response?.data, err.response?.status);
@@ -105,7 +105,7 @@ const Register: React.FC = () => {
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute top-0 right-0 w-full h-64 bg-gradient-to-b from-red-100 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-red-100 to-transparent"></div>
-        
+
         {/* Pattern elements */}
         {[...Array(10)].map((_, i) => (
           <motion.div
@@ -156,9 +156,7 @@ const Register: React.FC = () => {
         {/* Main register card */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
-          animate={
-            animateForm ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }
-          }
+          animate={animateForm ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="bg-white rounded-3xl shadow-xl overflow-hidden border border-red-100"
         >
@@ -193,7 +191,10 @@ const Register: React.FC = () => {
                 </label>
                 <div className="relative rounded-lg shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faUser} className="text-gray-400 text-lg" />
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      className="text-gray-400 text-lg"
+                    />
                   </div>
                   <input
                     id="userName"
@@ -218,7 +219,10 @@ const Register: React.FC = () => {
                 </label>
                 <div className="relative rounded-lg shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faEnvelope} className="text-gray-400 text-lg" />
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      className="text-gray-400 text-lg"
+                    />
                   </div>
                   <input
                     id="email"
@@ -243,7 +247,10 @@ const Register: React.FC = () => {
                 </label>
                 <div className="relative rounded-lg shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faLock} className="text-gray-400 text-lg" />
+                    <FontAwesomeIcon
+                      icon={faLock}
+                      className="text-gray-400 text-lg"
+                    />
                   </div>
                   <input
                     id="password"
@@ -268,7 +275,9 @@ const Register: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1 ml-1">Mật khẩu phải có ít nhất 6 ký tự</p>
+                <p className="text-xs text-gray-500 mt-1 ml-1">
+                  Mật khẩu phải có ít nhất 6 ký tự
+                </p>
               </div>
 
               {/* Confirm Password field */}
@@ -281,7 +290,10 @@ const Register: React.FC = () => {
                 </label>
                 <div className="relative rounded-lg shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faLock} className="text-gray-400 text-lg" />
+                    <FontAwesomeIcon
+                      icon={faLock}
+                      className="text-gray-400 text-lg"
+                    />
                   </div>
                   <input
                     id="confirmPassword"
@@ -291,21 +303,25 @@ const Register: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className={`block w-full pl-12 pr-12 py-4 text-base border ${
-                      confirmPassword && password === confirmPassword 
-                        ? "border-green-300 focus:ring-green-500 focus:border-green-500" 
+                      confirmPassword && password === confirmPassword
+                        ? "border-green-300 focus:ring-green-500 focus:border-green-500"
                         : "border-gray-300 focus:ring-red-500 focus:border-red-500"
                     } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
                     placeholder="Xác nhận mật khẩu"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                    {confirmPassword && (
-                      password === confirmPassword ? (
-                        <FontAwesomeIcon icon={faCheckCircle} className="text-green-500 mr-2" />
-                      ) : null
-                    )}
+                    {confirmPassword &&
+                      (password === confirmPassword ? (
+                        <FontAwesomeIcon
+                          icon={faCheckCircle}
+                          className="text-green-500 mr-2"
+                        />
+                      ) : null)}
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="text-gray-400 hover:text-gray-600 focus:outline-none"
                     >
                       <FontAwesomeIcon
@@ -325,14 +341,15 @@ const Register: React.FC = () => {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className={`group relative w-full flex justify-center py-4 px-5 rounded-lg text-white text-lg ${
-                    loading
-                      ? "bg-red-400"
-                      : "bg-red-600 hover:bg-red-700"
+                    loading ? "bg-red-400" : "bg-red-600 hover:bg-red-700"
                   } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 font-medium shadow-md`}
                 >
                   {loading ? (
                     <span className="flex items-center">
-                      <svg className="animate-spin h-6 w-6 mr-3" viewBox="0 0 24 24">
+                      <svg
+                        className="animate-spin h-6 w-6 mr-3"
+                        viewBox="0 0 24 24"
+                      >
                         <circle
                           className="opacity-25"
                           cx="12"

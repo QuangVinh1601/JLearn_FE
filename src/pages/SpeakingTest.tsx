@@ -71,15 +71,12 @@ const SpeakingTest: React.FC = () => {
     return () => {
       cleanupStream();
       if (audioURL) {
-
         URL.revokeObjectURL(audioURL);
       }
     };
   }, [cleanupStream, audioURL]);
 
-
   const requestMicPermissionAndInitRecorder = useCallback(async () => {
-
     if (testState !== "IDLE" && testState !== "ERROR") return;
 
     setTestState("REQUESTING_PERMISSION");
@@ -92,7 +89,6 @@ const SpeakingTest: React.FC = () => {
     }
 
     try {
-
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: false,
@@ -109,7 +105,6 @@ const SpeakingTest: React.FC = () => {
 
       mediaRecorder.current = recorder;
       audioChunks.current = [];
-
 
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -150,44 +145,45 @@ const SpeakingTest: React.FC = () => {
   }, [testState, audioURL, questions, questionIndex, cleanupStream]);
 
   const formatApiResponse = (response: string): string => {
-
-    const sections = response.split('\n\n');
+    const sections = response.split("\n\n");
 
     // Format each section with proper styling
-    return sections.map(section => {
-      if (section.startsWith('[TRANSCRIPTION]')) {
-        return `<div class="mb-4">
+    return sections
+      .map((section) => {
+        if (section.startsWith("[TRANSCRIPTION]")) {
+          return `<div class="mb-4">
           <h3 class="font-bold text-lg text-gray-800 mb-2">Bản ghi âm:</h3>
-          <p class="text-gray-700">${section.replace('[TRANSCRIPTION]', '').trim().replace(/\n/g, '<br>')}</p>
+          <p class="text-gray-700">${section.replace("[TRANSCRIPTION]", "").trim().replace(/\n/g, "<br>")}</p>
         </div>`;
-      }
-      if (section.startsWith('[PHÂN TÍCH LỖI DÙNG TỪ]')) {
-        return `<div class="mb-4">
+        }
+        if (section.startsWith("[PHÂN TÍCH LỖI DÙNG TỪ]")) {
+          return `<div class="mb-4">
           <h3 class="font-bold text-lg text-gray-800 mb-2">Phân tích lỗi dùng từ:</h3>
-          <div class="text-gray-700">${section.replace('[PHÂN TÍCH LỖI DÙNG TỪ]', '').trim().replace(/\n/g, '<br>')}</div>
+          <div class="text-gray-700">${section.replace("[PHÂN TÍCH LỖI DÙNG TỪ]", "").trim().replace(/\n/g, "<br>")}</div>
         </div>`;
-      }
-      if (section.startsWith('[PHÂN TÍCH NGỮ PHÁP]')) {
-        return `<div class="mb-4">
+        }
+        if (section.startsWith("[PHÂN TÍCH NGỮ PHÁP]")) {
+          return `<div class="mb-4">
           <h3 class="font-bold text-lg text-gray-800 mb-2">Phân tích ngữ pháp:</h3>
-          <div class="text-gray-700">${section.replace('[PHÂN TÍCH NGỮ PHÁP]', '').trim().replace(/\n/g, '<br>')}</div>
+          <div class="text-gray-700">${section.replace("[PHÂN TÍCH NGỮ PHÁP]", "").trim().replace(/\n/g, "<br>")}</div>
         </div>`;
-      }
-      if (section.startsWith('[ĐỀ XUẤT SỬA LỖI]')) {
-        return `<div class="mb-4">
+        }
+        if (section.startsWith("[ĐỀ XUẤT SỬA LỖI]")) {
+          return `<div class="mb-4">
           <h3 class="font-bold text-lg text-gray-800 mb-2">Đề xuất sửa lỗi:</h3>
-          <div class="text-gray-700">${section.replace('[ĐỀ XUẤT SỬA LỖI]', '').trim().replace(/\n/g, '<br>')}</div>
+          <div class="text-gray-700">${section.replace("[ĐỀ XUẤT SỬA LỖI]", "").trim().replace(/\n/g, "<br>")}</div>
         </div>`;
-      }
-      if (section.startsWith('[KẾT LUẬN]')) {
-        return `<div class="mb-4">
+        }
+        if (section.startsWith("[KẾT LUẬN]")) {
+          return `<div class="mb-4">
           <h3 class="font-bold text-lg text-gray-800 mb-2">Kết luận:</h3>
-          <div class="text-gray-700">${section.replace('[KẾT LUẬN]', '').trim().replace(/\n/g, '<br>')}</div>
+          <div class="text-gray-700">${section.replace("[KẾT LUẬN]", "").trim().replace(/\n/g, "<br>")}</div>
         </div>`;
-      }
-      // Các đoạn khác: thay \n bằng <br>
-      return `<p class="text-gray-700">${section.replace(/\n/g, '<br>')}</p>`;
-    }).join('');
+        }
+        // Các đoạn khác: thay \n bằng <br>
+        return `<p class="text-gray-700">${section.replace(/\n/g, "<br>")}</p>`;
+      })
+      .join("");
   };
 
   // --- Control Functions ---
@@ -215,7 +211,9 @@ const SpeakingTest: React.FC = () => {
 
         // Check if any audio was recorded
         if (!audioChunks.current.length) {
-          setErrorMessage("Không có âm thanh nào được ghi lại. Vui lòng thử lại.");
+          setErrorMessage(
+            "Không có âm thanh nào được ghi lại. Vui lòng thử lại.",
+          );
           setTestState("ERROR");
           return;
         }
@@ -227,7 +225,9 @@ const SpeakingTest: React.FC = () => {
         console.log("Audio blob size (bytes):", audioBlob.size);
 
         if (audioBlob.size === 0) {
-          setErrorMessage("Không có âm thanh nào được ghi lại (file rỗng). Vui lòng thử lại.");
+          setErrorMessage(
+            "Không có âm thanh nào được ghi lại (file rỗng). Vui lòng thử lại.",
+          );
           setTestState("ERROR");
           return;
         }
@@ -240,7 +240,10 @@ const SpeakingTest: React.FC = () => {
           );
 
           // Call the transcribe API
-          const data = await transcribeAudio(audioFile, questions[questionIndex] || "");
+          const data = await transcribeAudio(
+            audioFile,
+            questions[questionIndex] || "",
+          );
           console.log("API response:", data);
           const transcription =
             data.transcription || "Không có bản ghi âm nào được trả về.";

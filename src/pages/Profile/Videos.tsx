@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { FaPlay, FaSearch, FaFilter, FaClock, FaEye, FaHeart, FaBookmark } from 'react-icons/fa';
+import {
+  FaPlay,
+  FaSearch,
+  FaFilter,
+  FaClock,
+  FaEye,
+  FaHeart,
+  FaBookmark,
+} from "react-icons/fa";
 
 interface Video {
   id: string;
@@ -23,13 +31,14 @@ const Videos: React.FC = () => {
     {
       id: "1",
       title: "Giới thiệu về tiếng Nhật N5",
-      description: "Học những kiến thức cơ bản về tiếng Nhật dành cho người mới bắt đầu",
+      description:
+        "Học những kiến thức cơ bản về tiếng Nhật dành cho người mới bắt đầu",
       thumbnail: "https://img.youtube.com/vi/sKPCZPSrDXs/maxresdefault.jpg",
       duration: "15:30",
       category: "grammar",
       level: "N5",
       views: 1250,
-      isBookmarked: false
+      isBookmarked: false,
     },
     {
       id: "2",
@@ -40,7 +49,7 @@ const Videos: React.FC = () => {
       category: "vocabulary",
       level: "N5",
       views: 890,
-      isBookmarked: true
+      isBookmarked: true,
     },
     {
       id: "3",
@@ -51,7 +60,7 @@ const Videos: React.FC = () => {
       category: "pronunciation",
       level: "N5",
       views: 2100,
-      isBookmarked: false
+      isBookmarked: false,
     },
     {
       id: "4",
@@ -62,8 +71,8 @@ const Videos: React.FC = () => {
       category: "grammar",
       level: "N4",
       views: 756,
-      isBookmarked: true
-    }
+      isBookmarked: true,
+    },
   ];
 
   const categories = [
@@ -72,7 +81,7 @@ const Videos: React.FC = () => {
     { value: "vocabulary", label: "Từ vựng" },
     { value: "pronunciation", label: "Phát âm" },
     { value: "conversation", label: "Hội thoại" },
-    { value: "culture", label: "Văn hóa" }
+    { value: "culture", label: "Văn hóa" },
   ];
 
   const levels = [
@@ -81,14 +90,16 @@ const Videos: React.FC = () => {
     { value: "N4", label: "N4" },
     { value: "N3", label: "N3" },
     { value: "N2", label: "N2" },
-    { value: "N1", label: "N1" }
+    { value: "N1", label: "N1" },
   ];
 
   // Filter videos
-  const filteredVideos = videos.filter(video => {
-    const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredVideos = videos.filter((video) => {
+    const matchesSearch =
+      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       video.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === "all" || video.category === filterCategory;
+    const matchesCategory =
+      filterCategory === "all" || video.category === filterCategory;
     const matchesLevel = filterLevel === "all" || video.level === filterLevel;
     return matchesSearch && matchesCategory && matchesLevel;
   });
@@ -106,38 +117,53 @@ const Videos: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
+      <div
+        className="rounded-3xl shadow-xl p-6 md:p-8"
+        style={{ backgroundColor: "#F5E6CA" }}
+      >
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Video học tập</h1>
-            <p className="text-gray-600">Học tiếng Nhật qua các video bài giảng chất lượng cao</p>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              Video học tập
+            </h1>
+            <p className="text-gray-600">
+              Học tiếng Nhật qua các video bài giảng chất lượng cao
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="relative">
-              {FaSearch({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
+              {FaSearch({
+                className:
+                  "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400",
+              })}
               <input
                 type="text"
                 placeholder="Tìm kiếm video..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
-                style={{ borderColor: '#D4B896', backgroundColor: '#F0D5A8' }}
+                style={{ borderColor: "#D4B896", backgroundColor: "#F0D5A8" }}
               />
             </div>
 
             {/* Category Filter */}
             <div className="relative">
-              {FaFilter({ className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" })}
+              {FaFilter({
+                className:
+                  "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400",
+              })}
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
                 className="pl-10 pr-8 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none appearance-none"
-                style={{ borderColor: '#D4B896', backgroundColor: '#F0D5A8' }}
+                style={{ borderColor: "#D4B896", backgroundColor: "#F0D5A8" }}
               >
-                {categories.map(category => (
-                  <option key={category.value} value={category.value}>{category.label}</option>
+                {categories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -148,10 +174,12 @@ const Videos: React.FC = () => {
                 value={filterLevel}
                 onChange={(e) => setFilterLevel(e.target.value)}
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none appearance-none"
-                style={{ borderColor: '#D4B896', backgroundColor: '#F0D5A8' }}
+                style={{ borderColor: "#D4B896", backgroundColor: "#F0D5A8" }}
               >
-                {levels.map(level => (
-                  <option key={level.value} value={level.value}>{level.label}</option>
+                {levels.map((level) => (
+                  <option key={level.value} value={level.value}>
+                    {level.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -171,7 +199,9 @@ const Videos: React.FC = () => {
         </div>
         <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-6 text-white">
           <h3 className="text-lg font-semibold mb-2">Đã lưu</h3>
-          <p className="text-3xl font-bold">{videos.filter(v => v.isBookmarked).length}</p>
+          <p className="text-3xl font-bold">
+            {videos.filter((v) => v.isBookmarked).length}
+          </p>
         </div>
         <div className="bg-gradient-to-br from-red-500 to-red-700 rounded-2xl p-6 text-white">
           <h3 className="text-lg font-semibold mb-2">Thời gian học</h3>
@@ -180,7 +210,10 @@ const Videos: React.FC = () => {
       </div>
 
       {/* Featured Video */}
-      <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
+      <div
+        className="rounded-3xl shadow-xl p-6 md:p-8"
+        style={{ backgroundColor: "#F5E6CA" }}
+      >
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Video nổi bật</h2>
         <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-8 text-white">
           <div className="flex flex-col lg:flex-row items-center gap-6">
@@ -199,13 +232,16 @@ const Videos: React.FC = () => {
 
             <div className="flex-1 text-center lg:text-left">
               <h3 className="text-2xl font-bold mb-3">{videos[0].title}</h3>
-              <p className="text-red-100 text-lg mb-4">{videos[0].description}</p>
+              <p className="text-red-100 text-lg mb-4">
+                {videos[0].description}
+              </p>
               <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start">
                 <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
                   {FaClock({ className: "inline mr-1" })} {videos[0].duration}
                 </span>
                 <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
-                  {FaEye({ className: "inline mr-1" })} {videos[0].views.toLocaleString()} lượt xem
+                  {FaEye({ className: "inline mr-1" })}{" "}
+                  {videos[0].views.toLocaleString()} lượt xem
                 </span>
                 <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
                   {videos[0].level}
@@ -217,7 +253,10 @@ const Videos: React.FC = () => {
       </div>
 
       {/* Video Grid */}
-      <div className="rounded-3xl shadow-xl p-6 md:p-8" style={{ backgroundColor: '#F5E6CA' }}>
+      <div
+        className="rounded-3xl shadow-xl p-6 md:p-8"
+        style={{ backgroundColor: "#F5E6CA" }}
+      >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
             {searchTerm || filterCategory !== "all" || filterLevel !== "all"
@@ -232,7 +271,7 @@ const Videos: React.FC = () => {
               <div
                 key={video.id}
                 className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
-                style={{ backgroundColor: '#F0D5A8' }}
+                style={{ backgroundColor: "#F0D5A8" }}
               >
                 <div className="relative">
                   <img
@@ -252,10 +291,11 @@ const Videos: React.FC = () => {
                   <div className="absolute top-3 right-3">
                     <button
                       onClick={() => toggleBookmark(video.id)}
-                      className={`p-2 rounded-full transition-all ${video.isBookmarked
-                        ? 'bg-red-500 text-white'
-                        : 'bg-white bg-opacity-80 text-gray-600 hover:bg-opacity-100'
-                        }`}
+                      className={`p-2 rounded-full transition-all ${
+                        video.isBookmarked
+                          ? "bg-red-500 text-white"
+                          : "bg-white bg-opacity-80 text-gray-600 hover:bg-opacity-100"
+                      }`}
                     >
                       {video.isBookmarked ? FaHeart({}) : FaBookmark({})}
                     </button>
@@ -277,7 +317,8 @@ const Videos: React.FC = () => {
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center space-x-3">
                       <span className="flex items-center">
-                        {FaEye({ className: "mr-1" })} {video.views.toLocaleString()}
+                        {FaEye({ className: "mr-1" })}{" "}
+                        {video.views.toLocaleString()}
                       </span>
                       <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
                         {video.level}
@@ -291,8 +332,12 @@ const Videos: React.FC = () => {
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🎥</div>
-            <h3 className="text-2xl font-semibold text-gray-800 mb-2">Không tìm thấy video</h3>
-            <p className="text-gray-600">Hãy thử tìm kiếm với từ khóa khác hoặc điều chỉnh bộ lọc</p>
+            <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+              Không tìm thấy video
+            </h3>
+            <p className="text-gray-600">
+              Hãy thử tìm kiếm với từ khóa khác hoặc điều chỉnh bộ lọc
+            </p>
           </div>
         )}
       </div>

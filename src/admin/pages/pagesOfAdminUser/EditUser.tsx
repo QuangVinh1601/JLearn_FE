@@ -42,7 +42,8 @@ const EditUser: React.FC = () => {
         // Ví dụ: fetchUserById(id).then(data => setDetails(data)).catch(err => setError("..."))
         setError("Không tìm thấy thông tin người dùng để chỉnh sửa.");
       }
-    } else { // Chế độ thêm mới
+    } else {
+      // Chế độ thêm mới
       setDetails({
         id: `new_${Date.now()}`, // ID tạm thời cho user mới
         userName: "",
@@ -124,7 +125,11 @@ const EditUser: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">Đang tải...</div>;
+    return (
+      <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">
+        Đang tải...
+      </div>
+    );
   }
 
   if (error) {
@@ -142,20 +147,30 @@ const EditUser: React.FC = () => {
     );
   }
 
-  if (!details) { // Trường hợp details là null sau khi loading xong (ít khi xảy ra nếu logic đúng)
-    return <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">Không có dữ liệu để hiển thị.</div>;
+  if (!details) {
+    // Trường hợp details là null sau khi loading xong (ít khi xảy ra nếu logic đúng)
+    return (
+      <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">
+        Không có dữ liệu để hiển thị.
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-[#F8F7F0] p-4 sm:p-6 md:p-8 flex items-center justify-center">
       <div className="max-w-2xl w-full bg-white rounded-xl shadow-2xl p-6 sm:p-10 border border-gray-200">
         <h1 className="text-2xl sm:text-3xl font-bold text-red-700 mb-8 text-center">
-          {isEditMode ? "Chỉnh sửa thông tin người dùng" : "Thêm người dùng mới"}
+          {isEditMode
+            ? "Chỉnh sửa thông tin người dùng"
+            : "Thêm người dùng mới"}
         </h1>
 
         <form onSubmit={handleSave} className="space-y-6">
           <div>
-            <label htmlFor="userName" className="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label
+              htmlFor="userName"
+              className="block mb-1.5 text-sm font-semibold text-gray-700"
+            >
               Tên người dùng
             </label>
             <input
@@ -165,18 +180,24 @@ const EditUser: React.FC = () => {
               value={details.userName}
               onChange={handleInputChange}
               className={`w-full p-3 border rounded-lg text-sm transition-colors
-                ${validationErrors.userName
-                  ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
-                  : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+                ${
+                  validationErrors.userName
+                    ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
+                    : "border-gray-300 focus:border-red-500 focus:ring-red-500"
                 }`}
             />
             {validationErrors.userName && (
-              <p className="text-red-500 text-xs mt-1.5">{validationErrors.userName}</p>
+              <p className="text-red-500 text-xs mt-1.5">
+                {validationErrors.userName}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="email" className="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label
+              htmlFor="email"
+              className="block mb-1.5 text-sm font-semibold text-gray-700"
+            >
               Email
             </label>
             <input
@@ -186,18 +207,24 @@ const EditUser: React.FC = () => {
               value={details.email}
               onChange={handleInputChange}
               className={`w-full p-3 border rounded-lg text-sm transition-colors
-                ${validationErrors.email
-                  ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
-                  : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+                ${
+                  validationErrors.email
+                    ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
+                    : "border-gray-300 focus:border-red-500 focus:ring-red-500"
                 }`}
             />
             {validationErrors.email && (
-              <p className="text-red-500 text-xs mt-1.5">{validationErrors.email}</p>
+              <p className="text-red-500 text-xs mt-1.5">
+                {validationErrors.email}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="fullName" className="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label
+              htmlFor="fullName"
+              className="block mb-1.5 text-sm font-semibold text-gray-700"
+            >
               Họ và tên
             </label>
             <input
@@ -207,18 +234,24 @@ const EditUser: React.FC = () => {
               value={details.fullName}
               onChange={handleInputChange}
               className={`w-full p-3 border rounded-lg text-sm transition-colors
-                ${validationErrors.fullName
-                  ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
-                  : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+                ${
+                  validationErrors.fullName
+                    ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
+                    : "border-gray-300 focus:border-red-500 focus:ring-red-500"
                 }`}
             />
             {validationErrors.fullName && (
-              <p className="text-red-500 text-xs mt-1.5">{validationErrors.fullName}</p>
+              <p className="text-red-500 text-xs mt-1.5">
+                {validationErrors.fullName}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="roleUser" className="block mb-1.5 text-sm font-semibold text-gray-700">
+            <label
+              htmlFor="roleUser"
+              className="block mb-1.5 text-sm font-semibold text-gray-700"
+            >
               Vai trò
             </label>
             <select
@@ -227,9 +260,10 @@ const EditUser: React.FC = () => {
               value={details.roleUser}
               onChange={handleInputChange}
               className={`w-full p-3 border rounded-lg text-sm transition-colors bg-white
-                ${validationErrors.roleUser
-                  ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
-                  : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+                ${
+                  validationErrors.roleUser
+                    ? "border-red-500 text-red-700 focus:border-red-600 focus:ring-red-600"
+                    : "border-gray-300 focus:border-red-500 focus:ring-red-500"
                 }`}
             >
               <option value="User">User</option>
@@ -237,7 +271,9 @@ const EditUser: React.FC = () => {
               <option value="Moderator">Moderator</option>
             </select>
             {validationErrors.roleUser && (
-              <p className="text-red-500 text-xs mt-1.5">{validationErrors.roleUser}</p>
+              <p className="text-red-500 text-xs mt-1.5">
+                {validationErrors.roleUser}
+              </p>
             )}
           </div>
 
@@ -248,7 +284,13 @@ const EditUser: React.FC = () => {
               className="w-full sm:w-auto flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               {FaSave({ className: "mr-2" })}
-              {saving ? (isEditMode ? "Đang cập nhật..." : "Đang thêm...") : (isEditMode ? "Lưu thay đổi" : "Thêm người dùng")}
+              {saving
+                ? isEditMode
+                  ? "Đang cập nhật..."
+                  : "Đang thêm..."
+                : isEditMode
+                  ? "Lưu thay đổi"
+                  : "Thêm người dùng"}
             </button>
             <button
               type="button"
