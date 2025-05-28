@@ -80,7 +80,7 @@ const Videos: React.FC = () => {
       }
       timersRef.current[videoId] = setTimeout(() => {
         setShowSkipAd((prev) => ({ ...prev, [videoId]: true }));
-      }, 5000);
+      }, 25000);
     }
   };
 

@@ -71,17 +71,17 @@ export const loginUser = async (email, password) => {
     data: { email, password },
   });
   console.log("Raw API response from loginUser:", response);
-  const refreshToken = 
-    response.refreshToken || 
-    response.refreshtoken || 
+  const refreshToken =
+    response.refreshToken ||
+    response.refreshtoken ||
     response.refresh_token ||
     response.RefreshToken ||
     response.Refreshtoken ||
-    response.data?.refreshToken || 
+    response.data?.refreshToken ||
     response.data?.refreshtoken ||
     response.data?.refresh_token ||
     null;
-  
+
   console.log(refreshToken);
   // Ưu tiên kiểm tra email trước khi gán role từ API
   let role;
@@ -159,6 +159,64 @@ export const createPersonalFlashcardList = async (listName, description) => {
   return null;
 };
 
+export const updatePersonalFlashcardList = async (listId, listName, description) => {
+  console.log("Starting updatePersonalFlashcardList...");
+  const response = await request("dotnet", `/api/personal-flashcard/${listId}`, {
+    method: "PUT",
+    data: { listName, description },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  console.log("API Response:", response);
+  const updatedList = response && response.length > 0 ? response[0] : null;
+  if (updatedList) {
+    return {
+      listID: updatedList.ListID || updatedList.listID,
+      listName: updatedList.ListName || updatedList.listName,
+      description: updatedList.description || updatedList.Description || "",
+      flashcardItemGuests: updatedList.FlashcardItemGuests,
+    };
+  }
+  return null;
+};
+export const getPersonalFlashcardLists = async () => {
+  const response = await request("dotnet", "/api/personal-flashcard", {
+    method: "GET",
+  });
+
+  console.log("Raw response from getPersonalFlashcardLists:", response);
+
+  if (response && response.data && Array.isArray(response.data)) {
+    return response.data.map((item) => ({
+      listID: item.listID || item.ListID, // Hỗ trợ cả hai định dạng
+      listName: item.listName || item.ListName,
+      description: item.description || item.Description || "",
+      flashcards: item.flashcards,
+      createdAt: item.createdAt,
+    }));
+  } else if (Array.isArray(response)) {
+    return response.map((item) => ({
+      listID: item.listID || item.ListID,
+      listName: item.listName || item.ListName,
+      description: item.description || item.Description || "",
+      flashcards: item.flashcards,
+      createdAt: item.createdAt,
+    }));
+  }
+
+  return [];
+};
+
+export const deletePersonalFlashcardList = async (listId) => {
+  console.log("Starting deletePersonalFlashcardList...");
+  const response = await request("dotnet", `/api/personal-flashcard/${listId}`, {
+    method: "DELETE",
+  });
+  console.log("API Response:", response);
+  return response;
+};
+
 export const getFlashcards = async (listId) => {
   try {
     console.log(`Fetching flashcards for list ID: ${listId}`);
@@ -201,43 +259,6 @@ export const getFlashcards = async (listId) => {
     console.error("Error in getFlashcards:", error);
     return [];
   }
-};
-
-export const getPersonalFlashcardLists = async () => {
-  const response = await request("dotnet", "/api/personal-flashcard/user", {
-    method: "GET",
-  });
-
-  console.log("Raw response from getPersonalFlashcardLists:", response);
-
-  // Check if response has data property and it's an array
-  if (response && response.data && Array.isArray(response.data)) {
-    return response.data.map((item) => ({
-      listId: item.listID,
-      listName: item.listName,
-      description: item.description || "",
-      flashcards: item.flashcards,
-      createdAt: item.createdAt
-    }));
-  }
-  // If response itself is an array (fallback)
-  else if (Array.isArray(response)) {
-    return response.map((item) => ({
-      listId: item.listID,
-      listName: item.listName || item.ListName,
-      description: item.description || item.Description || "",
-      flashcards: item.flashcards,
-      createdAt: item.createdAt
-    }));
-  }
-
-  return [];
-};
-
-export const deletePersonalFlashcardList = async (listId) => {
-  return await request("dotnet", `/api/personal-flashcard/${listId}`, {
-    method: "DELETE",
-  });
 };
 
 export const getFlashcard = async (flashcardId) => {
@@ -287,8 +308,14 @@ export const deleteFlashcard = async (flashcardId) => {
 };
 
 // Tạo ZaloPay order
-export const createZaloPayOrder = async (amount, description, userId, collectionId) => {
-  return await request("python", "/api/ml/create_order", { // Updated to use Python backend
+export const createZaloPayOrder = async (
+  amount,
+  description,
+  userId,
+  collectionId,
+) => {
+  return await request("python", "/api/ml/create_order", {
+    // Updated to use Python backend
     method: "POST",
     data: {
       amount,
@@ -302,7 +329,6 @@ export const createZaloPayOrder = async (amount, description, userId, collection
 // Lấy trạng thái ZaloPay order
 export const getZaloPayOrderStatus = async (apptransid) => {
   return await request("python", "/api/ml/order_status", {
-    
     method: "GET",
     params: { apptransid },
   });
@@ -311,7 +337,6 @@ export const getZaloPayOrderStatus = async (apptransid) => {
 export const fetchUserInfo = async (userId) => {
   return await request("dotnet", "/api/user_info", {
     method: "GET",
-
   });
 };
 
@@ -326,7 +351,7 @@ export const transcribeAudio = async (audioFile, additionalText) => {
     data: formData,
     headers: {
       // "Content-Type": "multipart/form-data",
-      "Accept": "application/json",
+      Accept: "application/json",
     },
   });
 };
@@ -405,7 +430,12 @@ export const getAdminMetrics = async () => {
   });
 };
 
-export const createTransaction = async ({ transaction_id, user_id, collection_id, amount_paid }) => {
+export const createTransaction = async ({
+  transaction_id,
+  user_id,
+  collection_id,
+  amount_paid,
+}) => {
   return await request("dotnet", "/api/transaction", {
     method: "POST",
     data: {

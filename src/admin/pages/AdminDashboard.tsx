@@ -61,9 +61,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-3xl font-bold text-gray-800 mt-1">
-            {value}
-          </p>
+          <p className="text-3xl font-bold text-gray-800 mt-1">{value}</p>
         </div>
         <div className={`p-3 ${iconBgColor} rounded-full`}>
           <IconComponent className={`w-7 h-7 ${iconColor}`} />
@@ -84,8 +82,9 @@ function calculateUserGrowthOverTime(
   return userGrowth.map((item, idx, arr) => {
     let growthPercentText = "-";
     if (idx > 0 && arr[idx - 1].count > 0) {
-      const growth = ((item.count - arr[idx - 1].count) / arr[idx - 1].count) * 100;
-      growthPercentText = `${growth > 0 ? '↑' : '↓'} ${Math.abs(growth).toFixed(0)}%`;
+      const growth =
+        ((item.count - arr[idx - 1].count) / arr[idx - 1].count) * 100;
+      growthPercentText = `${growth > 0 ? "↑" : "↓"} ${Math.abs(growth).toFixed(0)}%`;
     } else if (idx === 0 && item.count > 0) {
       growthPercentText = ``; // No growth for the first month
     }
@@ -163,7 +162,7 @@ const AdminDashboard: React.FC = () => {
             size: 14,
             family: "Inter, sans-serif",
           },
-          color: '#4A5568',
+          color: "#4A5568",
         },
       },
       title: {
@@ -174,23 +173,23 @@ const AdminDashboard: React.FC = () => {
           weight: "bold" as const, // Sửa lỗi weight
           family: "Inter, sans-serif",
         },
-        color: '#1F2937',
+        color: "#1F2937",
       },
       tooltip: {
-        backgroundColor: '#fff',
-        titleColor: '#1F2937',
-        bodyColor: '#4A5568',
-        borderColor: '#E5E7EB',
+        backgroundColor: "#fff",
+        titleColor: "#1F2937",
+        bodyColor: "#4A5568",
+        borderColor: "#E5E7EB",
         borderWidth: 1,
         padding: 10,
         callbacks: {
           label: function (context: any) {
-            let label = context.dataset.label || '';
+            let label = context.dataset.label || "";
             if (label) {
-              label += ': ';
+              label += ": ";
             }
             if (context.parsed.y !== null) {
-              label += context.parsed.y + ' người dùng';
+              label += context.parsed.y + " người dùng";
             }
             return label;
           },
@@ -201,10 +200,10 @@ const AdminDashboard: React.FC = () => {
       y: {
         beginAtZero: true,
         grid: {
-          color: '#E5E7EB',
+          color: "#E5E7EB",
         },
         ticks: {
-          color: '#6B7280',
+          color: "#6B7280",
         },
       },
       x: {
@@ -212,7 +211,7 @@ const AdminDashboard: React.FC = () => {
           display: false,
         },
         ticks: {
-          color: '#6B7280',
+          color: "#6B7280",
         },
       },
     },
@@ -276,7 +275,9 @@ const AdminDashboard: React.FC = () => {
           <MetricCard
             title="Tổng doanh thu"
             value={formatCurrency(metrics.totalRevenue)}
-            icon={() => FaMoneyBillWave({ className: "w-7 h-7 text-amber-600" })}
+            icon={() =>
+              FaMoneyBillWave({ className: "w-7 h-7 text-amber-600" })
+            }
             iconBgColor="bg-amber-50"
             iconColor="text-amber-600"
             growth="↑ 20% so với tháng trước"
@@ -285,7 +286,9 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-4 md:p-6 border border-gray-200">
-          <div className="h-[350px] md:h-[450px]"> {/* Điều chỉnh chiều cao cho phù hợp */}
+          <div className="h-[350px] md:h-[450px]">
+            {" "}
+            {/* Điều chỉnh chiều cao cho phù hợp */}
             <Line data={chartData} />
           </div>
         </div>

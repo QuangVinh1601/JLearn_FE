@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  getLearningContents,
-  deleteLearningContent,
-} from "../../../api/apiClient"; // Đảm bảo đường dẫn đúng
+import { getLearningContents, deleteLearningContent } from "../../../api/apiClient";
 import {
   FaPlus as AddIcon,
   FaEdit as EditIcon,
@@ -11,41 +8,20 @@ import {
   FaAngleLeft as PrevIcon,
   FaAngleRight as NextIcon,
   FaExclamationCircle as EmptyIcon,
-  FaVideo as VideoIconSolid // Icon cho video
+  FaVideo as VideoIconSolid,
 } from "react-icons/fa";
 
 interface VideoContent {
-  id: string; // ID của LearningContent
+  id: string;
   title: string;
-  urlVideo: string; // URL để xem video (từ Cloudinary hoặc nơi lưu trữ khác)
-  urlAd?: string; // URL của quảng cáo liên kết (nếu có)
-  adId?: string; // ID của quảng cáo liên kết (nếu có)
-  createdAt?: string; // Định dạng lại nếu cần
-  uploadedBy?: string; // Tên hoặc ID người tải lên
+  urlVideo: string;
+  urlAd?: string;
+  adId?: string;
+  createdAt?: string;
+  uploadedBy?: string;
 }
 
 const ITEMS_PER_PAGE = 5;
-
-// --- Mock API functions (thay thế bằng API thật của bạn) ---
-const MOCK_DELAY_VIDEO = 500;
-let mockVideoContents: VideoContent[] = [
-  { id: "vid1", title: "Bài học Hiragana cơ bản", urlVideo: "https://res.cloudinary.com/demo/video/upload/dog.mp4", adId: "ad1", createdAt: "2024-05-20T10:00:00Z", uploadedBy: "Admin JLearn" },
-  { id: "vid2", title: "Giới thiệu Kanji N5", urlVideo: "https://res.cloudinary.com/demo/video/upload/sample.mp4", adId: "ad2", createdAt: "2024-05-21T11:30:00Z", uploadedBy: "Sensei A" },
-  { id: "vid3", title: "Luyện nghe hội thoại sơ cấp", urlVideo: "https://res.cloudinary.com/demo/video/upload/ski_jump.mp4", createdAt: "2024-05-22T14:15:00Z", uploadedBy: "Admin JLearn" },
-];
-
-const mockGetLearningContents = async (): Promise<{ data: VideoContent[] }> => {
-  return new Promise(resolve => setTimeout(() => resolve({ data: [...mockVideoContents] }), MOCK_DELAY_VIDEO));
-};
-
-const mockDeleteLearningContent = async (id: string): Promise<void> => {
-  return new Promise(resolve => setTimeout(() => {
-    mockVideoContents = mockVideoContents.filter(vc => vc.id !== id);
-    resolve();
-  }, MOCK_DELAY_VIDEO));
-};
-// --- End Mock API functions ---
-
 
 const AdminVideo: React.FC = () => {
   const [videoContents, setVideoContents] = useState<VideoContent[]>([]);
@@ -60,15 +36,8 @@ const AdminVideo: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        // Sử dụng API thật
-        // const response = await getLearningContents();
-        // const data = response.data;
-        // setVideoContents(Array.isArray(data) ? data : []);
-
-        // Sử dụng mock API
-        const response = await mockGetLearningContents();
-        setVideoContents(response.data);
-
+        const response = await getLearningContents();
+        setVideoContents(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("Lỗi khi lấy danh sách video:", err);
         setError("Không thể tải danh sách video. Vui lòng thử lại sau.");
@@ -81,59 +50,65 @@ const AdminVideo: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const updatedContent = (location.state as { updatedContent?: VideoContent })?.updatedContent;
+    const updatedContent = (location.state as { updatedContent?: VideoContent })
+      ?.updatedContent;
     if (updatedContent) {
       setVideoContents((prevContents) => {
-        const exists = prevContents.some((content) => content.id === updatedContent.id);
+        const exists = prevContents.some(
+          (content) => content.id === updatedContent.id,
+        );
         if (exists) {
           return prevContents.map((content) =>
             content.id === updatedContent.id ? updatedContent : content,
           );
         } else {
-          // Thêm video mới vào đầu danh sách
-          return [updatedContent, ...prevContents.filter(c => c.id !== updatedContent.id)];
+          return [
+            updatedContent,
+            ...prevContents.filter((c) => c.id !== updatedContent.id),
+          ];
         }
       });
-      navigate(location.pathname, { replace: true, state: {} }); // Xóa state
+      navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate, location.pathname]);
 
   const handleAdd = () => {
-    // Trang EditVideo dùng để tạo mới (không có id trong params)
     navigate("/admin/video/add");
   };
 
   const handleEdit = (content: VideoContent) => {
-    // Truyền content.id (ID của learning content) cho trang EditVideo
-    navigate(`/admin/video/edit/${content.id}`, { state: { videoDetails: content } });
+    navigate(`/admin/video/edit/${content.id}`, {
+      state: { videoDetails: content },
+    });
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa video này?")) {
-      // setLoading(true); // Có thể thêm spinner cho từng hàng hoặc disable nút
       try {
-        // await deleteLearningContent(id); // API thật
-        await mockDeleteLearningContent(id); // Mock API
+        await deleteLearningContent(id);
         setVideoContents((prevContents) =>
           prevContents.filter((content) => content.id !== id),
         );
-        // alert("Xóa video thành công!"); // Thay bằng toast notification
+        alert("Xóa video thành công!"); 
       } catch (err) {
         console.error("Lỗi khi xóa video:", err);
         setError("Xóa video thất bại. Vui lòng thử lại.");
-        // alert("Xóa video thất bại!");
-      } finally {
-        // setLoading(false);
       }
     }
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     try {
-      return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(dateString));
+      return new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(dateString));
     } catch (e) {
-      return dateString; // Trả về chuỗi gốc nếu không parse được
+      return dateString;
     }
   };
 
@@ -144,8 +119,12 @@ const AdminVideo: React.FC = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  if (loading && !error) { // Chỉ hiển thị loading nếu không có lỗi ban đầu
-    return <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">Đang tải danh sách video...</div>;
+  if (loading && !error) {
+    return (
+      <div className="p-8 text-center text-gray-700 bg-[#F8F7F0] min-h-screen">
+        Đang tải danh sách video...
+      </div>
+    );
   }
 
   return (
@@ -174,21 +153,39 @@ const AdminVideo: React.FC = () => {
             <table className="min-w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tiêu đề</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Video URL</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày tạo</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Người tải</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Thao tác</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    #
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Tiêu đề
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Video URL
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Ngày tạo
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Người tải
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Thao tác
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {currentVideos.map((content, index) => (
-                  <tr key={content.id} className="hover:bg-red-50 transition-colors duration-150">
+                  <tr
+                    key={content.id}
+                    className="hover:bg-red-50 transition-colors duration-150"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 max-w-xs truncate" title={content.title}>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 max-w-xs truncate"
+                      title={content.title}
+                    >
                       {content.title}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -200,14 +197,19 @@ const AdminVideo: React.FC = () => {
                           className="text-sky-600 hover:underline hover:text-sky-800 flex items-center"
                           title={content.urlVideo}
                         >
-                          {VideoIconSolid({ className: "mr-1.5 text-sky-500" })} Xem Video
+                          {VideoIconSolid({ className: "mr-1.5 text-sky-500" })}{" "}
+                          Xem Video
                         </a>
                       ) : (
                         <span className="text-gray-400 italic">Không có</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(content.createdAt)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{content.uploadedBy || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatDate(content.createdAt)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {content.uploadedBy || "N/A"}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
                         <button
@@ -247,9 +249,10 @@ const AdminVideo: React.FC = () => {
                 key={index + 1}
                 onClick={() => paginate(index + 1)}
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-                  ${currentPage === index + 1
-                    ? "bg-red-600 text-white shadow-sm"
-                    : "bg-white text-gray-700 hover:bg-red-50 border border-gray-300"
+                  ${
+                    currentPage === index + 1
+                      ? "bg-red-600 text-white shadow-sm"
+                      : "bg-white text-gray-700 hover:bg-red-50 border border-gray-300"
                   }`}
               >
                 {index + 1}
@@ -269,7 +272,16 @@ const AdminVideo: React.FC = () => {
           <div className="text-center py-16 text-gray-500">
             {EmptyIcon({ className: "mx-auto text-5xl text-gray-400 mb-4" })}
             <p className="text-lg">Không có video nào để hiển thị.</p>
-            <p className="text-sm">Bạn có thể bắt đầu bằng cách <button onClick={handleAdd} className="text-red-600 hover:underline">thêm video mới</button>.</p>
+            <p className="text-sm">
+              Bạn có thể bắt đầu bằng cách{" "}
+              <button
+                onClick={handleAdd}
+                className="text-red-600 hover:underline"
+              >
+                thêm video mới
+              </button>
+              .
+            </p>
           </div>
         )}
       </div>

@@ -127,7 +127,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
     } catch (err: any) {
       setZaloPayError(
         "Lỗi kiểm tra trạng thái ZaloPay: " +
-        (err.response?.data?.error || err.message),
+          (err.response?.data?.error || err.message),
       );
     } finally {
       setCheckingStatus(false);
@@ -164,7 +164,7 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
           console.error("Error checking ZaloPay status:", err);
           setZaloPayError(
             "Lỗi kiểm tra trạng thái ZaloPay: " +
-            (err.response?.data?.error || err.message),
+              (err.response?.data?.error || err.message),
           );
         }
       }, 5000); // Check every 5 seconds
@@ -210,8 +210,6 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
 
           {/* Phương thức thanh toán */}
           <div className="mb-4">
-
-
             {/* ZaloPay */}
             <label className="flex items-center mb-2 cursor-pointer">
               <input
@@ -331,7 +329,8 @@ const PaymentMethodModal: React.FC<PaymentMethodModalProps> = ({
                   khoản sử dụng và Chính sách bảo mật của japstudy.id.vn
                 </li>
                 <li>
-                  Sau khi chuyển khoản thành công bạn vui lòng đợi từ 5 đến 10 giây để đợi kết quả thanh toán.
+                  Sau khi chuyển khoản thành công bạn vui lòng đợi từ 5 đến 10
+                  giây để đợi kết quả thanh toán.
                 </li>
               </ul>
             </div>
