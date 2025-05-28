@@ -33,7 +33,7 @@ function CollectionFlashcards() {
       localStorage.setItem("flashcardCollections", JSON.stringify(result));
       setCollections(
         result.map((item: any) => ({
-          id: item.listId,
+          id: item.listID,
           title: item.listName,
           description: item.description || "No description available",
           createdAt: item.createdAt ? new Date(item.createdAt) : null,
