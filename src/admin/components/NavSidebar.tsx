@@ -15,6 +15,7 @@ import {
   faSignOut,
   faBars,
 } from "@fortawesome/free-solid-svg-icons";
+import { logoutUser } from "../../api/apiClient";
 
 const NavSidebar = () => {
   const navigate = useNavigate();
@@ -28,6 +29,19 @@ const NavSidebar = () => {
       isActive ? "bg-red-100 text-red-700 font-semibold" : "font-medium"
     }`;
 
+    const handleLogout = async () => {
+        try {
+          // Call API to invalidate tokens and clear cookies on the server
+          await logoutUser();
+        } catch (err) {
+          console.error("Error during logout:", err);
+        } finally {
+          // Always perform local logout, even if API call fails
+          logout();
+          navigate("/login");
+        }
+      };
+      
   return (
     <>
       {/* Hamburger Menu for Mobile */}
@@ -120,8 +134,7 @@ const NavSidebar = () => {
           </div>
           <button
             onClick={() => {
-              logout();
-              navigate("/home");
+             handleLogout();
               setIsOpen(false);
             }}
             className="block w-full text-left py-2.5 px-4 text-gray-700 hover:bg-red-100 hover:text-red-700 rounded-md mx-2 my-1 font-medium transition-colors duration-150"
