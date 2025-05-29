@@ -181,7 +181,7 @@ export const updatePersonalFlashcardList = async (listId, listName, description)
   return null;
 };
 export const getPersonalFlashcardLists = async () => {
-  const response = await request("dotnet", "/api/personal-flashcard", {
+  const response = await request("dotnet", "/api/personal-flashcard/user", {
     method: "GET",
   });
 
