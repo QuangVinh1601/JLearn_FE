@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/apiClient";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
-
-// Import icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -16,62 +14,71 @@ import {
   faChevronRight,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+// Định nghĩa schema validation với yup
+const schema = yup.object().shape({
+  userName: yup
+    .string()
+    .required("Vui lòng nhập tên người dùng")
+    .max(20, "Tên người dùng không được dài quá 20 ký tự")
+    .matches(/^[a-zA-Z0-9]+$/, "Tên người dùng chỉ được chứa chữ cái và số"),
+  email: yup
+    .string()
+    .required("Vui lòng nhập email")
+    .email("Email không hợp lệ"),
+  password: yup
+    .string()
+    .required("Vui lòng nhập mật khẩu")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      "Mật khẩu phải chứa chữ hoa, chữ thường và số"
+    ),
+  confirmPassword: yup
+    .string()
+    .required("Vui lòng xác nhận mật khẩu")
+    .oneOf([yup.ref("password")], "Mật khẩu không khớp"),
+});
 
 const Register: React.FC = () => {
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [animateForm, setAnimateForm] = useState(false);
-
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [animateForm, setAnimateForm] = React.useState(false);
   const navigate = useNavigate();
 
-  // Trigger animation after component mounts
+  // Khởi tạo react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  // Theo dõi giá trị confirmPassword để hiển thị biểu tượng check
+  const confirmPassword = watch("confirmPassword");
+  const password = watch("password");
+
   useEffect(() => {
     setAnimateForm(true);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate input
-    if (!userName || !email || !password || !confirmPassword) {
-      setError("Vui lòng điền đầy đủ các trường!");
-      toast.error("Vui lòng điền đầy đủ các trường!");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Mật khẩu không khớp!");
-      toast.error("Mật khẩu không khớp!");
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9]+$/.test(userName)) {
-      setError("Tên người dùng chỉ được chứa chữ cái và số!");
-      toast.error("Tên người dùng chỉ được chứa chữ cái và số!");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự!");
-      toast.error("Mật khẩu phải có ít nhất 6 ký tự!");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
+  const onSubmit = async (data: {
+    userName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
     try {
       const userData = {
-        userName,
-        email,
-        password,
-        confirmPassword,
+        userName: data.userName,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
       };
 
       console.log("userData:", userData);
@@ -90,23 +97,19 @@ const Register: React.FC = () => {
         err.response?.data?.message ||
         err.response?.data?.error ||
         "Đăng ký thất bại. Vui lòng thử lại.";
-
-      setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+      });
       console.error("Lỗi đăng ký:", err.response?.data, err.response?.status);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[rgb(248,241,229)]">
-      {/* Background patterns */}
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute top-0 right-0 w-full h-64 bg-gradient-to-b from-red-100 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-red-100 to-transparent"></div>
-
-        {/* Pattern elements */}
         {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
@@ -134,7 +137,6 @@ const Register: React.FC = () => {
       <ToastContainer />
 
       <div className="w-full max-w-xl space-y-8 relative z-10">
-        {/* Logo and branding section */}
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -152,36 +154,20 @@ const Register: React.FC = () => {
             <div className="h-1 w-16 bg-red-400 rounded-full"></div>
           </div>
         </motion.div>
-
-        {/* Main register card */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={animateForm ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="bg-white rounded-3xl shadow-xl overflow-hidden border border-red-100"
         >
-          {/* Card header */}
           <div className="px-8 py-8 bg-gradient-to-r from-red-500 to-red-400 text-white">
             <h2 className="text-2xl font-bold">新規登録 (Shinki tōroku)</h2>
             <p className="text-base text-white/90 mt-1">
               Tạo tài khoản để bắt đầu hành trình học tiếng Nhật của bạn
             </p>
           </div>
-
-          {/* Register form */}
           <div className="p-8">
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative"
-                >
-                  <span className="block sm:inline text-base">{error}</span>
-                </motion.div>
-              )}
-
-              {/* Username field */}
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="relative">
                 <label
                   htmlFor="userName"
@@ -198,18 +184,22 @@ const Register: React.FC = () => {
                   </div>
                   <input
                     id="userName"
-                    name="userName"
                     type="text"
-                    required
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+                    {...register("userName")}
+                    className={`block w-full pl-12 pr-4 py-4 text-base border ${
+                      errors.userName
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-red-500 focus:border-red-500"
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
                     placeholder="Tên người dùng"
                   />
                 </div>
+                {errors.userName && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.userName.message}
+                  </p>
+                )}
               </div>
-
-              {/* Email field */}
               <div className="relative">
                 <label
                   htmlFor="email"
@@ -226,18 +216,22 @@ const Register: React.FC = () => {
                   </div>
                   <input
                     id="email"
-                    name="email"
                     type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+                    {...register("email")}
+                    className={`block w-full pl-12 pr-4 py-4 text-base border ${
+                      errors.email
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-red-500 focus:border-red-500"
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
                     placeholder="example@gmail.com"
                   />
                 </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
-
-              {/* Password field */}
               <div className="relative">
                 <label
                   htmlFor="password"
@@ -254,12 +248,13 @@ const Register: React.FC = () => {
                   </div>
                   <input
                     id="password"
-                    name="password"
                     type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-12 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+                    {...register("password")}
+                    className={`block w-full pl-12 pr-12 py-4 text-base border ${
+                      errors.password
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-red-500 focus:border-red-500"
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
                     placeholder="Mật khẩu (ít nhất 6 ký tự)"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
@@ -275,12 +270,12 @@ const Register: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1 ml-1">
-                  Mật khẩu phải có ít nhất 6 ký tự
-                </p>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
-
-              {/* Confirm Password field */}
               <div className="relative">
                 <label
                   htmlFor="confirmPassword"
@@ -297,13 +292,12 @@ const Register: React.FC = () => {
                   </div>
                   <input
                     id="confirmPassword"
-                    name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    {...register("confirmPassword")}
                     className={`block w-full pl-12 pr-12 py-4 text-base border ${
-                      confirmPassword && password === confirmPassword
+                      errors.confirmPassword
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : confirmPassword && password === confirmPassword
                         ? "border-green-300 focus:ring-green-500 focus:border-green-500"
                         : "border-gray-300 focus:ring-red-500 focus:border-red-500"
                     } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
@@ -311,17 +305,16 @@ const Register: React.FC = () => {
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
                     {confirmPassword &&
-                      (password === confirmPassword ? (
+                      password === confirmPassword &&
+                      !errors.confirmPassword && (
                         <FontAwesomeIcon
                           icon={faCheckCircle}
                           className="text-green-500 mr-2"
                         />
-                      ) : null)}
+                      )}
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="text-gray-400 hover:text-gray-600 focus:outline-none"
                     >
                       <FontAwesomeIcon
@@ -331,20 +324,23 @@ const Register: React.FC = () => {
                     </button>
                   </div>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
-
-              {/* Submit button */}
               <div className="pt-2">
                 <motion.button
                   type="submit"
-                  disabled={loading}
+                  disabled={isSubmitting}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className={`group relative w-full flex justify-center py-4 px-5 rounded-lg text-white text-lg ${
-                    loading ? "bg-red-400" : "bg-red-600 hover:bg-red-700"
+                    isSubmitting ? "bg-red-400" : "bg-red-600 hover:bg-red-700"
                   } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 font-medium shadow-md`}
                 >
-                  {loading ? (
+                  {isSubmitting ? (
                     <span className="flex items-center">
                       <svg
                         className="animate-spin h-6 w-6 mr-3"
@@ -380,8 +376,6 @@ const Register: React.FC = () => {
             </form>
           </div>
         </motion.div>
-
-        {/* Login link */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

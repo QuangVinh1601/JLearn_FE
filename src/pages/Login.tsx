@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { loginUser, getCollections } from "../api/apiClient";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
-
-// Import icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -15,30 +13,45 @@ import {
   faEyeSlash,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+// Định nghĩa schema validation với yup
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .required("Vui lòng nhập email")
+    .email("Email không hợp lệ"),
+  password: yup
+    .string()
+    .required("Vui lòng nhập mật khẩu")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+});
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [animateForm, setAnimateForm] = useState(false);
-
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [animateForm, setAnimateForm] = React.useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Khởi tạo react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   // Trigger animation after component mounts
   useEffect(() => {
     setAnimateForm(true);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const onSubmit = async (data: { email: string; password: string }) => {
     try {
-      const response = await loginUser(email, password);
-
+      const response = await loginUser(data.email, data.password);
       const { refreshToken, role, userID } = response;
       console.log("Login API response:", response);
 
@@ -53,15 +66,14 @@ const Login: React.FC = () => {
       if (role !== "admin") {
         const collectionsResponse = await getCollections(userID);
         console.log("Collections API response:", collectionsResponse);
-        // Chuyển tất cả ID trong collectionsResponse thành chữ hoa
         const collectionsResponseUpcase = Array.isArray(collectionsResponse)
           ? collectionsResponse.map((id) =>
-              typeof id === "string" ? id.toUpperCase() : id,
+              typeof id === "string" ? id.toUpperCase() : id
             )
           : collectionsResponse;
         localStorage.setItem(
           "purchasedCourses",
-          JSON.stringify(collectionsResponseUpcase),
+          JSON.stringify(collectionsResponseUpcase)
         );
         console.log("Purchased courses:", collectionsResponseUpcase);
       }
@@ -89,7 +101,6 @@ const Login: React.FC = () => {
         err.response?.data?.message ||
         err.response?.data?.error ||
         "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.";
-      setError(errorMessage);
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
@@ -99,19 +110,14 @@ const Login: React.FC = () => {
         draggable: true,
         theme: "colored",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[rgb(248,241,229)]">
-      {/* Background patterns */}
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-red-100 to-transparent"></div>
         <div className="absolute bottom-0 right-0 w-full h-64 bg-gradient-to-t from-red-100 to-transparent"></div>
-
-        {/* Pattern elements */}
         {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
@@ -139,9 +145,6 @@ const Login: React.FC = () => {
       <ToastContainer />
 
       <div className="w-full max-w-xl space-y-8 relative z-10">
-        {" "}
-        {/* Increased width from max-w-md to max-w-xl */}
-        {/* Logo and branding section */}
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -149,58 +152,30 @@ const Login: React.FC = () => {
           className="text-center"
         >
           <h1 className="mt-6 text-5xl font-extrabold text-red-800 tracking-tight">
-            {" "}
-            {/* Increased text size */}
             JLEARN
           </h1>
           <div className="mt-3 flex items-center justify-center">
             <div className="h-1 w-16 bg-red-400 rounded-full"></div>
             <p className="mx-3 text-lg text-red-800/80 font-medium">
-              {" "}
-              {/* Increased text size */}
               Japanese Learning Platform
             </p>
             <div className="h-1 w-16 bg-red-400 rounded-full"></div>
           </div>
         </motion.div>
-        {/* Main login card */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={animateForm ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="bg-white rounded-3xl shadow-xl overflow-hidden border border-red-100"
         >
-          {/* Card header */}
           <div className="px-8 py-10 bg-gradient-to-r from-red-500 to-red-400 text-white">
-            {" "}
-            {/* Increased padding */}
-            <h2 className="text-2xl font-bold">ようこそ! (Yokoso!)</h2>{" "}
-            {/* Increased text size */}
+            <h2 className="text-2xl font-bold">ようこそ! (Yokoso!)</h2>
             <p className="text-base text-white/90 mt-1">
-              {" "}
-              {/* Increased text size */}
               Chào mừng bạn đến hành trình học tiếng Nhật
             </p>
           </div>
-
-          {/* Login form */}
           <div className="p-8">
-            {" "}
-            {/* Increased padding */}
-            <form className="space-y-7" onSubmit={handleSubmit}>
-              {" "}
-              {/* Increased spacing */}
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative"
-                >
-                  <span className="block sm:inline text-base">{error}</span>{" "}
-                  {/* Increased text size */}
-                </motion.div>
-              )}
-              {/* Email field */}
+            <form className="space-y-7" onSubmit={handleSubmit(onSubmit)}>
               <div className="relative">
                 <label
                   htmlFor="email"
@@ -209,28 +184,30 @@ const Login: React.FC = () => {
                   Email
                 </label>
                 <div className="relative rounded-lg shadow-sm">
-                  {" "}
-                  {/* Changed to rounded-lg */}
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <FontAwesomeIcon
                       icon={faUser}
                       className="text-gray-400 text-lg"
-                    />{" "}
-                    {/* Increased icon size */}
+                    />
                   </div>
                   <input
                     id="email"
-                    name="email"
                     type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-12 pr-4 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+                    {...register("email")}
+                    className={`block w-full pl-12 pr-4 py-4 text-base border ${
+                      errors.email
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-red-500 focus:border-red-500"
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
                     placeholder="example@gmail.com"
                   />
                 </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
-              {/* Password field */}
               <div className="relative">
                 <label
                   htmlFor="password"
@@ -239,23 +216,21 @@ const Login: React.FC = () => {
                   Mật khẩu
                 </label>
                 <div className="relative rounded-lg shadow-sm">
-                  {" "}
-                  {/* Changed to rounded-lg */}
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <FontAwesomeIcon
                       icon={faLock}
                       className="text-gray-400 text-lg"
-                    />{" "}
-                    {/* Increased icon size */}
+                    />
                   </div>
                   <input
                     id="password"
-                    name="password"
                     type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-12 py-4 text-base border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+                    {...register("password")}
+                    className={`block w-full pl-12 pr-12 py-4 text-base border ${
+                      errors.password
+                        ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 focus:ring-red-500 focus:border-red-500"
+                    } rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200`}
                     placeholder="••••••••"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
@@ -271,8 +246,12 @@ const Login: React.FC = () => {
                     </button>
                   </div>
                 </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
-              {/* Remember me & forgot password */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input
@@ -288,10 +267,7 @@ const Login: React.FC = () => {
                     Ghi nhớ đăng nhập
                   </label>
                 </div>
-
                 <div className="text-base">
-                  {" "}
-                  {/* Increased text size */}
                   <Link
                     to="/forgot-password"
                     className="font-medium text-red-600 hover:text-red-500 transition-colors"
@@ -300,27 +276,22 @@ const Login: React.FC = () => {
                   </Link>
                 </div>
               </div>
-              {/* Submit button */}
               <div className="pt-2">
-                {" "}
-                {/* Added top padding */}
                 <motion.button
                   type="submit"
-                  disabled={loading}
+                  disabled={isSubmitting}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className={`group relative w-full flex justify-center py-4 px-5 rounded-lg text-white text-lg ${
-                    loading ? "bg-red-400" : "bg-red-600 hover:bg-red-700"
+                    isSubmitting ? "bg-red-400" : "bg-red-600 hover:bg-red-700"
                   } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 font-medium shadow-md`}
                 >
-                  {loading ? (
+                  {isSubmitting ? (
                     <span className="flex items-center">
                       <svg
                         className="animate-spin h-6 w-6 mr-3"
                         viewBox="0 0 24 24"
                       >
-                        {" "}
-                        {/* Increased size and spacing */}
                         <circle
                           className="opacity-25"
                           cx="12"
@@ -351,7 +322,6 @@ const Login: React.FC = () => {
             </form>
           </div>
         </motion.div>
-        {/* Registration link */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -359,8 +329,6 @@ const Login: React.FC = () => {
           className="text-center pt-6"
         >
           <p className="text-gray-700 text-base">
-            {" "}
-            {/* Increased text size */}
             Bạn chưa có tài khoản?{" "}
             <Link
               to="/register"
